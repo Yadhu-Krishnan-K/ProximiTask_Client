@@ -8,6 +8,7 @@ import SignUp from './pages/User/SignUp'
 import Login from './pages/User/Login'
 import WSignUp from './pages/Worker/WSignUp'
 import AdminLogin from './pages/Admin/AdminLogin'
+// import {AuthorizeUser,ProtectRoute} from './middleware/auth'
 
 function App() {
   return (
@@ -17,7 +18,7 @@ function App() {
       <Route path='/UserSignUp' element={<SignUp/>} />
       <Route path='/UserLogin' element={<Login/>} />
       <Route path='/WorkerSignUp' element={<WSignUp />} />
-      <Route path='AdminLogin' element={<AdminLogin />} />
+      <Route path='/AdminLogin' element={<AdminLogin />} />
      </Routes>
     </>
   )
