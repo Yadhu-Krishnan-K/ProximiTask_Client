@@ -10,8 +10,14 @@ function SignUp() {
   const nav = useNavigate()
 
   function submit() {
+    console.log('clicked')
+    console.log(`
+      email = ${email},
+      name = ${name},
+      pass = ${pass}
+    `)
     if (pass === conPass) {
-      instance.post('/users/signup', {
+      instance.post('/users/initiateSignup', {
         name,
         email,
         pass
@@ -19,7 +25,7 @@ function SignUp() {
       .then((res) => {
         console.log(res)
         if (res.data.success) {
-          nav('/UserLogin')
+          nav('/Otp')
         }
       })
     }
@@ -34,24 +40,28 @@ function SignUp() {
             type="text"
             className="w-full p-3 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-300"
             placeholder="Name"
+            value={name}
             onChange={(e) => setName(e.target.value)}
           />
           <input
             type="email"
             className="w-full p-3 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-300"
             placeholder="Email"
+            value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
           <input
             type="password"
             className="w-full p-3 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-300"
             placeholder="Password"
+            value={pass}
             onChange={(e) => setPass(e.target.value)}
           />
           <input
             type="password"
             className="w-full p-3 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-300"
             placeholder="Confirm Password"
+            value={conPass}
             onChange={(e) => setConPass(e.target.value)}
           />
         </div>

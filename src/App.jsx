@@ -8,7 +8,8 @@ import SignUp from './pages/User/SignUp'
 import Login from './pages/User/Login'
 import WSignUp from './pages/Worker/WSignUp'
 import AdminLogin from './pages/Admin/AdminLogin'
-// import {AuthorizeUser,ProtectRoute} from './middleware/auth'
+import NotFoundPage from './pages/NotFound'
+import OTPPage from './pages/User/OtpPage'
 
 function App() {
   return (
@@ -19,6 +20,9 @@ function App() {
       <Route path='/UserLogin' element={<Login/>} />
       <Route path='/WorkerSignUp' element={<WSignUp />} />
       <Route path='/AdminLogin' element={<AdminLogin />} />
+      <Route path='/Otp' element={<OTPPage/>} />
+
+      <Route path='*' element={<NotFoundPage />} />
      </Routes>
     </>
   )
