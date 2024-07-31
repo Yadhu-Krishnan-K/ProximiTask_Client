@@ -23,9 +23,10 @@ function SignUp() {
         pass
       })
       .then((res) => {
-        console.log(res)
-        if (res.data.success) {
-          nav('/Otp')
+        if (res?.data?.success) {
+          nav('/Otp');
+        } else {
+          console.error('Signup failed: unexpected response structure', res);
         }
       })
     }

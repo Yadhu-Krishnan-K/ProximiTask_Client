@@ -18,8 +18,9 @@ function Login() {
     .then((res) => {
       console.log(res);
       if (res.data.success) {
-        
+        console.log(res.data)
         localStorage.setItem('userData',JSON.stringify(res.data.user))
+        // localStorage.setItem('refreshToken',)
         dispatch(setUserData(res.data.user));
         nav('/');
       }

@@ -1,32 +1,28 @@
-import axios from 'axios'
+import axios from "axios";
 
 const instance = axios.create({
-    baseURL:'http://localhost:8000',
-    timeout:10000,
-    headers:{
-        'Content-Type':'application/json'
-    }
-})
+  baseURL: "http://localhost:8000",
+  timeout: 10000,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
 
 instance.interceptors.request.use(
-    (config) => {
-        // Modify request config if needed
-        return config;
-      },
-      (error) => {
-        return Promise.reject(error);
-      }
-)
+  (config) => {
+    // Modify request config if needed
 
-instance.interceptors.response.use(
-    (response) => {
-        // Any status code within the range of 2xx causes this function to trigger
-        return response;
-      },
-      (error) => {
-        // Any status codes outside the range of 2xx cause this function to trigger
-        return Promise.reject(error);
-      }
-)
+    const accessToken = localStorage.getItem("accessToken");
+    if (accessToken) {
+      config.headers["Authorization"] = `Bearer ${accessToken}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
 
-export default instance
+instance.interceptors.response.use((res)=>res);
+
+export default instance;
