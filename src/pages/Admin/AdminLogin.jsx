@@ -1,12 +1,22 @@
 import React, { useState } from 'react';
+import instance from '../../helper/axiosInstance';
+import { useNavigate } from 'react-router-dom';
 
 const AdminLogin = () => {
-  const [username, setUsername] = useState('');
+  const nav = useNavigate()
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('Login attempted with:', username, password);
+    instance.post('/admin/login',{
+      email,password
+    })
+    .then((res)=>{
+      if(res.data.success){
+        nav('/AdminPanel')
+      }
+    })
   };
 
   return (
@@ -16,10 +26,10 @@ const AdminLogin = () => {
         <form onSubmit={handleSubmit}>
           <input
             type="text"
-            placeholder="Username"
+            placeholder="Email"
             className="w-full p-3 mb-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-300"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
           />
           <input
             type="password"

@@ -10,6 +10,8 @@ import WSignUp from './pages/Worker/WSignUp'
 import AdminLogin from './pages/Admin/AdminLogin'
 import NotFoundPage from './pages/NotFound'
 import OTPPage from './pages/User/OtpPage'
+import WorkerProfilie from './pages/Worker/WorkerProfilie'
+import Container from './pages/Admin/Container'
 
 function App() {
   return (
@@ -18,9 +20,13 @@ function App() {
       <Route path='/' element={<LandingPage />} />
       <Route path='/UserSignUp' element={<SignUp/>} />
       <Route path='/UserLogin' element={<Login/>} />
-      <Route path='/WorkerSignUp' element={<WSignUp />} />
-      <Route path='/AdminLogin' element={<AdminLogin />} />
       <Route path='/Otp' element={<OTPPage/>} />
+
+      <Route path='/WorkerSignUp' element={<WSignUp />} />
+      <Route path='/WorkerProfile' element={<WorkerProfilie />} />
+
+      <Route path='/AdminLogin' element={<AdminLogin />} />
+      <Route path='/AdminPanel' element={<Container />} />
 
       <Route path='*' element={<NotFoundPage />} />
      </Routes>
