@@ -23,6 +23,9 @@ instance.interceptors.request.use(
   }
 );
 
-instance.interceptors.response.use((res)=>res);
+instance.interceptors.response.use((res)=>res, async(error)=>{
+  console.log(error)
+  
+})
 
 export default instance;

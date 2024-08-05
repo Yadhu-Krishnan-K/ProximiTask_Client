@@ -25,7 +25,7 @@ function Nav1({user}) {
           {user ? (
             <>
               <li className='cursor-pointer'>Chat</li>
-              <li>{user.username}</li>
+              <li>{user.name}</li>
             </>
           ) : (
             <>
