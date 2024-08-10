@@ -25,7 +25,7 @@ function HeroSec() {
       <div className='w-full md:w-1/2 absolute md:relative right-0 bottom-0'>
         <div className='bg rounded-full w-3/4 h-3/4 absolute bottom-0 right-0 z-0'></div>
         <img 
-          src="./public/Rectangle 2.png" 
+          src="/Rectangle 2.png" 
           className='w-full h-auto max-w-lg mx-auto md:max-w-full relative z-10' 
           alt="Professionals near you" 
         />

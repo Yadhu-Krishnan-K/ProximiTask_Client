@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 function Sidebar({ activeTab, setActiveTab }) {
   return (
@@ -10,20 +10,29 @@ function Sidebar({ activeTab, setActiveTab }) {
         <a
           href="#"
           className={`block py-2 px-4 ${
-            activeTab === 'customers' ? 'bg-gray-900' : ''
+            activeTab === "customers" ? "bg-gray-900" : ""
           }`}
-          onClick={() => setActiveTab('customers')}
+          onClick={() => setActiveTab("customers")}
         >
           Customers
         </a>
         <a
           href="#"
           className={`block py-2 px-4 ${
-            activeTab === 'workers' ? 'bg-gray-900' : ''
+            activeTab === "workers" ? "bg-gray-900" : ""
           }`}
-          onClick={() => setActiveTab('workers')}
+          onClick={() => setActiveTab("workers")}
         >
           Workers
+        </a>
+        <a
+          href="#"
+          className={`block py-2 px-4 ${
+            activeTab === "categories" ? "bg-gray-900" : ""
+          }`}
+          onClick={() => setActiveTab("categories")}
+        >
+          Categories
         </a>
       </nav>
     </div>

@@ -11,12 +11,12 @@ function LandingPage() {
 
   // const [location, setLocation] = useState(null)
   useEffect(() => {
+    
     const data = JSON.parse(localStorage.getItem("userData"));
     console.log(data);
     if (data) {
       dispatch(setUserData(data));
     }
-
   }, []);
   const user = useSelector((state) => state.userReducer.userData);
   // const user = useSelector((state)=>)

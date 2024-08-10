@@ -1,10 +1,15 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useSelector,useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import {setUserData} from '../../features/User/userSlice'
 
 function Nav1({user}) {
   const nav = useNavigate()
+  function logout() {
+    localStorage.clear();
+    window.location.href = '/';
+  }
+
   // const data = JSON.parse(localStorage.getItem('userData'))
   // console.log(data)
   // if(data){
@@ -21,11 +26,11 @@ function Nav1({user}) {
       <div className='flex items-center'>
         <ul className='flex space-x-4'>
           <li className='cursor-pointer' onClick={() => nav('/')}>Home</li>
-          <li className='curLogosor-pointer' onClick={() => nav('/services')}>Services</li>
+          <li className='cursor-pointer' onClick={() => nav('/services')}>Services</li>
           {user ? (
             <>
               <li className='cursor-pointer'>Chat</li>
-              <li>{user.name}</li>
+              <li className='cursor-pointer' onClick={logout}>{user.name}</li>
             </>
           ) : (
             <>

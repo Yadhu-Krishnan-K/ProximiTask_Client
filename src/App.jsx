@@ -12,6 +12,7 @@ import NotFoundPage from './pages/NotFound'
 import OTPPage from './pages/User/OtpPage'
 import WorkerProfilie from './pages/Worker/WorkerProfilie'
 import Container from './pages/Admin/Container'
+import Test from './pages/User/Test'
 
 function App() {
   return (
@@ -28,6 +29,9 @@ function App() {
       <Route path='/AdminLogin' element={<AdminLogin />} />
       <Route path='/AdminPanel' element={<Container />} />
 
+      <Route path='/test' element={<Test />} />
+
+      {/* <Route path='/logout' */}
       <Route path='*' element={<NotFoundPage />} />
      </Routes>
     </>

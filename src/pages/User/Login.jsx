@@ -9,6 +9,10 @@ import { setUserData } from "../../features/User/userSlice";
 const Login = () => {
   const dispatch = useDispatch();
   const nav = useNavigate();
+  const [errors, setErrors] = useState({
+    email:false,
+    password:false
+  })
   const [showError, setShowError] = useState(false);
 
   useEffect(() => {
@@ -56,11 +60,16 @@ const Login = () => {
           if (res.data.success) {
             console.log(res.data);
             localStorage.setItem("userData", JSON.stringify(res.data.user));
-            // localStorage.setItem('refreshToken',)
+
+            localStorage.setItem('accessToken', res.data.accessToken)
+            localStorage.setItem('refreshToken',res.data.refreshToken)
             dispatch(setUserData(res.data.user));
             nav("/");
           }
-        });
+        })
+        .catch((error)=>{
+
+        })
     },
     validateOnBlur: true,
     validateOnChange: true,
