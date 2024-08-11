@@ -1,15 +1,39 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import instance from '../../helper/axiosInstance';
 
 function CustomerList() {
-  const [customers, setCustomers] = useState([
-    { id: 1, name: 'John Doe', email: 'john@example.com', isActive: true },
-    { id: 2, name: 'Jane Smith', email: 'jane@example.com', isActive: false },
-  ]);
+  const [customers, setCustomers] = useState([]);
+
+  useEffect(() => {
+    getUsers();
+  }, []);
+
+  const getUsers = () => {
+    instance.get('/users')
+      .then((res) => {
+        setCustomers(res.data.data);
+      })
+      .catch((error) => {
+        console.error('Error fetching users:', error);
+      });
+  };
+
+  const changeActivity = async (customer_id) => {
+    try {
+      const response = await instance.patch('/users', { userId: customer_id });
+      if (response.data.success) {
+        // Optimistically update the local state
+        toggleCustomerStatus(customer_id);
+      }
+    } catch (error) {
+      console.error('Error updating user status:', error);
+    }
+  };
 
   const toggleCustomerStatus = (id) => {
-    setCustomers(
-      customers.map((customer) =>
-        customer.id === id
+    setCustomers((prevCustomers) =>
+      prevCustomers.map((customer) =>
+        customer._id === id
           ? { ...customer, isActive: !customer.isActive }
           : customer
       )
@@ -30,7 +54,7 @@ function CustomerList() {
         </thead>
         <tbody>
           {customers.map((customer) => (
-            <tr key={customer.id}>
+            <tr key={customer._id}>
               <td className="border px-4 py-2">{customer.name}</td>
               <td className="border px-4 py-2">{customer.email}</td>
               <td className="border px-4 py-2">
@@ -43,7 +67,7 @@ function CustomerList() {
                       ? 'bg-red-500 hover:bg-red-600'
                       : 'bg-green-500 hover:bg-green-600'
                   } text-white`}
-                  onClick={() => toggleCustomerStatus(customer.id)}
+                  onClick={() => changeActivity(customer._id)}
                 >
                   {customer.isActive ? 'Disable' : 'Enable'}
                 </button>

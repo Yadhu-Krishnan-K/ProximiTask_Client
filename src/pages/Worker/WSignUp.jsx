@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import LoginComponent from "../../components/worker/LoginComponent";
 import CreateAccountForm from "../../components/worker/SignUpCredentials";
 import { useFormik } from "formik";
@@ -8,6 +10,11 @@ const WSignUp = () => {
   const [showPopup, setShowPopup] = useState(false);
   const [showLoginPopup, setShowLoginPopup] = useState(false);
   const [visibleErrors, setVisibleErrors] = useState({});
+  const [formData, setFormData] = useState({
+    fullName: "",
+    email: "",
+    password: ""
+  });
 
   const openPopup = () => {
     setShowPopup(true);
@@ -54,9 +61,10 @@ const WSignUp = () => {
         .matches(/^\S*$/, "Password must not contain spaces")
         .required("Password is required"),
     }),
-    onSubmit: (values) => {
-      // Handle form submission (e.g., send data to server)
+    onSubmit: (values,{resetForm}) => {
       console.log("Form values:", values);
+      setFormData(values);
+      resetForm();
       openPopup();
     },
     validateOnBlur: true,
@@ -82,8 +90,21 @@ const WSignUp = () => {
     }
   }, [form.errors, form.touched]);
 
+  const notifySuccess = () => {
+    toast.success("Your form is submitted, please wait until admin approves.", {
+      position: "top-center",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+    });
+  };
+
   return (
     <div className="flex w-full h-screen relative">
+      <ToastContainer />
       {/* Background Section */}
       <div
         className="hidden md:flex md:w-1/2 bg-cover"
@@ -189,7 +210,11 @@ const WSignUp = () => {
                 x
               </button>
             </div>
-            <CreateAccountForm onClose={closePopup} />
+            <CreateAccountForm 
+              onClose={closePopup} 
+              onSuccess={notifySuccess} 
+              data={formData} 
+            />
           </div>
         </div>
       )}
