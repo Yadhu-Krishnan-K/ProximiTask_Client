@@ -19,6 +19,7 @@ function LandingPage() {
     }
   }, []);
   const user = useSelector((state) => state.userReducer.userData);
+  
   // const user = useSelector((state)=>)
   // useEffect(()=>{
   //   navigator.geolocation.getCurrentPosition((res)=>{

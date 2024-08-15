@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useSelector } from 'react-redux'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import { Routes, Route } from 'react-router-dom'
@@ -14,17 +15,37 @@ import WorkerProfilie from './pages/Worker/WorkerProfilie'
 import Container from './pages/Admin/Container'
 import Test from './pages/User/Test'
 
+
 function App() {
+
+  const worker = useSelector((state) => state.workerReducer.workerData)
+  const user = useSelector((state) => state.userReducer.userData);
+
   return (
+
     <>
      <Routes>
+      {
+      !user?
+        (
+        <>
+          <Route path='/UserSignUp' element={<SignUp/>} />
+          <Route path='/UserLogin' element={<Login/>} />
+          <Route path='/Otp' element={<OTPPage/>} />
+        </>
+        )
+        :
+        null
+      }
       <Route path='/' element={<LandingPage />} />
-      <Route path='/UserSignUp' element={<SignUp/>} />
-      <Route path='/UserLogin' element={<Login/>} />
-      <Route path='/Otp' element={<OTPPage/>} />
 
-      <Route path='/WorkerSignUp' element={<WSignUp />} />
-      <Route path='/WorkerProfile' element={<WorkerProfilie />} />
+      {worker?.active
+      ?
+      (<Route path='/WorkerProfile' element={<WorkerProfilie />} />)
+      :
+      (<Route path='/WorkerSignUp' element={<WSignUp />} />)
+      }
+      
 
       <Route path='/AdminLogin' element={<AdminLogin />} />
       <Route path='/AdminPanel' element={<Container />} />

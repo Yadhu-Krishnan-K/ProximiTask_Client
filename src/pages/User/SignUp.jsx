@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
+import { ToastContainer } from "react-toastify";
 import * as Yup from "yup";
 import instance from "../../helper/axiosInstance";
 
@@ -67,7 +68,10 @@ const SignUp = () => {
           } else {
             console.error("Signup failed: unexpected response structure", res);
           }
-        });
+        })
+        .catch((error)=>{
+
+        })
     },
     validateOnBlur: true,
     validateOnChange: true,
@@ -87,6 +91,7 @@ const SignUp = () => {
 
   return (
     <div className="w-full h-screen bg-emerald-200 flex justify-center items-center p-4">
+      <ToastContainer />
       <div className="w-full max-w-md bg-[#F6FBF9] rounded-2xl shadow-lg p-8">
         <h1 className="text-2xl font-bold text-center mb-6">
           Create An Account

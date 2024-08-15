@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import WorkerApproval from './WorkerApproval';
 import instance from '../../helper/axiosInstance';
 
@@ -6,28 +6,51 @@ function WorkerList() {
   const [workers, setWorkers] = useState([]);
   const [newRequests, setNewRequests] = useState([]);
 
+  useEffect(()=>{
+    getWorkers()
+  },[])
+
   function getWorkers(){
     instance.get('/workers')
+    .then((res)=>{
+      console.log('type of data list = ',typeof(res.data.list));
+      
+      const Approvedworkers = res.data.list.filter((worker)=>worker.requestInitiated == false)
+      const requests = res.data.list.filter((worker)=>worker.requestInitiated == true)
+      setWorkers([...Approvedworkers]);
+      setNewRequests([...requests])
+    })
   }
 
   const [selectedWorker, setSelectedWorker] = useState(null);
 
-  const toggleWorkerStatus = (id) => {
-    setWorkers(
-      workers.map((worker) =>
-        worker.id === id ? { ...worker, isActive: !worker.isActive } : worker
-      )
-    );
-  };
+  // const toggleWorkerStatus = (id) => {
+  //   setWorkers(
+  //     workers.map((worker) =>
+  //       worker.id === id ? { ...worker, isActive: !worker.isActive } : worker
+  //     )
+  //   );
+  // };
 
   const handleApprove = (id) => {
-    const workerToApprove = newRequests.find((worker) => worker.id === id);
-    setWorkers([...workers, { ...workerToApprove, isActive: true }]);
-    setNewRequests(newRequests.filter((worker) => worker.id !== id));
+    // const workerToApprove = newRequests.find((worker) => worker.id === id);
+    // setWorkers([...workers, { ...workerToApprove, isActive: true }]);
+    // setNewRequests(newRequests.filter((worker) => worker.id !== id));
+    instance.patch('/workers',{worker_id:id})
+    .then((res)=>{
+      if(res.data.success){
+        getWorkers()
+      }
+    })
   };
 
   const handleReject = (id) => {
-    setNewRequests(newRequests.filter((worker) => worker.id !== id));
+    instance.delete(`/workers/${id}`)
+    .then((res)=>{
+      if(res.data.success){
+        getWorkers()
+      }
+    })
   };
 
   const handleWorkerClick = (worker) => {
@@ -52,22 +75,22 @@ function WorkerList() {
         </thead>
         <tbody>
           {workers.map((worker) => (
-            <tr key={worker.id}>
+            <tr key={worker._id}>
               <td className="border px-4 py-2">{worker.name}</td>
               <td className="border px-4 py-2">{worker.email}</td>
               <td className="border px-4 py-2">
-                {worker.isActive ? 'Active' : 'Inactive'}
+                {worker.active ? 'Active' : 'Inactive'}
               </td>
               <td className="border px-4 py-2">
                 <button
                   className={`px-4 py-2 rounded ${
-                    worker.isActive
+                    worker.active
                       ? 'bg-red-500 hover:bg-red-600'
                       : 'bg-green-500 hover:bg-green-600'
                   } text-white`}
                   onClick={() => toggleWorkerStatus(worker.id)}
                 >
-                  {worker.isActive ? 'Disable' : 'Enable'}
+                  {worker.active ? 'Disable' : 'Enable'}
                 </button>
               </td>
             </tr>
@@ -86,7 +109,7 @@ function WorkerList() {
         </thead>
         <tbody>
           {newRequests.map((worker) => (
-            <tr key={worker.id}>
+            <tr key={worker._id}>
               <td className="border px-4 py-2">{worker.name}</td>
               <td className="border px-4 py-2">{worker.email}</td>
               <td className="border px-4 py-2 flex justify-center">

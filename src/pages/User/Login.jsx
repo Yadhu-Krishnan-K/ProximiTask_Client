@@ -4,12 +4,12 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import { ToastContainer } from "react-toastify";
 import instance from "../../helper/axiosInstance";
 import { setUserData } from "../../features/User/userSlice";
 
 const Login = () => {
   const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
-  console.log('clientId = ',clientId)
   const dispatch = useDispatch();
   const nav = useNavigate();
   const [showError, setShowError] = useState(false);
@@ -64,7 +64,7 @@ const Login = () => {
           }
         })
         .catch((error) => {
-          console.error("Login error:", error);
+          setShowError(true);
         });
     },
     validateOnBlur: true,
@@ -72,7 +72,7 @@ const Login = () => {
   });
 
   const handleSubmit = (e) => {
-    e.preventDefault();
+    e.preventDefault(); // Prevent the form from refreshing the page
     formik.setTouched({
       email: true,
       pass: true,
@@ -99,11 +99,13 @@ const Login = () => {
       })
       .catch(error => {
         console.error("Google Login error:", error);
+        setShowError(true);
       });
   };
 
   return (
     <div className="w-full h-screen bg-emerald-200 flex justify-center items-center">
+      <ToastContainer />
       <div className="w-1/3 bg-white p-8 rounded-2xl shadow-lg">
         <h1 className="text-2xl font-bold mb-8 text-center">Login</h1>
         <form onSubmit={handleSubmit} className="space-y-4">

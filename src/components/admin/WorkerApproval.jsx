@@ -12,12 +12,17 @@ function WorkerApproval({ worker, onApprove, onReject, onClose }) {
           <p className="font-bold">New Account Request</p>
           <p>Name: {worker.name}</p>
           <p>Email: {worker.email}</p>
+          <p>Area: {worker.area}</p>
+          <p>Category: {worker.category}</p>
+          <p>Contact: {worker.phoneNumber} </p>
+          <p>Id Type: {worker.idCard}</p>
+          <p>Id Nuber: {worker.idCardNum}</p>
         </div>
         <div className="flex justify-end">
           <button
             className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded mr-2"
             onClick={() => {
-              onApprove(worker.id);
+              onApprove(worker._id);
               onClose();
             }}
           >
@@ -26,7 +31,7 @@ function WorkerApproval({ worker, onApprove, onReject, onClose }) {
           <button
             className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded mr-2"
             onClick={() => {
-              onReject(worker.id);
+              onReject(worker._id);
               onClose();
             }}
           >
