@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
-import { useNavigate } from "react-router-dom";
+import { json, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { ToastContainer } from "react-toastify";
 import instance from "../../helper/axiosInstance";
 import { setUserData } from "../../features/User/userSlice";
+// import {jwtDecode} from 'jwt-decode'
 
 const Login = () => {
   const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
@@ -56,9 +57,16 @@ const Login = () => {
         })
         .then((res) => {
           if (res.data.success) {
+            let accessTokens = localStorage.getItem('accessTokens') || []
+            let refreshToken = localStorage.getItem('refreshToken')
+            if(accessTokens){
+              accessTokens = JSON.parse(accessTokens)
+              accessTokens.push(res.data.accessToken)
+            }
+
             localStorage.setItem("userData", JSON.stringify(res.data.user));
-            localStorage.setItem('accessToken', res.data.accessToken);
-            localStorage.setItem('refreshToken', res.data.refreshToken);
+            localStorage.setItem('accessTokens', JSON.stringify(accessTokens));
+            if(!refreshToken) localStorage.setItem('refreshToken', JSON.stringify(res.data.refreshToken));
             dispatch(setUserData(res.data.user));
             nav("/");
           }
@@ -87,14 +95,29 @@ const Login = () => {
 
   const handleGoogleLoginSuccess = (response) => {
     const { credential } = response;
+    // console.log('response = ', response)
+    // const decoded = jwtDecode(credential)
+    // console.log(decoded)
     instance.post('/users/google-login', { token: credential })
       .then(res => {
         if (res.data.success) {
-          localStorage.setItem("userData", JSON.stringify(res.data.user));
-          localStorage.setItem('accessToken', res.data.accessToken);
-          localStorage.setItem('refreshToken', res.data.refreshToken);
-          dispatch(setUserData(res.data.user));
-          nav("/");
+          // localStorage.setItem("userData", JSON.stringify(res.data.user));
+          // localStorage.setItem('accessToken', res.data.accessToken);
+          // localStorage.setItem('refreshToken', res.data.refreshToken);
+          // dispatch(setUserData(res.data.user));
+          // nav("/");
+          let accessTokens = localStorage.getItem('accessTokens') || []
+            let refreshToken = localStorage.getItem('refreshToken')
+            if(accessTokens){
+              accessTokens = JSON.parse(accessTokens)
+              accessTokens.push(res.data.accessToken)
+            }
+
+            localStorage.setItem("userData", JSON.stringify(res.data.user));
+            localStorage.setItem('accessTokens', JSON.stringify(accessTokens));
+            if(!refreshToken) localStorage.setItem('refreshToken', JSON.stringify(res.data.refreshToken));
+            dispatch(setUserData(res.data.user));
+            nav("/");
         }
       })
       .catch(error => {
@@ -104,9 +127,10 @@ const Login = () => {
   };
 
   return (
-    <div className="w-full h-screen bg-emerald-200 flex justify-center items-center">
+    <GoogleOAuthProvider clientId={clientId}>
+    <div className="w-full h-screen bg-emerald-200 flex justify-center items-center p-4">
       <ToastContainer />
-      <div className="w-1/3 bg-white p-8 rounded-2xl shadow-lg">
+      <div className="max-sm:w-full md:w-1/3 bg-white p-8 rounded-2xl shadow-lg">
         <h1 className="text-2xl font-bold mb-8 text-center">Login</h1>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="mb-4">
@@ -154,16 +178,17 @@ const Login = () => {
           </span>
         </p>
         <p className="text-center mt-2">or</p>
-        <GoogleOAuthProvider clientId={clientId}>
+        <div className="w-full flex justify-center">
           <GoogleLogin
             onSuccess={handleGoogleLoginSuccess}
             onError={() => console.error('Google Login Failed')}
             buttonText="Login with Google"
-            className="w-full bg-white text-gray-700 py-3 px-4 rounded-md mt-2 border border-gray-300 hover:bg-gray-100 transition duration-300 flex items-center justify-center"
+            className=" bg-white text-gray-700 py-3 px-4 rounded-md mt-2 border border-gray-300 hover:bg-gray-100 transition duration-300 flex items-center justify-center cursor-pointer"
           />
-        </GoogleOAuthProvider>
+        </div>
       </div>
     </div>
+        </GoogleOAuthProvider>
   );
 };
 

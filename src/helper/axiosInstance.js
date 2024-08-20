@@ -1,5 +1,6 @@
 import axios from "axios";
 import showErrorPopup from "../Common/ShowErrorPopup"; // Assume this function shows the error popup
+import {jwtDecode} from 'jwt-decode'
 
 // Create an Axios instance
 const instance = axios.create({
@@ -15,11 +16,13 @@ instance.interceptors.request.use(
   (config) => {
     try {
       // Retrieve the access token from localStorage
-      const accessToken = localStorage.getItem("accessToken");
+      const accessTokens = localStorage.getItem("accessTokens");
+      // const refreshToken = localStorage.getItem("refreshToken")
 
-      if (accessToken) {
+      if (accessTokens && accessTokens.length) {
         // Attach the token to the request headers
-        config.headers["Authorization"] = `Bearer ${accessToken}`;
+        config.headers["Access-Tokens"] = accessTokens
+        // config.headers["Refresh-Tokens"] = refreshTokens
       } 
       // else {
       //   // Handle the case where there's no token
@@ -54,6 +57,20 @@ instance.interceptors.response.use(
 
     if (error.response) {
       const status = error.response.status;
+      const data = error.response.data
+      let pos = 0
+      let accessTokens = JSON.parse(localStorage.getItem("accessTokens"))
+      for(let i=0;i<accessTokens.length;i++){
+        const decoded = jwtDecode(accessTokens[i])
+        if(decoded.role == data.role){
+          break;
+        }
+        pos++
+      }
+      if(pos<accessTokens.length){
+        accessTokens.splice(pos,1)
+        localStorage.setItem('accessTokens',JSON.stringify(accessTokens))
+      }
 
       if (status === 401 && !originalRequest._retry) {
         originalRequest._retry = true;
@@ -62,11 +79,13 @@ instance.interceptors.response.use(
         if (refreshToken) {
           try {
             const response = await axios.post("http://localhost:8000/refresh/access-token", {
-              refreshToken: refreshToken,
+              refreshTokens: refreshToken,
             });
 
             if (response.data.success) {
-              localStorage.setItem("accessToken", response.data.accessToken);
+              let accessTokens  = JSON.parse(localStorage.getItem("accessTokens"))
+              accessTokens.push(response.data.accessToken)
+              localStorage.setItem("accessToken", JSON.stringify(accessTokens));
               originalRequest.headers["Authorization"] = `Bearer ${response.data.accessToken}`;
               return axios(originalRequest);
             } else {
@@ -74,12 +93,12 @@ instance.interceptors.response.use(
             }
           } catch (refreshError) {
             console.error("Failed to refresh token", refreshError);
-            localStorage.removeItem("accessToken");
+            localStorage.removeItem("accessTokens");
             localStorage.removeItem("refreshToken");
             window.location.href = "/UserLogin"; 
           }
         } else {
-          localStorage.removeItem("accessToken");
+          localStorage.removeItem("accessTokens");
           localStorage.removeItem("refreshToken");
           window.location.href = "/UserLogin"; // Redirect to login page
         }

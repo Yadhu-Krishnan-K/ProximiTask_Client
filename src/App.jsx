@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useSelector } from 'react-redux'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, Navigate } from 'react-router-dom'
 import './App.css'
 import LandingPage from './pages/User/LandingPage'
 import SignUp from './pages/User/SignUp'
@@ -25,26 +25,16 @@ function App() {
 
     <>
      <Routes>
-      {
-      !user?
-        (
-        <>
-          <Route path='/UserSignUp' element={<SignUp/>} />
-          <Route path='/UserLogin' element={<Login/>} />
-          <Route path='/Otp' element={<OTPPage/>} />
-        </>
-        )
-        :
-        null
-      }
+      
+      <Route path='/UserSignUp' element={user?.isActive?(<Navigate to='/'/>):(<SignUp/>)} />
+      <Route path='/UserLogin' element={user?.isActive?(<Navigate to='/' />):(<Login/>)} />
+      <Route path='/Otp' element={user?.isActive?(<Navigate to='/' />):(<OTPPage/>)} />a
       <Route path='/' element={<LandingPage />} />
 
-      {worker?.active
-      ?
-      (<Route path='/WorkerProfile' element={<WorkerProfilie />} />)
-      :
-      (<Route path='/WorkerSignUp' element={<WSignUp />} />)
-      }
+      
+      <Route path='/WorkerProfile' element={worker?.active?(<WorkerProfilie />):(<Navigate to='/WorkerSignUp' />)} />
+      <Route path='/WorkerSignUp' element={worker?.active?(<Navigate to='/WorkerProfile' />):(<WSignUp />)} />
+     
       
 
       <Route path='/AdminLogin' element={<AdminLogin />} />
