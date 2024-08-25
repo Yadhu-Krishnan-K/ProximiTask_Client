@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { toast, ToastContainer } from "react-toastify";
+import { IoMdCloseCircleOutline } from "react-icons/io";
+
+
 import "react-toastify/dist/ReactToastify.css";
 import LoginComponent from "../../components/worker/LoginComponent";
 import CreateAccountForm from "../../components/worker/SignUpCredentials";
@@ -201,13 +204,13 @@ const WSignUp = () => {
       {/* Create Account Popup */}
       {showPopup && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg overflow-hidden">
+          <div className="bg-white rounded-lg">
             <div className="flex justify-end p-2">
               <button
                 onClick={closePopup}
                 className="text-gray-500 hover:text-gray-700"
               >
-                x
+                <IoMdCloseCircleOutline />
               </button>
             </div>
             <CreateAccountForm 

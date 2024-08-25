@@ -2,6 +2,9 @@ import React, { useState, useEffect } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import instance from "../../helper/axiosInstance";
+import { ToastContainer } from "react-toastify";
+import { FaLocationCrosshairs } from "react-icons/fa6";
+import cordsToCity from "../../helper/openCage";
 
 const validationSchema = Yup.object().shape({
   area: Yup.string().required("Area is required"),
@@ -21,11 +24,11 @@ const validationSchema = Yup.object().shape({
   ),
 });
 
-
 function CreateAccountForm({ onClose, onSuccess, data }) {
   const [showErrors, setShowErrors] = useState({});
   const [isFormFilled, setIsFormFilled] = useState(false);
-  const [categories, setCategories] = useState([]); // State to store categories
+  const [categories, setCategories] = useState([]);
+  const [location, setLocation] = useState(null)
 
   useEffect(() => {
     const timers = Object.keys(showErrors).map((field) =>
@@ -49,8 +52,19 @@ function CreateAccountForm({ onClose, onSuccess, data }) {
     getCategory();
   }, []);
 
-  const initialValues = {
-    area: "Kasaragod",
+  async function checkLocation(setFieldValue) {
+    navigator.geolocation.getCurrentPosition(async (res) => {
+      console.log('current Location test = ', res)
+      const city = await cordsToCity(res.coords.latitude, res.coords.longitude)
+      console.log('city type == ', city)
+      setFieldValue('area', city) // Set the Formik field value
+    }, async (err) => {
+      console.log(err)
+    })
+  }
+
+  const initialValues ={
+    area: "",
     category: "",
     phone: "",
     idType: "",
@@ -89,14 +103,14 @@ function CreateAccountForm({ onClose, onSuccess, data }) {
   };
 
   return (
-    <div className="w-[600px] mx-auto mt-10 p-6 bg-white rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold mb-6">Create Account</h2>
+    <div className="max-w-md mx-auto  p-4 bg-white rounded-lg shadow-md">
+      <h2 className="text-2xl font-bold text-center">Create Account</h2>
       <Formik
         initialValues={initialValues}
         validationSchema={validationSchema}
         onSubmit={handleSubmit}
       >
-        {({ errors, touched, setFieldTouched, values, isValid }) => {
+        {({ errors, touched, setFieldTouched, values, isValid, setFieldValue }) => {
           useEffect(() => {
             const requiredFields = [
               "area",
@@ -113,39 +127,40 @@ function CreateAccountForm({ onClose, onSuccess, data }) {
 
           return (
             <Form>
+              <ToastContainer />
+              
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700">
-                  Select your area
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Area
                 </label>
-                <Field
-                  as="select"
-                  name="area"
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                  onFocus={() => {
-                    setFieldTouched("area", true);
-                    setShowErrors((prev) => ({ ...prev, area: true }));
-                  }}
-                >
-                  <option value="Kasaragod">Kasaragod</option>
-                  {/* Add more options as needed */}
-                </Field>
-                {errors.area && touched.area && showErrors.area && (
-                  <ErrorMessage
+                <div className="flex items-center">
+                  <Field
+                    type="text"
                     name="area"
-                    component="div"
-                    className="text-red-500 text-sm mt-1"
+                    className="flex-grow p-2 border border-gray-300 rounded-l-md focus:ring-indigo-500 focus:border-indigo-500"
+                    placeholder="Enter area or use current location"
                   />
-                )}
+                  <button
+                    type="button"
+                    className="flex items-center justify-center p-2 border border-gray-300 rounded-r-md hover:bg-gray-50"
+                    onClick={() => checkLocation(setFieldValue)}
+                  >
+                    <FaLocationCrosshairs className="mr-2" />
+                    Use Location
+                  </button>
+                </div>
+                <ErrorMessage name="area" component="div" className="text-red-500 text-sm mt-1" />
               </div>
 
+
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
                   Choose a Category
                 </label>
                 <Field
                   as="select"
                   name="category"
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
                   onFocus={() => {
                     setFieldTouched("category", true);
                     setShowErrors((prev) => ({ ...prev, category: true }));
@@ -168,17 +183,17 @@ function CreateAccountForm({ onClose, onSuccess, data }) {
               </div>
 
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
                   Phone
                 </label>
-                <div className="mt-1 flex rounded-md shadow-sm">
+                <div className="flex rounded-md shadow-sm">
                   <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
                     +91
                   </span>
                   <Field
                     type="tel"
                     name="phone"
-                    className="focus:ring-indigo-500 focus:border-indigo-500 flex-1 block w-full rounded-none rounded-r-md sm:text-sm border-gray-300"
+                    className="flex-1 p-2 border border-gray-300 rounded-r-md focus:ring-indigo-500 focus:border-indigo-500"
                     onFocus={() => {
                       setFieldTouched("phone", true);
                       setShowErrors((prev) => ({ ...prev, phone: true }));
@@ -195,13 +210,13 @@ function CreateAccountForm({ onClose, onSuccess, data }) {
               </div>
 
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700">
-                  Select Id
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Select ID
                 </label>
                 <Field
                   as="select"
                   name="idType"
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
                   onFocus={() => {
                     setFieldTouched("idType", true);
                     setShowErrors((prev) => ({ ...prev, idType: true }));
@@ -225,14 +240,14 @@ function CreateAccountForm({ onClose, onSuccess, data }) {
               </div>
 
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700">
-                  Id number
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  ID Number
                 </label>
                 <Field
                   type="text"
                   name="idNumber"
-                  placeholder="Enter Id Number"
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                  placeholder="Enter ID Number"
+                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
                   onFocus={() => {
                     setFieldTouched("idNumber", true);
                     setShowErrors((prev) => ({ ...prev, idNumber: true }));
@@ -252,7 +267,7 @@ function CreateAccountForm({ onClose, onSuccess, data }) {
                   <Field
                     type="checkbox"
                     name="isSoleProprietor"
-                    className="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-offset-0 focus:ring-indigo-200 focus:ring-opacity-50"
+                    className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
                   />
                   <span className="ml-2 text-sm text-gray-600">
                     I acknowledge I am a sole proprietor.
@@ -260,21 +275,21 @@ function CreateAccountForm({ onClose, onSuccess, data }) {
                 </label>
               </div>
 
-              <div className="mb-4">
+              <div className="mb-6">
                 <label className="flex items-center">
                   <Field
                     type="checkbox"
                     name="agreeTerms"
-                    className="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-offset-0 focus:ring-indigo-200 focus:ring-opacity-50"
+                    className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
                     disabled={!isFormFilled}
                   />
                   <span className="ml-2 text-sm text-gray-600">
                     I agree to TaskRabbit's{" "}
-                    <a href="#" className="text-indigo-600">
+                    <a href="#" className="text-indigo-600 hover:underline">
                       Terms of Service
                     </a>{" "}
                     and{" "}
-                    <a href="#" className="text-indigo-600">
+                    <a href="#" className="text-indigo-600 hover:underline">
                       Privacy Policy
                     </a>
                     .
@@ -304,6 +319,7 @@ function CreateAccountForm({ onClose, onSuccess, data }) {
           );
         }}
       </Formik>
+      
     </div>
   );
 }

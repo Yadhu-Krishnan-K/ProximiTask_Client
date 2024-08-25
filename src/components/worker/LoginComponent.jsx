@@ -4,7 +4,7 @@ import * as Yup from "yup";
 import instance from "../../helper/axiosInstance";
 import {useNavigate} from 'react-router-dom'
 import { useDispatch } from "react-redux";
-import { setWorkerData } from "../../features/Worker/workerSlice";
+import { setWorkerData } from "../../redux/features/Worker/workerSlice";
 
 function LoginComponent({ onClose }) {
   const dispatch = useDispatch()

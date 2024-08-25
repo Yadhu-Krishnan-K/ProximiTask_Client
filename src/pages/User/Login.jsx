@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 import { json, useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { ToastContainer } from "react-toastify";
 import instance from "../../helper/axiosInstance";
-import { setUserData } from "../../features/User/userSlice";
+import { setUserData,userLogin } from "../../redux/features/User/userSlice";
 // import {jwtDecode} from 'jwt-decode'
 
 const Login = () => {
+  const userData = useSelector((state) => state.userReducer.userData);
+  console.log('User Data:', userData);
   const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
   const dispatch = useDispatch();
   const nav = useNavigate();
@@ -50,30 +52,16 @@ const Login = () => {
         .required("Password is required"),
     }),
     onSubmit: (values) => {
-      instance
-        .post("/users/login", {
-          email: values.email,
-          pass: values.pass,
-        })
-        .then((res) => {
-          if (res.data.success) {
-            let accessTokens = localStorage.getItem('accessTokens') || []
-            let refreshToken = localStorage.getItem('refreshToken')
-            if(accessTokens){
-              accessTokens = JSON.parse(accessTokens)
-              accessTokens.push(res.data.accessToken)
-            }
-
-            localStorage.setItem("userData", JSON.stringify(res.data.user));
-            localStorage.setItem('accessTokens', JSON.stringify(accessTokens));
-            if(!refreshToken) localStorage.setItem('refreshToken', JSON.stringify(res.data.refreshToken));
-            dispatch(setUserData(res.data.user));
-            nav("/");
+      try {
+        dispatch(userLogin(values)).then((data)=>{
+          // console.log('data from login = ',data)
+          if((data.meta.requestStatus == 'fulfilled')&&(data.payload.isActive)){
+            nav('/')
           }
-        })
-        .catch((error) => {
+        } )
+      } catch (error) {
           setShowError(true);
-        });
+      }
     },
     validateOnBlur: true,
     validateOnChange: true,
@@ -100,23 +88,26 @@ const Login = () => {
     // console.log(decoded)
     instance.post('/users/google-login', { token: credential })
       .then(res => {
-        if (res.data.success) {
+        if (res?.data?.success) {
+          console.log('res.data = ',res?.data)
           // localStorage.setItem("userData", JSON.stringify(res.data.user));
           // localStorage.setItem('accessToken', res.data.accessToken);
           // localStorage.setItem('refreshToken', res.data.refreshToken);
           // dispatch(setUserData(res.data.user));
           // nav("/");
-          let accessTokens = localStorage.getItem('accessTokens') || []
+            let accessTokens = localStorage.getItem('accessTokens')
             let refreshToken = localStorage.getItem('refreshToken')
             if(accessTokens){
               accessTokens = JSON.parse(accessTokens)
-              accessTokens.push(res.data.accessToken)
+            }else{
+              accessTokens = []
             }
+            accessTokens.push(res?.data?.accessToken)
 
-            localStorage.setItem("userData", JSON.stringify(res.data.user));
+            localStorage.setItem("userData", JSON.stringify(res?.data?.user));
             localStorage.setItem('accessTokens', JSON.stringify(accessTokens));
-            if(!refreshToken) localStorage.setItem('refreshToken', JSON.stringify(res.data.refreshToken));
-            dispatch(setUserData(res.data.user));
+            if(!refreshToken) localStorage.setItem('refreshToken', JSON.stringify(res?.data?.refreshToken));
+            dispatch(setUserData(res?.data?.user));
             nav("/");
         }
       })

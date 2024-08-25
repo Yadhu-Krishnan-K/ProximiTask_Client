@@ -1,7 +1,5 @@
-import { useState } from 'react'
-import { useSelector } from 'react-redux'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import './App.css'
 import LandingPage from './pages/User/LandingPage'
@@ -14,13 +12,41 @@ import OTPPage from './pages/User/OtpPage'
 import WorkerProfilie from './pages/Worker/WorkerProfilie'
 import Container from './pages/Admin/Container'
 import Test from './pages/User/Test'
+import CustomerList from './components/admin/CustomerList';
+import WorkerList from './components/admin/WorkerList';
+import CategoryList from './components/admin/CategoryList';
+import { setUserData } from './redux/features/User/userSlice'
+import { setWorkerData } from './redux/features/Worker/workerSlice'
+import { jwtDecode } from 'jwt-decode'
+import { setAdmin } from './redux/features/Admin/adminSlice'
 
 
 function App() {
 
   const worker = useSelector((state) => state.workerReducer.workerData)
   const user = useSelector((state) => state.userReducer.userData);
+  const adminStatus = useSelector((state) => state.adminReducer.adminLogedIn)
+  const dispatch = useDispatch();
 
+  useEffect(() => {
+    const storedUser = localStorage.getItem('userData');
+    if (storedUser) {
+      dispatch(setUserData(JSON.parse(storedUser)));
+    }
+
+    const storedWorker = localStorage.getItem('workerData');
+    if(storedWorker){
+      dispatch(setWorkerData(JSON.parse(storedWorker)))
+    }
+
+    const storedAdmin = localStorage.getItem('adminLogedIn')
+    if(storedAdmin){
+      dispatch(setAdmin())
+    }
+  }, []);
+
+  
+  
   return (
 
     <>
@@ -28,7 +54,7 @@ function App() {
       
       <Route path='/UserSignUp' element={user?.isActive?(<Navigate to='/'/>):(<SignUp/>)} />
       <Route path='/UserLogin' element={user?.isActive?(<Navigate to='/' />):(<Login/>)} />
-      <Route path='/Otp' element={user?.isActive?(<Navigate to='/' />):(<OTPPage/>)} />a
+      <Route path='/Otp' element={user?.isActive?(<Navigate to='/' />):(<OTPPage/>)} />
       <Route path='/' element={<LandingPage />} />
 
       
@@ -37,8 +63,13 @@ function App() {
      
       
 
-      <Route path='/AdminLogin' element={<AdminLogin />} />
-      <Route path='/AdminPanel' element={<Container />} />
+      <Route path='/AdminLogin' element={!adminStatus?(<AdminLogin />):(<Navigate to="/AdminPanel" />)} />
+      <Route path='/AdminPanel' element={adminStatus?(<Container />):(<Navigate to="/AdminLogin" />)} >
+        <Route index element={<Navigate to='customers' />} /> 
+        <Route path='customers' element={<CustomerList />} />
+        <Route path='workers' element={<WorkerList />} />
+        <Route path='categories' element={<CategoryList />} />
+      </Route>
 
       <Route path='/test' element={<Test />} />
 
