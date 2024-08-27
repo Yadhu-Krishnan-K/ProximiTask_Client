@@ -24,13 +24,19 @@ function WorkerList() {
 
   const [selectedWorker, setSelectedWorker] = useState(null);
 
-  // const toggleWorkerStatus = (id) => {
-  //   setWorkers(
-  //     workers.map((worker) =>
-  //       worker.id === id ? { ...worker, isActive: !worker.isActive } : worker
-  //     )
-  //   );
-  // };
+  const toggleWorkerStatus = (id) => {
+    instance.patch(`/workers/${id}`)
+    .then(res=>{
+      if(res.data.success){
+        getWorkers()
+      }
+    })
+    // setWorkers(
+    //   workers.map((worker) =>
+    //     worker.id === id ? { ...worker, isActive: !worker.isActive } : worker
+    //   )
+    // );
+  };
 
   const handleApprove = (id) => {
     // const workerToApprove = newRequests.find((worker) => worker.id === id);
@@ -53,8 +59,10 @@ function WorkerList() {
     })
   };
 
-  const handleWorkerClick = (worker) => {
+  const handleWorkerClick = async(worker) => {
+    // instance.patch(`/workers/${worker._id}`)
     setSelectedWorker(worker);
+
   };
 
   const handleClosePopup = () => {
@@ -72,7 +80,7 @@ function WorkerList() {
             <th className="px-4 py-2">Status</th>
             <th className="px-4 py-2">Action</th>
           </tr>
-        </thead>
+        </thead>  
         <tbody>
           {workers.map((worker) => (
             <tr key={worker._id}>
@@ -88,7 +96,7 @@ function WorkerList() {
                       ? 'bg-red-500 hover:bg-red-600'
                       : 'bg-green-500 hover:bg-green-600'
                   } text-white`}
-                  onClick={() => toggleWorkerStatus(worker.id)}
+                  onClick={() => toggleWorkerStatus(worker._id)}
                 >
                   {worker.active ? 'Disable' : 'Enable'}
                 </button>

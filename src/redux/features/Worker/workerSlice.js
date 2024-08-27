@@ -20,7 +20,9 @@ const workerSlice = createSlice(
                 state.workerData = action.payload
             },
             deleteWorkerData:(state)=>{
+                state.loading = false
                 state.workerData = null
+                state.error = null
             }
         },
         // extraReducers:(builder)=>{
@@ -30,4 +32,4 @@ const workerSlice = createSlice(
 )
 
 export default workerSlice.reducer
-export const {setWorkerData} = workerSlice.actions
+export const {setWorkerData,deleteWorkerData} = workerSlice.actions

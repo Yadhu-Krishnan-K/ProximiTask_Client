@@ -7,7 +7,7 @@ function WorkerProfilie() {
   return (
     <div className="min-h-screen bg-gray-100">
       <Header />
-      <IconBar />
+      {/* <IconBar /> */}
       <ProfileForm />
     </div>
   );

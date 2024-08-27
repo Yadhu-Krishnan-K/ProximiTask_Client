@@ -12,7 +12,7 @@ function LandingPage() {
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
-  // const [location, setLocation] = useState(null)
+  const [location, setLocation] = useState(null)
   useEffect(() => {
     console.log('instance rerender working..........===============----------')
     const data = JSON.parse(localStorage.getItem("userData"));
@@ -40,23 +40,22 @@ function LandingPage() {
 
   const user = useSelector((state) => state.userReducer.userData);
   
-  // const user = useSelector((state)=>)
-  // useEffect(()=>{
-  //   navigator.geolocation.getCurrentPosition((res)=>{
-  //     console.log(res.coords)
-  //     setLocation({
-  //       lat:res.coords.latitude,
-  //       long:res.coords.longitude
-  //     })
-  //   })
-  // },[])
+  useEffect(()=>{
+    navigator.geolocation.getCurrentPosition((res)=>{
+      console.log(res.coords)
+      setLocation({
+        lat:res.coords.latitude,
+        long:res.coords.longitude
+      })
+    })
+  },[])
   return (
     <>
       <Nav1 user={user}/>
       <HeroSec />
       {/* <h1>latitude: {location.lat}</h1>
         <h1>longitude: {location.long}</h1> */}
-      <WorkerNear />
+      <WorkerNear location={location} />
       <Footer />
     </>
   );

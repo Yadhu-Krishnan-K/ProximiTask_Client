@@ -29,6 +29,7 @@ function CreateAccountForm({ onClose, onSuccess, data }) {
   const [isFormFilled, setIsFormFilled] = useState(false);
   const [categories, setCategories] = useState([]);
   const [location, setLocation] = useState(null)
+  const [cords, setCords] = useState(null)
 
   useEffect(() => {
     const timers = Object.keys(showErrors).map((field) =>
@@ -55,6 +56,12 @@ function CreateAccountForm({ onClose, onSuccess, data }) {
   async function checkLocation(setFieldValue) {
     navigator.geolocation.getCurrentPosition(async (res) => {
       console.log('current Location test = ', res)
+      setCords({
+        lat:res.coords.latitude,
+        long:res.coords.longitude
+      })
+      setFieldValue('lat', res.coords.latitude)
+      setFieldValue('long', res.coords.longitude)
       const city = await cordsToCity(res.coords.latitude, res.coords.longitude)
       console.log('city type == ', city)
       setFieldValue('area', city) // Set the Formik field value
@@ -65,6 +72,8 @@ function CreateAccountForm({ onClose, onSuccess, data }) {
 
   const initialValues ={
     area: "",
+    lat:"",
+    long:"",
     category: "",
     phone: "",
     idType: "",
@@ -79,6 +88,8 @@ function CreateAccountForm({ onClose, onSuccess, data }) {
         ...data,
         area: values.area,
         category: values.category,
+        lat: values.lat,
+        long: values.long,
         phone: values.phone,
         idType: values.idType,
         idNumber: values.idNumber,

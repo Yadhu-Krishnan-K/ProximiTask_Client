@@ -37,7 +37,19 @@ function LoginComponent({ onClose }) {
     onSubmit: (values,{resetForm}) => {
       instance.post('/workers/signin',{email:values.email, password:values.password})
       .then((res)=>{
+        console.log('res = ',res)
         localStorage.setItem('workerData',JSON.stringify(res.data.worker))
+          let accessTokens = JSON.parse(localStorage.getItem("accessTokens") || "[]");
+          let refreshToken = localStorage.getItem("refreshToken");
+
+          accessTokens.push(res.data.accessToken);
+
+          localStorage.setItem("accessTokens", JSON.stringify(accessTokens));
+
+          if (!refreshToken) {
+            localStorage.setItem("refreshToken", JSON.stringify(res.data.refreshToken));
+          }
+          // nav('/AdminPanel');
           dispatch(setWorkerData(res.data.worker))
           nav('/WorkerProfile')
         resetForm()

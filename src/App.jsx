@@ -35,7 +35,9 @@ function App() {
     }
 
     const storedWorker = localStorage.getItem('workerData');
+    console.log('storedWorker = === ', storedWorker)
     if(storedWorker){
+      
       dispatch(setWorkerData(JSON.parse(storedWorker)))
     }
 

@@ -96,7 +96,7 @@ instance.interceptors.response.use(
               let accessTokens  = JSON.parse(localStorage.getItem("accessTokens"))
               accessTokens.push(response.data.accessToken)
               localStorage.setItem("accessToken", JSON.stringify(accessTokens));
-              // originalRequest.headers["Authorization"] = `Bearer ${response.data.accessToken}`;
+              originalRequest.headers["Access-Tokens"] = accessTokens;
               return axios(originalRequest);
             } else {
               throw new Error('Refresh token expired');
