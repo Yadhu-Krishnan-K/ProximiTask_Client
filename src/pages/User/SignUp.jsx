@@ -4,10 +4,13 @@ import { useFormik } from "formik";
 import { ToastContainer } from "react-toastify";
 import * as Yup from "yup";
 import instance from "../../helper/axiosInstance";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const SignUp = () => {
   const nav = useNavigate();
   const [showError, setShowError] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   useEffect(() => {
     if (showError) {
@@ -27,17 +30,11 @@ const SignUp = () => {
     },
     validationSchema: Yup.object({
       name: Yup.string()
-        .matches(
-          /[A-Za-z]/,
-          "Name must contain at least one alphabetic character"
-        )
+        .matches(/[A-Za-z]/, "Name must contain at least one alphabetic character")
         .matches(/^[A-Za-z\s]+$/, "Name can only contain letters and spaces")
         .required("Name is required"),
       email: Yup.string()
-        .matches(
-          /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-          "Invalid email address"
-        )
+        .matches(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, "Invalid email address")
         .matches(/^\S*$/, "Email must not contain spaces")
         .required("Email is required"),
       pass: Yup.string()
@@ -45,10 +42,7 @@ const SignUp = () => {
         .matches(/[A-Z]/, "Password must contain at least one uppercase letter")
         .matches(/[a-z]/, "Password must contain at least one lowercase letter")
         .matches(/\d/, "Password must contain at least one number")
-        .matches(
-          /[@$!%*?&]/,
-          "Password must contain at least one special character"
-        )
+        .matches(/[@$!%*?&]/, "Password must contain at least one special character")
         .matches(/^\S*$/, "Password must not contain spaces")
         .required("Password is required"),
       conPass: Yup.string()
@@ -69,9 +63,9 @@ const SignUp = () => {
             console.error("Signup failed: unexpected response structure", res);
           }
         })
-        .catch((error)=>{
-
-        })
+        .catch((error) => {
+          console.error("Signup failed:", error);
+        });
     },
     validateOnBlur: true,
     validateOnChange: true,
@@ -89,13 +83,19 @@ const SignUp = () => {
     formik.handleSubmit(e);
   };
 
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const toggleConfirmPasswordVisibility = () => {
+    setShowConfirmPassword(!showConfirmPassword);
+  };
+
   return (
     <div className="w-full h-screen bg-emerald-200 flex justify-center items-center p-4">
       <ToastContainer />
       <div className="w-full max-w-md bg-[#F6FBF9] rounded-2xl shadow-lg p-8">
-        <h1 className="text-2xl font-bold text-center mb-6">
-          Create An Account
-        </h1>
+        <h1 className="text-2xl font-bold text-center mb-6">Create An Account</h1>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <input
@@ -125,9 +125,9 @@ const SignUp = () => {
               <div className="text-red-500 text-sm">{formik.errors.email}</div>
             ) : null}
           </div>
-          <div>
+          <div className="relative">
             <input
-              type="password"
+              type={showPassword ? "text" : "password"}
               name="pass"
               className="w-full p-3 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-300"
               placeholder="Password"
@@ -135,13 +135,21 @@ const SignUp = () => {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
             />
+            <button
+              type="button"
+              onClick={togglePasswordVisibility}
+              className="absolute right-3 top-3"
+              aria-label={showPassword ? "Hide password" : "Show password"}
+            >
+              {showPassword ? <FaEyeSlash /> : <FaEye />}
+            </button>
             {formik.touched.pass && formik.errors.pass && showError ? (
               <div className="text-red-500 text-sm">{formik.errors.pass}</div>
             ) : null}
           </div>
-          <div>
+          <div className="relative">
             <input
-              type="password"
+              type={showConfirmPassword ? "text" : "password"}
               name="conPass"
               className="w-full p-3 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-300"
               placeholder="Confirm Password"
@@ -149,10 +157,16 @@ const SignUp = () => {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
             />
+            <button
+              type="button"
+              onClick={toggleConfirmPasswordVisibility}
+              className="absolute right-3 top-3"
+              aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+            >
+              {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+            </button>
             {formik.touched.conPass && formik.errors.conPass && showError ? (
-              <div className="text-red-500 text-sm">
-                {formik.errors.conPass}
-              </div>
+              <div className="text-red-500 text-sm">{formik.errors.conPass}</div>
             ) : null}
           </div>
           <button

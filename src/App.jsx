@@ -19,6 +19,7 @@ import { setUserData } from './redux/features/User/userSlice'
 import { setWorkerData } from './redux/features/Worker/workerSlice'
 import { jwtDecode } from 'jwt-decode'
 import { setAdmin } from './redux/features/Admin/adminSlice'
+import Profile from './pages/User/Profile'
 
 
 function App() {
@@ -73,7 +74,9 @@ function App() {
         <Route path='categories' element={<CategoryList />} />
       </Route>
 
-      <Route path='/test' element={<Test />} />
+      {/* <Route path='/test' element={<Test />} /> */}
+
+      <Route path='/Profile' element={<Profile />} />
 
       {/* <Route path='/logout' */}
       <Route path='*' element={<NotFoundPage />} />

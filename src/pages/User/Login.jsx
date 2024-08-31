@@ -4,18 +4,30 @@ import { json, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import { FaEye } from "react-icons/fa";
+import { FaEyeSlash } from "react-icons/fa";
+
 import { ToastContainer } from "react-toastify";
 import instance from "../../helper/axiosInstance";
 import { setUserData,userLogin } from "../../redux/features/User/userSlice";
 // import {jwtDecode} from 'jwt-decode'
 
 const Login = () => {
+
+  const [showPassword, setShowPassword] = useState(false)
+
   const userData = useSelector((state) => state.userReducer.userData);
   console.log('User Data:', userData);
   const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
   const dispatch = useDispatch();
   const nav = useNavigate();
   const [showError, setShowError] = useState(false);
+
+
+  function toggleShowPass(){
+    setShowPassword((prev)=>!prev)
+  }
+
 
   useEffect(() => {
     if (showError) {
@@ -83,18 +95,12 @@ const Login = () => {
 
   const handleGoogleLoginSuccess = (response) => {
     const { credential } = response;
-    // console.log('response = ', response)
-    // const decoded = jwtDecode(credential)
-    // console.log(decoded)
+
     instance.post('/users/google-login', { token: credential })
       .then(res => {
         if (res?.data?.success) {
           console.log('res.data = ',res?.data)
-          // localStorage.setItem("userData", JSON.stringify(res.data.user));
-          // localStorage.setItem('accessToken', res.data.accessToken);
-          // localStorage.setItem('refreshToken', res.data.refreshToken);
-          // dispatch(setUserData(res.data.user));
-          // nav("/");
+
             let accessTokens = localStorage.getItem('accessTokens')
             let refreshToken = localStorage.getItem('refreshToken')
             if(accessTokens){
@@ -139,15 +145,20 @@ const Login = () => {
             ) : null}
           </div>
           <div className="mb-4">
+            <div className="w-full p-2 border border-gray-300 rounded flex justify-center">
             <input
-              type="password"
+              type={showPassword?'text':"password"}
               name="pass"
-              className="w-full p-2 border border-gray-300 rounded"
+              className="flex-grow border-none focus:outline-none"
               placeholder="Password"
               value={formik.values.pass}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
             />
+            <button onClick={toggleShowPass}>
+              {showPassword?(<FaEyeSlash />):(<FaEye />)}
+            </button>
+            </div>
             {formik.touched.pass && formik.errors.pass && showError ? (
               <div className="text-red-500 text-sm">{formik.errors.pass}</div>
             ) : null}

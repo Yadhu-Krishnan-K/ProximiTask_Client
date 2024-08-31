@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import { IoMdCloseCircleOutline } from "react-icons/io";
-
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 import "react-toastify/dist/ReactToastify.css";
 import LoginComponent from "../../components/worker/LoginComponent";
@@ -10,6 +10,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 
 const WSignUp = () => {
+  const [showPass, setShowPass] = useState(false)
   const [showPopup, setShowPopup] = useState(false);
   const [showLoginPopup, setShowLoginPopup] = useState(false);
   const [visibleErrors, setVisibleErrors] = useState({});
@@ -157,7 +158,7 @@ const WSignUp = () => {
                 </div>
               )}
             </div>
-            <div className="mb-6">
+            <div className="mb-6 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600 flex justify-between">
               <input
                 name="password"
                 type="password"
@@ -165,14 +166,19 @@ const WSignUp = () => {
                 value={form.values.password}
                 onChange={form.handleChange}
                 onBlur={form.handleBlur}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600"
+                className="w-full px-3 py-2  focus:outline-none"
               />
+              <button
+                className=""
+              >
+                {showPass?(<FaEyeSlash/>):(<FaEye/>)}
+              </button>
+            </div>
               {form.touched.password && visibleErrors.password && (
                 <div className="text-red-500 text-sm mt-1">
                   {visibleErrors.password}
                 </div>
               )}
-            </div>
             <button
               type="submit"
               className="w-full bg-purple-600 text-white py-2 rounded-md hover:bg-purple-700 transition duration-300"

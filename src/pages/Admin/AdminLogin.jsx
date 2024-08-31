@@ -1,11 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import instance from '../../helper/axiosInstance';
 import { ToastContainer, toast } from "react-toastify";
-import { useDispatch } from 'react-redux';
-import { setAdmin } from '../../redux/features/Admin/adminSlice';
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const AdminLoginSchema = Yup.object().shape({
   email: Yup.string().email('Invalid email').required('Email is required'),
@@ -13,6 +12,7 @@ const AdminLoginSchema = Yup.object().shape({
 });
 
 const AdminLogin = () => {
+  const [showPass, setShowPass] = useState(false);
   const nav = useNavigate();
 
   const formik = useFormik({
@@ -32,14 +32,14 @@ const AdminLogin = () => {
           let refreshToken = localStorage.getItem("refreshToken");
 
           accessTokens.push(res.data.accessToken);
-
           localStorage.setItem("accessTokens", JSON.stringify(accessTokens));
 
           if (!refreshToken) {
             localStorage.setItem("refreshToken", JSON.stringify(res.data.refreshToken));
           }
-          // nav('/AdminPanel');
-          window.location.href = '/AdminPanel'
+
+          // Redirect to AdminPanel
+          nav('/AdminPanel');
         }
       } catch (error) {
         console.error('Login error:', error);
@@ -50,24 +50,28 @@ const AdminLogin = () => {
     },
   });
 
-  function handleSubmit(e){
-    e.preventDefault(); // Prevent the form from refreshing the page
+  const handleSubmit = (e) => {
+    e.preventDefault();
     formik.setTouched({
       email: true,
       password: true,
     });
 
     if (formik.errors.email || formik.errors.password) {
-      setShowError(true);
+      formik.validateForm(); // Trigger validation
     } else {
-      formik.handleSubmit(e);
+      formik.handleSubmit();
     }
-  }
+  };
+
+  const togglePasswordVisibility = () => {
+    setShowPass(prev => !prev);
+  };
 
   return (
     <div className="bg-emerald-200 min-h-screen flex items-center justify-center p-4">
       <ToastContainer />
-      <div className="bg-white rounded-lg shadow-md p-8 w-full max-w-md">
+      <div className="bg-white rounded-lg shadow-md p-8 w-full max-w-md relative">
         <div className="text-emerald-400 text-2xl font-bold mb-6">ProximiTask</div>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
@@ -86,24 +90,32 @@ const AdminLogin = () => {
             ) : null}
           </div>
 
-          <div className="mb-6">
+          <div className="mb-6 relative">
             <input
               id="password"
               name="password"
-              type="password"
+              type={showPass ? "text" : "password"}
               placeholder="Password"
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               value={formik.values.password}
               className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-300"
             />
+            <button
+              type="button"
+              onClick={togglePasswordVisibility}
+              className="absolute right-3 top-3"
+              aria-label={showPass ? "Hide password" : "Show password"}
+            >
+              {showPass ? <FaEyeSlash /> : <FaEye />}
+            </button>
             {formik.touched.password && formik.errors.password ? (
               <div className="text-red-500 text-sm mt-1">{formik.errors.password}</div>
             ) : null}
           </div>
 
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             disabled={formik.isSubmitting}
             className="w-full bg-emerald-400 text-white py-3 rounded-md hover:bg-emerald-500 transition duration-300 disabled:opacity-50"
           >
