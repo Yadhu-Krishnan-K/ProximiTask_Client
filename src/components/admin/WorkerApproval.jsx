@@ -10,6 +10,7 @@ function WorkerApproval({ worker, onApprove, onReject, onClose }) {
         <h3 className="text-xl font-semibold mb-4">Worker Account Approval</h3>
         <div className="bg-yellow-100 border-l-4 border-yellow-500 p-4 mb-4">
           <p className="font-bold">New Account Request</p>
+          <img src={worker.croppedImgURL} alt="img" width={44} />
           <p>Name: {worker.name}</p>
           <p>Email: {worker.email}</p>
           <p>Area: {worker.area}</p>

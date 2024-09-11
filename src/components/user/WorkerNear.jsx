@@ -3,6 +3,7 @@ import WorkerCard from './WorkerCard';
 import instance from '../../helper/axiosInstance';
 import isWithin from '../../helper/isWithIn';
 import WorkerCard2 from './WorkerCard2';
+import ProfileCard from './WorkerProfile3';
 
 function WorkerNear({ location }) {
   const [workers, setWorkers] = useState([]);
@@ -33,6 +34,7 @@ function WorkerNear({ location }) {
     <div className="text-center p-5 flex-col">
       <h1 className="text-3xl underline mb-5">Workers Near You</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+        <ProfileCard />
         {workers.map((worker, index) =>
           index === 0 ? (
             // Render WorkerCard2 for the first worker

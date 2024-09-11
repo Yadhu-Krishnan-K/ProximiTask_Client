@@ -8,6 +8,7 @@ import WorkerNear from "../../components/user/WorkerNear";
 import instance from "../../helper/axiosInstance";
 import { useNavigate } from "react-router-dom";
 
+
 function LandingPage() {
   const dispatch = useDispatch()
   const navigate = useNavigate()
@@ -53,9 +54,8 @@ function LandingPage() {
     <>
       <Nav1 user={user}/>
       <HeroSec />
-      {/* <h1>latitude: {location.lat}</h1>
-        <h1>longitude: {location.long}</h1> */}
       <WorkerNear location={location} />
+      {/* <Categories /> */}
       <Footer />
     </>
   );

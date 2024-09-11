@@ -61,7 +61,11 @@ function App() {
         <Route path='/UserLogin' element={user?.isActive ? (<Navigate to='/' />) : (<Login />)} />
         <Route path='/Otp' element={user?.isActive ? (<Navigate to='/' />) : (<OTPPage />)} />
         <Route path='/' element={<LandingPage />} />
-        <Route path='/WorkerDetails' element={<WorkerDetailPage/>}/>
+        <Route path='/WorkerDetails' element={<WorkerDetailPage/>}>
+          <Route index element={<Navigate to='WorkerServices' />} />
+          
+        </Route>
+        
 
 
         <Route path='/WorkerProfile' element={worker?.active ? (<WorkerProfilie />) : (<Navigate to='/WorkerSignUp' />)} />

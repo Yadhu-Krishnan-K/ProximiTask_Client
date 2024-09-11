@@ -24,7 +24,7 @@ const validationSchema = Yup.object().shape({
   ),
 });
 
-function CreateAccountForm({ onClose, onSuccess, data }) {
+function CreateAccountForm({ setOriginalImg, setCroppedImg, setCropped, onClose, onSuccess, data }) {
   const [showErrors, setShowErrors] = useState({});
   const [isFormFilled, setIsFormFilled] = useState(false);
   const [categories, setCategories] = useState([]);
@@ -96,8 +96,10 @@ function CreateAccountForm({ onClose, onSuccess, data }) {
         isSoleProprietor: values.isSoleProprietor,
         agreeTerms: values.agreeTerms,
       };
-
-      const response = await instance.post("/workers/signup", formData);
+      console.log('formData while submittng = ',formData)
+      const response = await instance.post("/workers/signup", formData,{
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
 
       if (response.status === 201) {
         console.log("Signup successful:", response.data);
@@ -106,9 +108,13 @@ function CreateAccountForm({ onClose, onSuccess, data }) {
       } else {
         console.error("Signup failed:", response.data);
       }
+      
     } catch (error) {
       console.error("An error occurred during signup:", error);
     } finally {
+      setCropped(false)
+      setOriginalImg(null)
+      setCroppedImg(null)
       setSubmitting(false);
     }
   };
@@ -179,7 +185,8 @@ function CreateAccountForm({ onClose, onSuccess, data }) {
                 >
                   <option value="">Select Category</option>
                   {categories.map((category) => (
-                    <option key={category._id} value={category.categoryName}>
+                    <option key={category._id} value={category.categoryName} className="flex justify-between">
+                      {/* <img src={category.croppedImgURL} alt="img" width={20} /> */}
                       {category.categoryName}
                     </option>
                   ))}
