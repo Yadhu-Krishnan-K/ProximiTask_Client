@@ -1,31 +1,34 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense, lazy } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Routes, Route, Navigate } from 'react-router-dom'
+
 import './App.css'
-import LandingPage from './pages/User/LandingPage'
-import SignUp from './pages/User/SignUp'
-import Login from './pages/User/Login'
-import WSignUp from './pages/Worker/WSignUp'
-import AdminLogin from './pages/Admin/AdminLogin'
-import NotFoundPage from './pages/NotFound'
-import OTPPage from './pages/User/OtpPage'
-import WorkerProfilie from './pages/Worker/WorkerProfilie'
-import Container from './pages/Admin/Container'
-import Test from './pages/User/Test'
-import CustomerList from './components/admin/CustomerList';
-import WorkerList from './components/admin/WorkerList';
-import CategoryList from './components/admin/CategoryList';
+
 import { setUserData } from './redux/features/User/userSlice'
 import { setWorkerData } from './redux/features/Worker/workerSlice'
-import { jwtDecode } from 'jwt-decode'
 import { setAdmin } from './redux/features/Admin/adminSlice'
-import Profile from './pages/User/Profile'
-import EditProfile from './components/user/EditProfile'
-import Security from './components/user/Security'
-import WorkerDetailPage from './pages/User/WorkerDetailPage'
-import WorkerServices from './components/user/WorkerServices'
-import ProfileForm from './components/worker/ProfileForm'
-import LocationManagement from './components/admin/LocationManagement'
+
+const LandingPage = lazy(() => import('./pages/User/LandingPage'));
+const SignUp = lazy(() => import('./pages/User/SignUp'));
+const Login = lazy(() => import('./pages/User/Login'));
+const WSignUp = lazy(() => import('./pages/Worker/WSignUp'));
+const AdminLogin = lazy(() => import('./pages/Admin/AdminLogin'));
+const NotFoundPage = lazy(() => import('./pages/NotFound'));
+const OTPPage = lazy(() => import('./pages/User/OtpPage'));
+const WorkerProfile = lazy(() => import('./pages/Worker/WorkerProfile'));
+const Container = lazy(() => import('./pages/Admin/Container'));
+const Test = lazy(() => import('./pages/User/Test'));
+const CustomerList = lazy(() => import('./components/admin/CustomerList'));
+const WorkerList = lazy(() => import('./components/admin/WorkerList'));
+const CategoryList = lazy(() => import('./components/admin/CategoryList'));
+const Profile = lazy(() => import('./pages/User/Profile'));
+const EditProfile = lazy(() => import('./components/user/EditProfile'));
+const Security = lazy(() => import('./components/user/Security'));
+const WorkerDetailPage = lazy(() => import('./pages/User/WorkerDetailPage'));
+const WorkerServices = lazy(() => import('./components/user/WorkerServices'));
+const ProfileForm = lazy(() => import('./components/worker/ProfileForm'));
+const LocationManagement = lazy(() => import('./components/admin/LocationManagement'));
+
 function App() {
 
   const worker = useSelector((state) => state.workerReducer.workerData)
@@ -57,6 +60,7 @@ function App() {
   return (
 
     <>
+    <Suspense fallback={<div>Loading...</div>}>
       <Routes>
 
         <Route path='/user/signUp' element={user?.isActive ? (<Navigate to='/' />) : (<SignUp />)} />
@@ -100,6 +104,7 @@ function App() {
         {/* <Route path='/logout' */}
         <Route path='*' element={<NotFoundPage />} />
       </Routes >
+    </Suspense>
     </>
   )
 }
