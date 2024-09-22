@@ -10,6 +10,7 @@ function Nav1({ user }) {
   const [isOpen, setIsOpen] = useState(false) // State to toggle the mobile menu
 
   function logout() {
+    localStorage.removeItem('userData')
     logOutHeloper('user')
     window.location.href = '/';
   }

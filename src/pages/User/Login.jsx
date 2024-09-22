@@ -145,20 +145,24 @@ const Login = () => {
             ) : null}
           </div>
           <div className="mb-4">
-            <div className="w-full p-2 border border-gray-300 rounded flex justify-center">
-            <input
-              type={showPassword?'text':"password"}
-              name="pass"
-              className="flex-grow border-none focus:outline-none"
-              placeholder="Password"
-              value={formik.values.pass}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-            />
-            <button type="button" onClick={toggleShowPass}>
-              {showPassword?(<FaEyeSlash />):(<FaEye />)}
-            </button>
-            </div>
+          <div className="flex items-center border border-gray-300 rounded">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  name="pass"
+                  className="w-full p-2 border-none outline-none border-gray-300 rounded"
+                  placeholder="Password"
+                  value={formik.values.pass}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                />
+                <button
+                  type="button"
+                  onClick={toggleShowPass}
+                  className="p-2  hover:bg-gray-300 transition duration-200"
+                >
+                  {showPassword ? <FaEyeSlash /> : <FaEye />}
+                </button>
+              </div>
             {formik.touched.pass && formik.errors.pass && showError ? (
               <div className="text-red-500 text-sm">{formik.errors.pass}</div>
             ) : null}
