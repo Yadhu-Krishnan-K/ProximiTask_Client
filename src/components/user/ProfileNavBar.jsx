@@ -17,11 +17,11 @@ const ProfileNavBar = ({ toggleSidebar }) => {
             <div onClick={() => navigate('/')} className="text-blue-600 hidden sm:inline cursor-pointer">HOME</div>
             <div onClick={() => navigate('/services')} className="text-blue-600 hidden sm:inline cursor-pointer">SERVICES</div>
             <div onClick={() => navigate('/chat')} className="text-blue-600 hidden sm:inline cursor-pointer">CHAT</div>
-            <div className="flex items-center space-x-2">
+            <div className="flex p-2 items-center space-x-2 bg-cyan-500 rounded-3xl">
               <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
                 <FaRegUserCircle className="h-5 w-5 text-gray-600" />
               </div>
-              <span className="hidden sm:inline">User</span>
+              <span className="hidden sm:inline text-white">User</span>
             </div>
           </div>
         </div>

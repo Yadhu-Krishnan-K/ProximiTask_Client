@@ -10,7 +10,7 @@ const WorkerInfo = () => {
 
       <div className="relative w-full h-1/3 ps-2">
         <img
-          src="vite.svg"
+          src="/vite.svg"
           alt="User"
           className="rounded-full h-20 w-20 object-cover shadow-md absolute -mt-10 bg-slate-400"
         />

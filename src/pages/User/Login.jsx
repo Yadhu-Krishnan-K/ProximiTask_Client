@@ -155,7 +155,7 @@ const Login = () => {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
             />
-            <button onClick={toggleShowPass}>
+            <button type="button" onClick={toggleShowPass}>
               {showPassword?(<FaEyeSlash />):(<FaEye />)}
             </button>
             </div>
@@ -174,7 +174,7 @@ const Login = () => {
           Don't have an account?
           <span
             className="text-sky-400 underline cursor-pointer ml-1"
-            onClick={() => nav("/UserSignUp")}
+            onClick={() => nav("/user/signUp")}
           >
             Sign Up
           </span>

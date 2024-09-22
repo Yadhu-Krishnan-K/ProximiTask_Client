@@ -50,8 +50,9 @@ function LoginComponent({ onClose }) {
             localStorage.setItem("refreshToken", JSON.stringify(res.data.refreshToken));
           }
           // nav('/AdminPanel');
+          
           dispatch(setWorkerData(res.data.worker))
-          nav('/WorkerProfile')
+          nav('/worker/profile')
         resetForm()
       })
       .catch((error)=>{

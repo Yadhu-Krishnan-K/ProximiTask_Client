@@ -3,9 +3,9 @@ import { NavLink } from 'react-router-dom'
 
 function WorkerSidebar() {
   return (
-    <div className='grid mt-5 p-3 max-w-44 border-r-2'>
+    <div className='grid mt-5 p-3 max-w-44 border-2'>
         <NavLink 
-         to='/ser'
+         to='/WorkerDetails/WorkerServices'
          className={({isActive})=>
             isActive?
             'text-[#083A50] cursor-pointer bg-gray-300 font-semibold py-2 px-4 w-full rounded'

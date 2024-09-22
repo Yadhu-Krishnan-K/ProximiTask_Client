@@ -64,7 +64,7 @@ const OTPPage = () => {
     })
       .then((res) => {
         if (res.data.success) {
-          nav('/UserLogin');
+          nav('/user/login');
         }
         localStorage.removeItem('resendTimeout'); 
 

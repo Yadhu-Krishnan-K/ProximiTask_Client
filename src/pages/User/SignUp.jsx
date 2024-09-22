@@ -58,7 +58,7 @@ const SignUp = () => {
         })
         .then((res) => {
           if (res?.data?.success) {
-            nav("/Otp");
+            nav("/user/Otp");
           } else {
             console.error("Signup failed: unexpected response structure", res);
           }
@@ -180,7 +180,7 @@ const SignUp = () => {
           Already have an account?{" "}
           <span
             className="text-sky-400 underline cursor-pointer"
-            onClick={() => nav("/UserLogin")}
+            onClick={() => nav("/user/login")}
           >
             Sign In
           </span>

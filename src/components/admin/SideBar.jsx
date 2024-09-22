@@ -12,7 +12,7 @@ function Sidebar() {
     dispatch(adminLogout());
     localStorage.removeItem("adminLogedIn");
     logOutHeloper("admin");
-    nav("/AdminLogin");
+    nav("/admin/login");
   }
 
   return (
@@ -22,7 +22,7 @@ function Sidebar() {
       </div>
       <nav className="mt-8 flex-grow">
         <NavLink
-          to="/adminpanel/customers"
+          to="/admin/panel/customers"
           className={({ isActive }) =>
             isActive ? "block py-2 px-4 bg-gray-900" : "block py-2 px-4"
           }
@@ -30,7 +30,7 @@ function Sidebar() {
           Customers
         </NavLink>
         <NavLink
-          to="/adminpanel/workers"
+          to="/admin/panel/workers"
           className={({ isActive }) =>
             isActive ? "block py-2 px-4 bg-gray-900" : "block py-2 px-4"
           }
@@ -38,12 +38,20 @@ function Sidebar() {
           Workers
         </NavLink>
         <NavLink
-          to="/adminpanel/categories"
+          to="/admin/panel/categories"
           className={({ isActive }) =>
             isActive ? "block py-2 px-4 bg-gray-900" : "block py-2 px-4"
           }
         >
           Categories
+        </NavLink>
+        <NavLink
+          to="/admin/panel/location"
+          className={({ isActive }) =>
+            isActive ? "block py-2 px-4 bg-gray-900" : "block py-2 px-4"
+          }
+        >
+          Location Management
         </NavLink>
       </nav>
       <div className="mt-auto p-4">

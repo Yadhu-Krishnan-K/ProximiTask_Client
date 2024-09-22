@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
+import { setAdmin } from '../../redux/features/Admin/adminSlice';
+import { useDispatch } from 'react-redux';
 import * as Yup from 'yup';
 import instance from '../../helper/axiosInstance';
 import { ToastContainer, toast } from "react-toastify";
@@ -12,6 +14,7 @@ const AdminLoginSchema = Yup.object().shape({
 });
 
 const AdminLogin = () => {
+  const dispatch = useDispatch()
   const [showPass, setShowPass] = useState(false);
   const nav = useNavigate();
 
@@ -26,20 +29,21 @@ const AdminLogin = () => {
       try {
         const res = await instance.post('/admin/login', values);
         console.log('API response:', res);
+        
         if (res.data.success) {
           localStorage.setItem('adminLogedIn', 'true');
           let accessTokens = JSON.parse(localStorage.getItem("accessTokens") || "[]");
           let refreshToken = localStorage.getItem("refreshToken");
-
+    
           accessTokens.push(res.data.accessToken);
           localStorage.setItem("accessTokens", JSON.stringify(accessTokens));
-
+    
           if (!refreshToken) {
             localStorage.setItem("refreshToken", JSON.stringify(res.data.refreshToken));
           }
-
-          // Redirect to AdminPanel
-          nav('/AdminPanel');
+          dispatch(setAdmin())
+          // Add a delay to ensure localStorage is properly set before navigating
+          nav('/admin/panel')
         }
       } catch (error) {
         console.error('Login error:', error);
@@ -48,6 +52,7 @@ const AdminLogin = () => {
         setSubmitting(false);
       }
     },
+    
   });
 
   const handleSubmit = (e) => {

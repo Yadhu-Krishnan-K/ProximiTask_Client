@@ -6,6 +6,7 @@ import {Outlet} from 'react-router-dom'
 import WorkerInfo from '../../components/user/WorkerInfo';
 import Nav1 from '../../components/navbar/Nav1';
 import WorkerSidebar from '../../components/user/WorkerSidebar';
+import WorkerServices from '../../components/user/WorkerServices';
 
 const WorkerDetailPage = () => {
   return (

@@ -1,10 +1,12 @@
 import React, { useEffect } from "react";
 import { IoIosArrowBack } from "react-icons/io";
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, NavLink } from 'react-router-dom'
 import { ImPencil } from "react-icons/im";
-import { FaRegBell } from "react-icons/fa";
+import { FaRegBell, FaRegUserCircle, FaCamera } from "react-icons/fa";
 import { MdLockOutline } from "react-icons/md";
 import { IoHelpCircleOutline, IoClose } from "react-icons/io5";
+// import { FaRegUserCircle } from "react-icons/fa";
+
 
 import { BiExit } from "react-icons/bi";
 
@@ -20,23 +22,47 @@ const ProfileSideBar = ({ isOpen, toggleSidebar }) => {
           <IoClose className="h-6 w-6" />
         </button>
       </div>
+      <div className="w-full h-32 flex justify-center items-center relative">
+        {/* <img src="" alt="ProfileImg" /> */}
+        <FaRegUserCircle className="w-2/3 h-2/3" />
+        <button className="rounded-full border-2 border-black w-7 h-7 flex justify-center items-center absolute bottom-5 right-20 bg-white">
+          <FaCamera className="text-cyan-400 bg-white"/>
+        </button>
+      </div>
       <nav className="mt-4">
-        <div onClick={() => navigate('/profile/editProfile')} className="flex items-center px-4 py-2 text-gray-700 bg-gray-200 cursor-pointer">
+        <NavLink to={'/profile/editProfile'} className={({isActive})=>(
+          isActive
+          ?("flex items-center px-4 py-2 text-gray-700 bg-gray-200 cursor-pointer")
+          :("flex items-center px-4 py-2 text-gray-600 hover:bg-gray-100 cursor-pointer")
+        )}>
+        
           <ImPencil className="mr-3 h-5 w-5" />
           Edit profile
-        </div>
-        <div onClick={() => navigate('/profile/notifications')} className="flex items-center px-4 py-2 text-gray-600 hover:bg-gray-100 cursor-pointer">
+        </NavLink>
+        <NavLink to={'/profile/notifications'} className={({isActive})=>(
+          isActive
+          ?("flex items-center px-4 py-2 text-gray-700 bg-gray-200 cursor-pointer")
+          :("flex items-center px-4 py-2 text-gray-600 hover:bg-gray-100 cursor-pointer")
+        )}>
           <FaRegBell className="mr-3 h-5 w-5" />
           Notification
-        </div>
-        <div onClick={() => navigate('/profile/security')} className="flex items-center px-4 py-2 text-gray-600 hover:bg-gray-100 cursor-pointer">
+        </NavLink>
+        <NavLink to={'/profile/security'} className={({isActive})=>(
+          isActive
+          ?("flex items-center px-4 py-2 text-gray-700 bg-gray-200 cursor-pointer")
+          :("flex items-center px-4 py-2 text-gray-600 hover:bg-gray-100 cursor-pointer")
+        )}>
           <MdLockOutline className="mr-3 h-5 w-5" />
           Security
-        </div>
-        <div onClick={() => navigate('/profile/help')} className="flex items-center px-4 py-2 text-gray-600 hover:bg-gray-100 cursor-pointer">
+        </NavLink>
+        <NavLink to={'/profile/help'} className={({isActive})=>(
+          isActive
+          ?("flex items-center px-4 py-2 text-gray-700 bg-gray-200 cursor-pointer")
+          :("flex items-center px-4 py-2 text-gray-600 hover:bg-gray-100 cursor-pointer")
+        )}>
           <IoHelpCircleOutline className="mr-3 h-5 w-5" />
           Help
-        </div>
+        </NavLink>
       </nav>
       <div className="absolute bottom-0 w-full p-4 border-t">
         <div onClick={() => navigate('/logout')} className="flex items-center text-red-600 cursor-pointer">
