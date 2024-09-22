@@ -15,7 +15,7 @@ const WSignUp = lazy(() => import('./pages/Worker/WSignUp'));
 const AdminLogin = lazy(() => import('./pages/Admin/AdminLogin'));
 const NotFoundPage = lazy(() => import('./pages/NotFound'));
 const OTPPage = lazy(() => import('./pages/User/OtpPage'));
-const WorkerProfile = lazy(() => import('./pages/Worker/WorkerProfile'));
+const WorkerProfile = lazy(() => import('./pages/Worker/WorkerProfilie'));
 const Container = lazy(() => import('./pages/Admin/Container'));
 const Test = lazy(() => import('./pages/User/Test'));
 const CustomerList = lazy(() => import('./components/admin/CustomerList'));
@@ -80,7 +80,7 @@ function App() {
 
 
         <Route path='/worker/signUp' element={worker?.active ? (<Navigate to='/worker/profile' />) : (<WSignUp />)} />
-        <Route path='/worker/profile' element={worker?.active ? (<WorkerProfilie />) : (<Navigate to='/worker/signUp' />)} >
+        <Route path='/worker/profile' element={worker?.active ? (<WorkerProfile />) : (<Navigate to='/worker/signUp' />)} >
           <Route index element={<Navigate to='workerProfileEdit' />} />
           <Route path='workerProfileEdit' element={<ProfileForm />} />
         </Route>
