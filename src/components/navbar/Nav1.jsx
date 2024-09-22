@@ -1,9 +1,12 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import logOutHeloper from '../../helper/logoutHelper'
+import { IoMdArrowDropdown, IoMdArrowDropup } from "react-icons/io";
+
 
 function Nav1({ user }) {
   const nav = useNavigate()
+  const [ddopen, setDdopen] = useState(false)
   const [isOpen, setIsOpen] = useState(false) // State to toggle the mobile menu
 
   function logout() {
@@ -19,7 +22,24 @@ function Nav1({ user }) {
       {user ? (
         <>
           <li className='cursor-pointer'>Chat</li>
-          <li className='cursor-pointer' onClick={logout}>{user.name}</li>
+          <li className='cursor-pointer flex justify-center items-center' onClick={() => setDdopen((prev) => !prev)}>{user.name}{ddopen ? (<IoMdArrowDropup />) : (<IoMdArrowDropdown />)}</li>
+          {(
+  <div
+    className={`w-48 flex flex-col bg-white border border-gray-200 shadow-md rounded-md absolute top-16 right-0 z-50
+    transition-all duration-300 ease-in-out transform overflow-hidden
+    ${ddopen ? 'opacity-100 max-h-64 translate-y-0' : 'opacity-0 max-h-0 translate-y-[-10px]'}`}
+    style={{ transitionProperty: 'opacity, transform, max-height' }}
+  >
+    <div className='px-4 py-2 hover:bg-gray-100 cursor-pointer' onClick={() => nav('/user/profile/editProfile')}>Edit Profile</div>
+    <div className='px-4 py-2 hover:bg-gray-100 cursor-pointer' onClick={() => nav('/notifications')}>Notifications</div>
+    <div className='px-4 py-2 hover:bg-gray-100 cursor-pointer' onClick={() => nav('/user/profile/security')}>Security</div>
+    <div className='px-4 py-2 hover:bg-gray-100 cursor-pointer' onClick={() => nav('/help')}>Help</div>
+    <div className='px-4 py-2 hover:bg-red-100 cursor-pointer text-red-500' onClick={logout}>Logout</div>
+  </div>
+)}
+
+
+
         </>
       ) : (
         <>
@@ -41,7 +61,7 @@ function Nav1({ user }) {
     <nav className='w-full h-20 flex justify-between items-center shadow-lg px-4'>
       {/* Logo Section */}
       <div className="logo flex items-center">
-      <img src="/logo.png" alt="logo" className='lg:w-52 w-36 transition-all duration-300 ease-in-out' />
+        <img src="/logo.png" alt="logo" className='lg:w-52 w-36 transition-all duration-300 ease-in-out' />
       </div>
 
       {/* Desktop Menu */}

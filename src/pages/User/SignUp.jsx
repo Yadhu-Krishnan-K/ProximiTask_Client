@@ -97,6 +97,19 @@ const SignUp = () => {
       <div className="w-full max-w-md bg-[#F6FBF9] rounded-2xl shadow-lg p-8">
         <h1 className="text-2xl font-bold text-center mb-6">Create An Account</h1>
         <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+            <input
+              type="file"
+              name="img"
+              className="w-full p-3 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-300 hidden"
+              value={formik.values.img}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+            />
+            {formik.touched.img && formik.errors.img && showError ? (
+              <div className="text-red-500 text-sm">{formik.errors.img}</div>
+            ) : null}
+          </div>
           <div>
             <input
               type="text"
