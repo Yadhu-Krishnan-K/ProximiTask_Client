@@ -36,7 +36,7 @@ const ImgCropper = ({imageURL,cropInit,zoomInit,setImage,setCropped, setCroppedF
   
     // Convert the Blob to a File object
     const file = new File([blob], 'croppedImage.jpg', { type: blob.type });
-  
+  console.log('cropped file = ',file)
     // setImage(imgBlob);
     setCroppedFile(file);  // Set the cropped file as the File object
     setCropped(true);
