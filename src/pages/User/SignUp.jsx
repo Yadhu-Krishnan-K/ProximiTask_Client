@@ -96,7 +96,7 @@ const SignUp = () => {
       <ToastContainer />
       <div className="w-full max-w-md bg-[#F6FBF9] rounded-2xl shadow-lg p-8">
         <h1 className="text-2xl font-bold text-center mb-6">Create An Account</h1>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4" noValidate>
         <div>
             <input
               type="file"

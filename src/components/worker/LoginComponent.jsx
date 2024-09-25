@@ -68,7 +68,7 @@ function LoginComponent({ onClose }) {
         &times;
       </button>
       <h3 className="md:text-2xl lg:text-3xl mb-4">Log In</h3>
-      <form onSubmit={formik.handleSubmit} className="flex flex-col">
+      <form onSubmit={formik.handleSubmit} className="flex flex-col" noValidate>
         <input
           type="email"
           name="email"

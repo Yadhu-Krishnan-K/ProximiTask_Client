@@ -129,7 +129,7 @@ const Login = () => {
       <ToastContainer />
       <div className="max-sm:w-full md:w-1/3 bg-white p-8 rounded-2xl shadow-lg">
         <h1 className="text-2xl font-bold mb-8 text-center">Login</h1>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4" noValidate>
           <div className="mb-4">
             <input
               type="email"
