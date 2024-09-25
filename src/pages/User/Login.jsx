@@ -65,6 +65,7 @@ const Login = () => {
     }),
     onSubmit: (values) => {
       try {
+        console.log('values before sumbittng === ',values)
         dispatch(userLogin(values)).then((data)=>{
           // console.log('data from login = ',data)
           if((data.meta.requestStatus == 'fulfilled')&&(data.payload.isActive)){

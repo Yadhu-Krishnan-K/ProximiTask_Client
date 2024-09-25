@@ -2,18 +2,17 @@ import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import { useDispatch, useSelector } from "react-redux";
-import { ToastContainer } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 import * as Yup from "yup";
 import instance from "../../helper/axiosInstance";
 import { FaEye, FaEyeSlash, FaCamera, FaEdit } from "react-icons/fa";
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 import { setUserData } from "../../redux/features/User/userSlice";
 import ImgCropper from "../../helper/ImageCropper";
-
+import "react-toastify/dist/ReactToastify.css";
 
 const SignUp = () => {
   const nav = useNavigate();
-  const userData = useSelector((state) => state.userReducer.userData);
   const dispatch = useDispatch();
   const [showError, setShowError] = useState(false);
   
@@ -27,7 +26,6 @@ const SignUp = () => {
   const fileInputRef = useRef(null);
   const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
-
   useEffect(() => {
     if (showError) {
       const timer = setTimeout(() => {
@@ -36,19 +34,20 @@ const SignUp = () => {
       return () => clearTimeout(timer);
     }
   }, [showError]);
-  useEffect(()=>{
-    if(croppedFile!==null){
-      const objUrl = URL.createObjectURL(croppedFile)
-      setCroppedImage(objUrl)
 
+  useEffect(() => {
+    if (croppedFile !== null) {
+      const objUrl = URL.createObjectURL(croppedFile);
+      formik.setFieldValue("croppedImg", croppedFile); // Set croppedImg value in formik
+      setCroppedImage(objUrl);
       return () => URL.revokeObjectURL(objUrl);
     }
-  },[croppedFile])
+  }, [croppedFile]);
 
   const formik = useFormik({
     initialValues: {
       userImg: null,
-      croppedImg:null,
+      croppedImg: null,
       name: "",
       email: "",
       pass: "",
@@ -56,9 +55,9 @@ const SignUp = () => {
     },
     validationSchema: Yup.object({
       userImg: Yup.mixed().required("Profile image is required"),
-      croppedImg:Yup.mixed().required('need to crop'),
+      croppedImg: Yup.mixed().required("Image needs to be cropped"),
       name: Yup.string()
-        .matches(/[A-Za-z]/, "Name must contain at least one alhabetic character")
+        .matches(/[A-Za-z]/, "Name must contain at least one alphabetic character")
         .matches(/^[A-Za-z\s]+$/, "Name can only contain letters and spaces")
         .required("Name is required"),
       email: Yup.string()
@@ -82,8 +81,8 @@ const SignUp = () => {
       formData.append("name", values.name);
       formData.append("email", values.email);
       formData.append("pass", values.pass);
-      formData.append("userImg", values.userImg);
-      formData.append("croppedImg", values.croppedImg)
+      formData.append("userImg", originalFile);
+      formData.append("croppedImg", croppedFile);
 
       instance
         .post("/users/initiateSignup", formData, {
@@ -95,11 +94,13 @@ const SignUp = () => {
           if (res?.data?.success) {
             nav("/user/Otp");
           } else {
+            toast.error("Signup failed, try again.");
             console.error("Signup failed: unexpected response structure", res);
           }
         })
         .catch((error) => {
           console.error("Signup failed:", error);
+          toast.error("Signup error. Please try again.");
         });
     },
     validateOnBlur: true,
@@ -110,9 +111,10 @@ const SignUp = () => {
     const file = event.currentTarget.files[0];
     if (file) {
       const fileUrl = URL.createObjectURL(file);
-      setOriginal(fileUrl); // Set image for cropping
-      setOriginalFile(file); // Store original file
-      setCropped(false); // Reset cropped state
+      setOriginal(fileUrl);
+      setOriginalFile(file);
+      formik.setFieldValue("userImg", file); // Set userImg value in formik
+      setCropped(false); // Reset cropping state
     }
   };
 
@@ -124,6 +126,7 @@ const SignUp = () => {
     e.preventDefault();
     formik.setTouched({
       userImg: true,
+      croppedImg: true,
       name: true,
       email: true,
       pass: true,
@@ -144,47 +147,49 @@ const SignUp = () => {
   const handleGoogleLoginSuccess = (response) => {
     const { credential } = response;
 
-    instance.post('/users/google-login', { token: credential })
-      .then(res => {
+    instance.post("/users/google-login", { token: credential })
+      .then((res) => {
         if (res?.data?.success) {
-          console.log('res.data = ',res?.data)
+          let accessTokens = localStorage.getItem("accessTokens");
+          let refreshToken = localStorage.getItem("refreshToken");
 
-            let accessTokens = localStorage.getItem('accessTokens')
-            let refreshToken = localStorage.getItem('refreshToken')
-            if(accessTokens){
-              accessTokens = JSON.parse(accessTokens)
-            }else{
-              accessTokens = []
-            }
-            accessTokens.push(res?.data?.accessToken)
+          if (accessTokens) {
+            accessTokens = JSON.parse(accessTokens);
+          } else {
+            accessTokens = [];
+          }
+          accessTokens.push(res?.data?.accessToken);
 
-            localStorage.setItem("userData", JSON.stringify(res?.data?.user));
-            localStorage.setItem('accessTokens', JSON.stringify(accessTokens));
-            if(!refreshToken) localStorage.setItem('refreshToken', JSON.stringify(res?.data?.refreshToken));
-            dispatch(setUserData(res?.data?.user));
-            nav("/");
+          localStorage.setItem("userData", JSON.stringify(res?.data?.user));
+          localStorage.setItem("accessTokens", JSON.stringify(accessTokens));
+          if (!refreshToken) {
+            localStorage.setItem("refreshToken", JSON.stringify(res?.data?.refreshToken));
+          }
+
+          dispatch(setUserData(res?.data?.user));
+          nav("/");
+        } else {
+          toast.error("Google login failed. Please try again.");
         }
       })
-      .catch(error => {
+      .catch((error) => {
         console.error("Google Login error:", error);
-        setShowError(true);
+        toast.error("Google login error. Please try again.");
       });
   };
 
-
   return (
     <GoogleOAuthProvider clientId={clientId}>
-      
-        {!cropped && original && (
-            <div className="w-screen h-screen bg-white">
-              <ImgCropper
-                imageURL={original}
-                setImage={setCroppedImage} // Set cropped image URL
-                setCropped={setCropped} // Mark cropping as done
-                setCroppedFile={setCroppedFile} // Store cropped file
-              />
-            </div>
-          )}
+      {!cropped && original && (
+        <div className="w-screen h-screen bg-white">
+          <ImgCropper
+            imageURL={original}
+            setImage={setCroppedImage}
+            setCropped={setCropped}
+            setCroppedFile={setCroppedFile}
+          />
+        </div>
+      )}
       <div className="w-full min-h-screen bg-emerald-200 flex justify-center items-center p-4 overflow-y-auto">
         <ToastContainer />
         <div className="w-full max-w-md bg-[#F6FBF9] rounded-2xl shadow-lg p-8 my-8">
@@ -208,7 +213,7 @@ const SignUp = () => {
                     <FaCamera size={32} color="#9CA3AF" />
                   </div>
                 )}
-                <button 
+                <button
                   type="button"
                   onClick={handleImageEdit}
                   className="absolute bottom-0 right-0 bg-white rounded-full p-2 shadow-md"
@@ -222,90 +227,117 @@ const SignUp = () => {
                 name="userImg"
                 accept="image/*"
                 onChange={handleImageChange}
-                className="hidden"
+                hidden
               />
-              {formik.touched.userImg && formik.errors.userImg && showError && (
+              {formik.touched.userImg && formik.errors.userImg && (
                 <div className="text-red-500 text-sm mt-1">{formik.errors.userImg}</div>
               )}
+              {formik.touched.croppedImg && formik.errors.croppedImg && (
+                <div className="text-red-500 text-sm mt-1">{formik.errors.croppedImg}</div>
+              )}
             </div>
+
+            {/* Name Input */}
             <div>
               <input
+                id="name"
                 type="text"
                 name="name"
-                className="w-full p-3 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-300"
-                placeholder="Name"
+                placeholder="Full Name"
+                className="w-full px-4 py-2 border rounded-lg focus:outline-none"
                 value={formik.values.name}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
               />
-              {formik.touched.name && formik.errors.name && showError && (
-                <div className="text-red-500 text-sm mt-1">{formik.errors.name}</div>
+              {formik.touched.name && formik.errors.name && (
+                <div className="text-red-500 text-sm">{formik.errors.name}</div>
               )}
             </div>
+
+            {/* Email Input */}
             <div>
               <input
-                type="email"
+                id="email"
+                type="text"
                 name="email"
-                className="w-full p-3 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-300"
-                placeholder="Email"
+                placeholder="Email Address"
+                className="w-full px-4 py-2 border rounded-lg focus:outline-none"
                 value={formik.values.email}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
               />
-              {formik.touched.email && formik.errors.email && showError && (
-                <div className="text-red-500 text-sm mt-1">{formik.errors.email}</div>
+              {formik.touched.email && formik.errors.email && (
+                <div className="text-red-500 text-sm">{formik.errors.email}</div>
               )}
             </div>
+
+            {/* Password Input */}
             <div className="relative">
               <input
+                id="pass"
                 type={showPassword ? "text" : "password"}
                 name="pass"
-                className="w-full p-3 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-300"
                 placeholder="Password"
+                className="w-full px-4 py-2 border rounded-lg focus:outline-none"
                 value={formik.values.pass}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
               />
               <button
                 type="button"
+                className="absolute right-2 top-2 focus:outline-none"
                 onClick={togglePasswordVisibility}
-                className="absolute right-3 top-3"
-                aria-label={showPassword ? "Hide password" : "Show password"}
               >
                 {showPassword ? <FaEyeSlash /> : <FaEye />}
               </button>
-              {formik.touched.pass && formik.errors.pass && showError && (
-                <div className="text-red-500 text-sm mt-1">{formik.errors.pass}</div>
+              {formik.touched.pass && formik.errors.pass && (
+                <div className="text-red-500 text-sm">{formik.errors.pass}</div>
               )}
             </div>
+
+            {/* Confirm Password Input */}
             <div className="relative">
               <input
+                id="conPass"
                 type={showConfirmPassword ? "text" : "password"}
                 name="conPass"
-                className="w-full p-3 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-300"
                 placeholder="Confirm Password"
+                className="w-full px-4 py-2 border rounded-lg focus:outline-none"
                 value={formik.values.conPass}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
               />
               <button
                 type="button"
+                className="absolute right-2 top-2 focus:outline-none"
                 onClick={toggleConfirmPasswordVisibility}
-                className="absolute right-3 top-3"
-                aria-label={showConfirmPassword ? "Hide password" : "Show password"}
               >
                 {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
               </button>
-              {formik.touched.conPass && formik.errors.conPass && showError && (
-                <div className="text-red-500 text-sm mt-1">{formik.errors.conPass}</div>
+              {formik.touched.conPass && formik.errors.conPass && (
+                <div className="text-red-500 text-sm">{formik.errors.conPass}</div>
               )}
             </div>
-            <button
-              type="submit"
-              className="w-full bg-[#84C7AE] text-white py-3 rounded-md mt-6 hover:bg-emerald-600 transition duration-300"
-            >
-              Sign Up
+
+            {/* Submit Button */}
+            <button type="submit" className="w-full bg-emerald-600 text-white py-2 rounded-lg hover:bg-emerald-700">
+              Create Account
             </button>
+
+            <div className="mt-4 text-center text-gray-600">or</div>
+
+            {/* Google Login Button */}
+            <div className="flex justify-center">
+              <GoogleLogin
+                onSuccess={handleGoogleLoginSuccess}
+                onError={() => {
+                  console.log("Login Failed");
+                  toast.error("Google login failed.");
+                }}
+                text="signup_with"
+                useOneTap
+              />
+            </div>
           </form>
           <p className="text-center mt-4">
             Already have an account?{" "}
@@ -316,20 +348,11 @@ const SignUp = () => {
               Sign In
             </span>
           </p>
-          <p className="text-center mt-2">or</p>
-          <div className="w-full flex justify-center">
-          <GoogleLogin
-            onSuccess={handleGoogleLoginSuccess}
-            onError={() => console.error('Google Login Failed')}
-            buttonText="Login with Google"
-            className=" bg-white text-gray-700 py-3 px-4 rounded-md mt-2 border border-gray-300 hover:bg-gray-100 transition duration-300 flex items-center justify-center cursor-pointer"
-          />
-        </div>
         </div>
       </div>
     </GoogleOAuthProvider>
-
   );
 };
 
 export default SignUp;
+
