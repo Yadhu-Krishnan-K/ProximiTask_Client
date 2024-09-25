@@ -59,7 +59,10 @@ const ImgCropper = ({imageURL,cropInit,zoomInit,setImage,setCropped, setCroppedF
           className='fixed top-3 right-3 w-56 h-11 bg-red-100 rounded-3xl flex justify-evenly'
         >
             <button className='text-fuchsia-900 ' onClick={croppedImage}>crop</button>
-            <button className='text-red-500' onClick={()=>{setImage('')}}>cancel</button>
+            <button className='text-red-500' onClick={()=>{
+              setImage('')
+              // setCropped(false)
+              }}>cancel</button>
         </div>
     </>
   )

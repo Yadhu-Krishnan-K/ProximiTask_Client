@@ -36,10 +36,19 @@ const SignUp = () => {
       return () => clearTimeout(timer);
     }
   }, [showError]);
+  useEffect(()=>{
+    if(croppedFile!==null){
+      const objUrl = URL.createObjectURL(croppedFile)
+      setCroppedImage(objUrl)
+
+      return () => URL.revokeObjectURL(objUrl);
+    }
+  },[croppedFile])
 
   const formik = useFormik({
     initialValues: {
       userImg: null,
+      croppedImg:null,
       name: "",
       email: "",
       pass: "",
@@ -47,8 +56,9 @@ const SignUp = () => {
     },
     validationSchema: Yup.object({
       userImg: Yup.mixed().required("Profile image is required"),
+      croppedImg:Yup.mixed().required('need to crop'),
       name: Yup.string()
-        .matches(/[A-Za-z]/, "Name must contain at least one alphabetic character")
+        .matches(/[A-Za-z]/, "Name must contain at least one alhabetic character")
         .matches(/^[A-Za-z\s]+$/, "Name can only contain letters and spaces")
         .required("Name is required"),
       email: Yup.string()
@@ -73,6 +83,7 @@ const SignUp = () => {
       formData.append("email", values.email);
       formData.append("pass", values.pass);
       formData.append("userImg", values.userImg);
+      formData.append("croppedImg", values.croppedImg)
 
       instance
         .post("/users/initiateSignup", formData, {
@@ -129,11 +140,7 @@ const SignUp = () => {
   const toggleConfirmPasswordVisibility = () => {
     setShowConfirmPassword(!showConfirmPassword);
   };
-  useEffect(()=>{
-    console.log('cropped file = ',croppedFile)
-    // const fileUrl = URL.createObjectURL(croppedFile)
-    // setCropped(fileUrl)
-  },[cropped])
+
   const handleGoogleLoginSuccess = (response) => {
     const { credential } = response;
 
@@ -167,40 +174,41 @@ const SignUp = () => {
 
   return (
     <GoogleOAuthProvider clientId={clientId}>
-      <div className="w-full min-h-screen bg-emerald-200 flex justify-center items-center p-4 overflow-y-auto">
-        <ToastContainer />
-        <div className="w-full max-w-md bg-[#F6FBF9] rounded-2xl shadow-lg p-8 my-8">
-          <h1 className="text-2xl font-bold text-center mb-6">Create An Account</h1>
-          
-          {!cropped && original && (
-            // <div className="w-full h-full bg-white">
+      
+        {!cropped && original && (
+            <div className="w-screen h-screen bg-white">
               <ImgCropper
                 imageURL={original}
                 setImage={setCroppedImage} // Set cropped image URL
                 setCropped={setCropped} // Mark cropping as done
                 setCroppedFile={setCroppedFile} // Store cropped file
               />
-            // </div>
+            </div>
           )}
+      <div className="w-full min-h-screen bg-emerald-200 flex justify-center items-center p-4 overflow-y-auto">
+        <ToastContainer />
+        <div className="w-full max-w-md bg-[#F6FBF9] rounded-2xl shadow-lg p-8 my-8">
+          <h1 className="text-2xl font-bold text-center mb-6">Create An Account</h1>
+          
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="flex flex-col items-center mb-4">
               <div className="relative mb-4">
                 {cropped ? (
                   <img
-                    src={croppedFile}
+                    src={croppedImage}
                     alt="Preview"
                     className="w-32 h-32 rounded-full object-cover"
                     onClick={() => {
-                      setOriginal(croppedImage);
+                      setOriginal(original);
                       setCropped(false);
                     }}
                   />
                 ) : (
-                  <div className="w-32 h-32 rounded-full bg-gray-200 flex items-center justify-center">
+                  <div className="w-32 h-32 rounded-full bg-gray-200 flex items-center justify-center cursor-pointer" onClick={handleImageEdit}>
                     <FaCamera size={32} color="#9CA3AF" />
                   </div>
                 )}
-                <button
+                <button 
                   type="button"
                   onClick={handleImageEdit}
                   className="absolute bottom-0 right-0 bg-white rounded-full p-2 shadow-md"
