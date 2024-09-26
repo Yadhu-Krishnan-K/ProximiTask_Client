@@ -156,7 +156,7 @@ const WSignUp = () => {
           <div className="w-full md:w-1/2 flex items-center justify-center p-8">
             <div className="w-full max-w-md">
               <h1 className="text-2xl font-bold mb-6">Create Account</h1>
-              <form onSubmit={form.handleSubmit}>
+              <form onSubmit={form.handleSubmit} noValidate >
                 <div className="flex w-full h-20 justify-center">
                   {(cropped && croppedImg) ? (
                     <img

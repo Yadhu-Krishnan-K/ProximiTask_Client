@@ -144,7 +144,7 @@ function CreateAccountForm({ setOriginalImg, setCroppedImg, setCropped, onClose,
           };
 
           return (
-            <Form className="space-y-4">
+            <Form className="space-y-4" noValidate>
               <ToastContainer />
 
               {/* Area Selection */}

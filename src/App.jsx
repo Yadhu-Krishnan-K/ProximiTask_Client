@@ -71,7 +71,7 @@ function App() {
           <Route index element={<Navigate to='WorkerServices' />} />
           <Route path='WorkerServices' element={<WorkerServices />} />
         </Route>
-        <Route path='/user/profile' element={<Profile />} >
+        <Route path='/user/profile' element={user?.isActive?(<Profile />):(<Navigate to='/' />)} >
           <Route index element={<Navigate to='editProfile' />} />
           <Route path='editProfile' element={<EditProfile />} />
           <Route path='security' element={<Security />} />

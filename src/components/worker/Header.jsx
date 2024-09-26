@@ -13,7 +13,7 @@ function logout(){
   logOutHeloper('worker')
   dispatch(deleteWorkerData())
   // nav('/WorkerSignUp')
-  window.location.href = '/WorkerSignUp'
+  window.location.href = '/worker/signup'
 }
 
  return (

@@ -78,7 +78,7 @@ const AdminLogin = () => {
       <ToastContainer />
       <div className="bg-white rounded-lg shadow-md p-8 w-full max-w-md relative">
         <div className="text-emerald-400 text-2xl font-bold mb-6">ProximiTask</div>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} noValidate>
           <div className="mb-4">
             <input
               id="email"
