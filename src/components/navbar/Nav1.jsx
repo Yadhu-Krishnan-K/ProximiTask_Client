@@ -1,8 +1,7 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import logOutHeloper from '../../helper/logoutHelper'
+import logOutHelper from '../../helper/logoutHelper'
 import { IoMdArrowDropdown, IoMdArrowDropup } from "react-icons/io";
-
 
 function Nav1({ user }) {
   const nav = useNavigate()
@@ -11,7 +10,7 @@ function Nav1({ user }) {
 
   function logout() {
     localStorage.removeItem('userData')
-    logOutHeloper('user')
+    logOutHelper('user')
     window.location.href = '/';
   }
 
@@ -23,31 +22,35 @@ function Nav1({ user }) {
       {user ? (
         <>
           <li className='cursor-pointer'>Chat</li>
-          <li className='cursor-pointer flex justify-center items-center' onClick={() => setDdopen((prev) => !prev)}>{user.name}{ddopen ? (<IoMdArrowDropup />) : (<IoMdArrowDropdown />)}</li>
-          {(
-  <div
-    className={`w-48 flex flex-col bg-white border border-gray-200 shadow-md rounded-md absolute top-16 right-0 z-50
-    transition-all duration-300 ease-in-out transform overflow-hidden
-    ${ddopen ? 'opacity-100 max-h-64 translate-y-0' : 'opacity-0 max-h-0 translate-y-[-10px]'}`}
-    style={{ transitionProperty: 'opacity, transform, max-height' }}
-  >
-    <div className='px-4 py-2 hover:bg-gray-100 cursor-pointer' onClick={() => nav('/user/profile/editProfile')}>Edit Profile</div>
-    <div className='px-4 py-2 hover:bg-gray-100 cursor-pointer' onClick={() => nav('/notifications')}>Notifications</div>
-    <div className='px-4 py-2 hover:bg-gray-100 cursor-pointer' onClick={() => nav('/user/profile/security')}>Security</div>
-    <div className='px-4 py-2 hover:bg-gray-100 cursor-pointer' onClick={() => nav('/help')}>Help</div>
-    <div className='px-4 py-2 hover:bg-red-100 cursor-pointer text-red-500' onClick={logout}>Logout</div>
-  </div>
-)}
+          <li className='relative'>
+            <div className='flex items-center cursor-pointer space-x-2 p-2 bg-gray-100 rounded-full shadow-md hover:bg-gray-200 transition-all duration-300' onClick={() => setDdopen(!ddopen)}>
+              <img src={user.croppedImgURL} alt="img" className='w-8 h-8 rounded-full object-cover border-2 border-cyan-500' />
+              <span className='text-md font-semibold text-gray-800'>{user.name}</span>
+              <span className='text-cyan-500'>
+                {ddopen ? <IoMdArrowDropup size={20} /> : <IoMdArrowDropdown size={20} />}
+              </span>
+            </div>
 
-
-
+            {/* Dropdown Menu */}
+            {ddopen && (
+              <div className='absolute right-0 mt-2 w-48 bg-white border border-gray-200 shadow-lg rounded-lg z-50'>
+                <div className='flex flex-col'>
+                  <div className='px-4 py-2 hover:bg-gray-100 cursor-pointer' onClick={() => nav('/user/profile/editProfile')}>Edit Profile</div>
+                  <div className='px-4 py-2 hover:bg-gray-100 cursor-pointer' onClick={() => nav('/notifications')}>Notifications</div>
+                  <div className='px-4 py-2 hover:bg-gray-100 cursor-pointer' onClick={() => nav('/user/profile/security')}>Security</div>
+                  <div className='px-4 py-2 hover:bg-gray-100 cursor-pointer' onClick={() => nav('/help')}>Help</div>
+                  <div className='px-4 py-2 hover:bg-red-100 cursor-pointer text-red-500' onClick={logout}>Logout</div>
+                </div>
+              </div>
+            )}
+          </li>
         </>
       ) : (
         <>
           <li className='cursor-pointer' onClick={() => nav('/user/signUp')}>SignUp/SignIn</li>
           <li>
             <button
-              className='bg-cyan-700 text-white py-1 px-4 rounded-full'
+              className='bg-cyan-700 text-white py-1 px-4 rounded-full hover:bg-cyan-800 transition-colors duration-300'
               onClick={() => nav('/worker/signUp')}
             >
               Become a tasker
@@ -59,15 +62,15 @@ function Nav1({ user }) {
   )
 
   return (
-    <nav className='w-full h-20 flex justify-between items-center shadow-lg px-4'>
+    <nav className='w-full h-16 flex justify-between items-center shadow-md px-4 bg-white'>
       {/* Logo Section */}
       <div className="logo flex items-center">
-        <img src="/logo.png" alt="logo" className='lg:w-52 w-36 transition-all duration-300 ease-in-out' />
+        <img src="/logo.png" alt="logo" className='lg:w-48 w-36 transition-all duration-300 ease-in-out' />
       </div>
 
       {/* Desktop Menu */}
       <div className='hidden md:flex items-center'>
-        <ul className='flex space-x-4'>
+        <ul className='flex space-x-6 text-md font-medium text-gray-700 items-center'>
           {menuItems}
         </ul>
       </div>
@@ -89,8 +92,8 @@ function Nav1({ user }) {
 
       {/* Mobile Dropdown Menu */}
       {isOpen && (
-        <div className="absolute top-20 right-0 w-full bg-white shadow-lg md:hidden">
-          <ul className='flex flex-col items-center space-y-4 p-4'>
+        <div className="absolute top-16 right-0 w-full bg-white shadow-lg md:hidden z-40">
+          <ul className='flex flex-col items-center space-y-4 p-4 text-md font-medium text-gray-700'>
             {menuItems}
           </ul>
         </div>
