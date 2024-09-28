@@ -1,11 +1,11 @@
 import React from 'react'
 import { NavLink } from 'react-router-dom'
 
-function WorkerSidebar() {
+function WorkerSidebar({id}) {
   return (
     <div className='grid mt-5 p-3 max-w-44 border-2'>
-        <NavLink 
-         to='/WorkerDetails/WorkerServices'
+        {/* <NavLink 
+         to='/user/WorkerDetails/WorkerServices'
          className={({isActive})=>
             isActive?
             'text-[#083A50] cursor-pointer bg-gray-300 font-semibold py-2 px-4 w-full rounded'
@@ -14,7 +14,7 @@ function WorkerSidebar() {
          }
         >
             Services
-        </NavLink>
+        </NavLink> */}
         <NavLink 
          to='/det'
          className={({isActive})=>
@@ -27,7 +27,7 @@ function WorkerSidebar() {
             Details
         </NavLink>
         <NavLink 
-        to='/boo'
+        to={`/user/WorkerDetails/${id}/workerBooking`}
         className={({isActive})=>
             isActive?
             'text-[#083A50] cursor-pointer bg-gray-300 font-semibold py-2 px-4 w-full rounded'

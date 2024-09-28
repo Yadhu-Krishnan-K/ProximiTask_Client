@@ -21,7 +21,7 @@ function ProfileSidebar() {
                 Billing
             </NavLink>
             <NavLink
-                to='/WorkerProfile/notifications'
+                to='/worker/profile/notifications'
                 className={({isActive})=>isActive?
                 'text-[#083A50] cursor-pointer bg-gray-300 font-semibold py-2 px-4 w-full rounded'
                 :

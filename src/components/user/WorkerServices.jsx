@@ -1,9 +1,20 @@
-import { useEffect } from "react"
+import { useEffect,useState } from "react"
+import { useParams } from "react-router-dom"
+import instance from "../../helper/axiosInstance"
 
 function WorkerServices() {//workerId pass here
+  const {id} = useParams()
+  const [worker, setWorker] = useState(null)
   useEffect(()=>{
-    
+    getWorker(id)
   },[])
+  async function getWorker(id){
+    const response = await instance.get(`/workers/worker/${id}`)
+    if(response.data.success){
+      console.log(response)
+      setWorker(response.data.worker)
+    }
+  }
 
   return (
     <>

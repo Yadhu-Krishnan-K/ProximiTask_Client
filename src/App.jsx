@@ -7,6 +7,7 @@ import './App.css'
 import { setUserData } from './redux/features/User/userSlice'
 import { setWorkerData } from './redux/features/Worker/workerSlice'
 import { setAdmin } from './redux/features/Admin/adminSlice'
+import ServiceBookingForm from './pages/User/WorkerBooking'
 
 const LandingPage = lazy(() => import('./pages/User/LandingPage'));
 const SignUp = lazy(() => import('./pages/User/SignUp'));
@@ -55,56 +56,50 @@ function App() {
     }
   }, []);
 
-
-
   return (
 
     <>
-    <Suspense fallback={<div>Loading...</div>}>
-      <Routes>
+      <Suspense fallback={<div>Loading...</div>}>
+        <Routes>
 
-        <Route path='/user/signUp' element={user?.isActive ? (<Navigate to='/' />) : (<SignUp />)} />
-        <Route path='/user/login' element={user?.isActive ? (<Navigate to='/' />) : (<Login />)} />
-        <Route path='/user/Otp' element={user?.isActive ? (<Navigate to='/' />) : (<OTPPage />)} />
-        <Route path='/' element={<LandingPage />} />
-        <Route path='/user/WorkerDetails/:id' element={<WorkerDetailPage />}>
-          <Route index element={<Navigate to='WorkerServices' />} />
-          <Route path='WorkerServices' element={<WorkerServices />} />
-        </Route>
-        <Route path='/user/profile' element={user?.isActive?(<Profile />):(<Navigate to='/' />)} >
-          <Route index element={<Navigate to='editProfile' />} />
-          <Route path='editProfile' element={<EditProfile />} />
-          <Route path='security' element={<Security />} />
-        </Route>
+          <Route path='/user/signUp' element={user?.isActive ? (<Navigate to='/' />) : (<SignUp />)} />
+          <Route path='/user/login' element={user?.isActive ? (<Navigate to='/' />) : (<Login />)} />
+          <Route path='/user/Otp' element={user?.isActive ? (<Navigate to='/' />) : (<OTPPage />)} />
+          <Route path='/' element={<LandingPage />} />
+          <Route path='/user/WorkerDetails/:id' element={<WorkerDetailPage />}>
+            <Route index element={<Navigate to='WorkerServices' />} />
+            <Route path='WorkerServices' element={<WorkerServices />} />
+            <Route path='workerBooking' element={user?.isActive ? (<ServiceBookingForm />) : (<Navigate to='/user/login' />)} />
+          </Route>
+          <Route path='/user/profile' element={user?.isActive ? (<Profile />) : (<Navigate to='/' />)} >
+            <Route index element={<Navigate to='editProfile' />} />
+            <Route path='editProfile' element={<EditProfile />} />
+            <Route path='security' element={<Security />} />
+          </Route>
 
+          <Route path='/worker/signUp' element={worker?.active ? (<Navigate to='/worker/profile' />) : (<WSignUp />)} />
+          <Route path='/worker/profile' element={worker?.active ? (<WorkerProfile />) : (<Navigate to='/worker/signUp' />)} >
+            <Route index element={<Navigate to='workerProfileEdit' />} />
+            <Route path='workerProfileEdit' element={<ProfileForm />} />
+          </Route>
+          {/* <Route path='/WorkerServices' element={worker.active?(<WorkerServices />):(<Navigate to='/WorkerProfile' />)} /> */}
+          <Route path='/worker/services' element={<WorkerServices />} />
 
+          <Route path='/admin/login' element={!adminStatus ? (<AdminLogin />) : (<Navigate to="/admin/panel" />)} />
+          <Route path='/admin/panel' element={adminStatus ? (<Container />) : (<Navigate to="/admin/login" />)} >
+            <Route index element={<Navigate to='customers' />} />
+            <Route path='customers' element={<CustomerList />} />
+            <Route path='workers' element={<WorkerList />} />
+            <Route path='categories' element={<CategoryList />} />
+            <Route path='location' element={<LocationManagement />} />
+          </Route>
 
-        <Route path='/worker/signUp' element={worker?.active ? (<Navigate to='/worker/profile' />) : (<WSignUp />)} />
-        <Route path='/worker/profile' element={worker?.active ? (<WorkerProfile />) : (<Navigate to='/worker/signUp' />)} >
-          <Route index element={<Navigate to='workerProfileEdit' />} />
-          <Route path='workerProfileEdit' element={<ProfileForm />} />
-        </Route>
-        {/* <Route path='/WorkerServices' element={worker.active?(<WorkerServices />):(<Navigate to='/WorkerProfile' />)} /> */}
-        <Route path='/worker/services' element={<WorkerServices />} />
+          {/* <Route path='/test' element={<Test />} /> */}
 
-
-
-        <Route path='/admin/login' element={!adminStatus ? (<AdminLogin />) : (<Navigate to="/admin/panel" />)} />
-        <Route path='/admin/panel' element={adminStatus ? (<Container />) : (<Navigate to="/admin/login" />)} >
-          <Route index element={<Navigate to='customers' />} />
-          <Route path='customers' element={<CustomerList />} />
-          <Route path='workers' element={<WorkerList />} />
-          <Route path='categories' element={<CategoryList />} />
-          <Route path='location' element={<LocationManagement />} />
-        </Route>
-
-        {/* <Route path='/test' element={<Test />} /> */}
-
-
-        {/* <Route path='/logout' */}
-        <Route path='*' element={<NotFoundPage />} />
-      </Routes >
-    </Suspense>
+          {/* <Route path='/logout' */}
+          <Route path='*' element={<NotFoundPage />} />
+        </Routes >
+      </Suspense>
     </>
   )
 }

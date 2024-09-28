@@ -180,7 +180,7 @@ const SignUp = () => {
 
   return (
     <GoogleOAuthProvider clientId={clientId}>
-      {!cropped && original && (
+      {(!cropped && original )? (
         <div className="w-screen h-screen bg-white">
           <ImgCropper
             imageURL={original}
@@ -189,7 +189,7 @@ const SignUp = () => {
             setCroppedFile={setCroppedFile}
           />
         </div>
-      )}
+      ):
       <div className="w-full min-h-screen bg-emerald-200 flex justify-center items-center p-4 overflow-y-auto">
         <ToastContainer />
         <div className="w-full max-w-md bg-[#F6FBF9] rounded-2xl shadow-lg p-8 my-8">
@@ -350,6 +350,7 @@ const SignUp = () => {
           </p>
         </div>
       </div>
+      }
     </GoogleOAuthProvider>
   );
 };
