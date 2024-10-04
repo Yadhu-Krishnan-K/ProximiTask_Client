@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import logOutHelper from '../../helper/logoutHelper'
 import { IoMdArrowDropdown, IoMdArrowDropup } from "react-icons/io";
@@ -7,6 +7,22 @@ function Nav1({ user }) {
   const nav = useNavigate()
   const [ddopen, setDdopen] = useState(false)
   const [isOpen, setIsOpen] = useState(false) // State to toggle the mobile menu
+  const dropdownRef = useRef(null)
+  useEffect(()=>{
+    function handleClickOutside(event) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDdopen(false); // Close the dropdown if clicked outside
+      }
+    }
+
+    // Add event listener for clicks on the whole document
+    document.addEventListener('mousedown', handleClickOutside);
+
+    // Cleanup event listener on unmount
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [])
 
   function logout() {
     localStorage.removeItem('userData')
@@ -18,12 +34,12 @@ function Nav1({ user }) {
   const menuItems = (
     <>
       <li className='cursor-pointer' onClick={() => nav('/')}>Home</li>
-      <li className='cursor-pointer' onClick={() => nav('/services')}>Services</li>
+      <li className='cursor-pointer' onClick={() => nav('/user/Services')}>Services</li>
       {user ? (
         <>
           <li className='cursor-pointer'>Chat</li>
-          <li className='relative'>
-            <div className='flex items-center cursor-pointer space-x-2 p-2 bg-gray-100 rounded-full shadow-md hover:bg-gray-200 transition-all duration-300' onClick={() => setDdopen(!ddopen)}>
+          <li className='relative' ref={dropdownRef}>
+              <div className='flex items-center cursor-pointer space-x-2 p-2 bg-gray-100 rounded-full shadow-md hover:bg-gray-200 transition-all duration-300' onClick={() => setDdopen(!ddopen)}>
               <img src={user.croppedImgURL} alt="img" className='w-8 h-8 rounded-full object-cover border-2 border-cyan-500' />
               <span className='text-md font-semibold text-gray-800'>{user.name}</span>
               <span className='text-cyan-500'>
@@ -35,10 +51,10 @@ function Nav1({ user }) {
             {ddopen && (
               <div className='absolute right-0 mt-2 w-48 bg-white border border-gray-200 shadow-lg rounded-lg z-50'>
                 <div className='flex flex-col'>
-                  <div className='px-4 py-2 hover:bg-gray-100 cursor-pointer' onClick={() => nav('/user/profile/editProfile')}>Edit Profile</div>
-                  <div className='px-4 py-2 hover:bg-gray-100 cursor-pointer' onClick={() => nav('/notifications')}>Notifications</div>
-                  <div className='px-4 py-2 hover:bg-gray-100 cursor-pointer' onClick={() => nav('/user/profile/security')}>Security</div>
-                  <div className='px-4 py-2 hover:bg-gray-100 cursor-pointer' onClick={() => nav('/help')}>Help</div>
+                  <div className='px-4 py-2 hover:bg-gray-100 cursor-pointer' onClick={() => nav(`/user/profile/${user._id}/editProfile`)}>Edit Profile</div>
+                  <div className='px-4 py-2 hover:bg-gray-100 cursor-pointer' onClick={() => nav(`/user/profile/${user._id}/notifications`)}>Notifications</div>
+                  <div className='px-4 py-2 hover:bg-gray-100 cursor-pointer' onClick={() => nav(`/user/profile/${user._id}/security`)}>Security</div>
+                  <div className='px-4 py-2 hover:bg-gray-100 cursor-pointer' onClick={() => nav(`/user/profile/${user._id}/help`)}>Help</div>
                   <div className='px-4 py-2 hover:bg-red-100 cursor-pointer text-red-500' onClick={logout}>Logout</div>
                 </div>
               </div>
@@ -89,7 +105,6 @@ function Nav1({ user }) {
           </svg>
         </button>
       </div>
-
       {/* Mobile Dropdown Menu */}
       {isOpen && (
         <div className="absolute top-16 right-0 w-full bg-white shadow-lg md:hidden z-40">

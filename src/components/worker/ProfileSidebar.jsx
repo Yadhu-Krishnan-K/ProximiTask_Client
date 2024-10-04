@@ -5,7 +5,7 @@ function ProfileSidebar() {
   return (
     <>
         <div className='flex flex-col mt-8'>
-            <NavLink to='/WorkerProfile/workerProfileEdit' className={({isActive})=>isActive?
+            <NavLink to='/worker/profile/workerProfileEdit' className={({isActive})=>isActive?
             'text-[#083A50] cursor-pointer bg-gray-300 font-semibold py-2 px-4 w-full rounded'
             :
             'text-gray-400 font-semibold py-2 px-4 w-full rounded hover:bg-gray-200 hover:text-[#083A50] cursor-pointer'}>

@@ -104,11 +104,15 @@ instance.interceptors.response.use(
           } catch (refreshError) {
             console.error("Failed to refresh token", refreshError);
             localStorage.clear()
-            window.location.href = "/UserLogin"; 
+            if(data.role == 'user') window.location.href = "/user/login"; 
+            if(data.role == 'admin') window.location.href = "/admin/login"; 
+            if(data.role == 'worker') window.location.href = '/worker/signup';
           }
         } else {
-          localStorage.clear()
-          window.location.href = "/UserLogin"; // Redirect to login page
+            localStorage.clear()
+            if(data.role == 'user') window.location.href = "/user/login"; 
+            if(data.role == 'admin') window.location.href = "/admin/login"; 
+            if(data.role == 'worker') window.location.href = '/worker/signup';
         }
       } else {
         console.error('error due to invalide user')

@@ -8,6 +8,8 @@ import { setUserData } from './redux/features/User/userSlice'
 import { setWorkerData } from './redux/features/Worker/workerSlice'
 import { setAdmin } from './redux/features/Admin/adminSlice'
 import ServiceBookingForm from './pages/User/WorkerBooking'
+import Notifications from './components/worker/Notifications'
+import ServiceList from './pages/User/ServiceList'
 
 const LandingPage = lazy(() => import('./pages/User/LandingPage'));
 const SignUp = lazy(() => import('./pages/User/SignUp'));
@@ -29,6 +31,7 @@ const WorkerDetailPage = lazy(() => import('./pages/User/WorkerDetailPage'));
 const WorkerServices = lazy(() => import('./components/user/WorkerServices'));
 const ProfileForm = lazy(() => import('./components/worker/ProfileForm'));
 const LocationManagement = lazy(() => import('./components/admin/LocationManagement'));
+const BookingStatusList = lazy(() => import('./components/user/BookingStatusList'));
 
 function App() {
 
@@ -66,14 +69,16 @@ function App() {
           <Route path='/user/login' element={user?.isActive ? (<Navigate to='/' />) : (<Login />)} />
           <Route path='/user/Otp' element={user?.isActive ? (<Navigate to='/' />) : (<OTPPage />)} />
           <Route path='/' element={<LandingPage />} />
+          <Route path='/user/Services' element={<ServiceList />} />
           <Route path='/user/WorkerDetails/:id' element={<WorkerDetailPage />}>
             <Route index element={<Navigate to='WorkerServices' />} />
-            <Route path='WorkerServices' element={<WorkerServices />} />
-            <Route path='workerBooking' element={user?.isActive ? (<ServiceBookingForm />) : (<Navigate to='/user/login' />)} />
+            <Route path='details' element={<WorkerServices />} />
+            <Route path='workerBooking' element={user?.isActive ? (<ServiceBookingForm  />) : (<Navigate to='/user/login' />)} />
           </Route>
-          <Route path='/user/profile' element={user?.isActive ? (<Profile />) : (<Navigate to='/' />)} >
+          <Route path='/user/profile/:id' element={user?.isActive ? (<Profile user={user} />) : (<Navigate to='/' />)} >
             <Route index element={<Navigate to='editProfile' />} />
             <Route path='editProfile' element={<EditProfile />} />
+            <Route path='notifications' element={<BookingStatusList />} />
             <Route path='security' element={<Security />} />
           </Route>
 
@@ -81,6 +86,7 @@ function App() {
           <Route path='/worker/profile' element={worker?.active ? (<WorkerProfile />) : (<Navigate to='/worker/signUp' />)} >
             <Route index element={<Navigate to='workerProfileEdit' />} />
             <Route path='workerProfileEdit' element={<ProfileForm />} />
+            <Route path='notifications' element={<Notifications />} />
           </Route>
           {/* <Route path='/WorkerServices' element={worker.active?(<WorkerServices />):(<Navigate to='/WorkerProfile' />)} /> */}
           <Route path='/worker/services' element={<WorkerServices />} />

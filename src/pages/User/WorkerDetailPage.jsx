@@ -7,12 +7,15 @@ import WorkerInfo from '../../components/user/WorkerInfo';
 import Nav1 from '../../components/navbar/Nav1';
 import WorkerSidebar from '../../components/user/WorkerSidebar';
 import WorkerServices from '../../components/user/WorkerServices';
+import { useSelector } from 'react-redux';
 
 const WorkerDetailPage = () => {
   const {id} = useParams()  
+  const user = useSelector((state) => state.userReducer.userData);
+
   return (
     <div className="min-h-screen bg-gray-100 w-full">
-      <Nav1 />
+      <Nav1 user={user} />
       <main className=" w-full">
         <WorkerInfo id={id} />
         <div className='flex'>

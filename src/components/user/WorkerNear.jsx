@@ -11,7 +11,7 @@ function WorkerNear({ location }) {
 
   useEffect(() => {
     getAllWorkers();
-  }, [location]); // Add location as a dependency
+  }, [location]);
 
   const nav = useNavigate()
 
@@ -39,7 +39,7 @@ function WorkerNear({ location }) {
     console.log('Working.....');
     
     console.log('working id == ',_id)
-    nav(`/user/WorkerDetails/${_id}/WorkerServices`)
+    nav(`/user/WorkerDetails/${_id}/workerBooking`)
   }
 
 
