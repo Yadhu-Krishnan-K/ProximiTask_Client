@@ -124,6 +124,7 @@ const WSignUp = () => {
 
   return (
     <>
+    <ToastContainer />
       {(originalImg && !cropped)
         ? (<ImgCropper
           imageURL={URL.createObjectURL(originalImg)}
@@ -139,7 +140,6 @@ const WSignUp = () => {
           }}
         />)
         : (<div className="flex w-full h-screen relative">
-          <ToastContainer />
           {/* Background Section */}
           <div
             className="hidden md:flex md:w-1/2 bg-cover"

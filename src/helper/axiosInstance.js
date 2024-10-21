@@ -14,9 +14,13 @@ const instance = axios.create({
 // Request interceptor
 instance.interceptors.request.use(
   (config) => {
+    // console.log('instance.interceptors',instance.interceptors);
+    
+    // console.log('config from interceptor = ',config)
     try {
-      // Retrieve the access token from localStorage
       const accessTokens = localStorage.getItem("accessTokens");
+      // console.log(`accessToken = ${localStorage.getItem("accessTokens")}, refreshToken = ${localStorage.getItem("refreshToken")}`);
+      
       // const refreshToken = localStorage.getItem("refreshToken")
 
       if (accessTokens && accessTokens.length) {
@@ -24,23 +28,20 @@ instance.interceptors.request.use(
         config.headers["Access-Tokens"] = accessTokens
         // config.headers["Refresh-Tokens"] = refreshTokens
       } 
-      // else {
-      //   // Handle the case where there's no token
-      //   showErrorPopup("No access token found. Please log in.");
-      //   window.location.href = "/UserLogin";
-      // }
 
       return config;
     } catch (error) {
       
       // Handle errors that occur during token retrieval or config modification
-      showErrorPopup("An error occurred while setting up the request.");
+      console.log('An error occurred while setting up the request. ',error)
+      showErrorPopup("Something went wrong please try again later");
       return Promise.reject(error);
     }
   },
   (error) => {
     // Handle errors that occur before the request is sent
-    showErrorPopup("Request setup failed. Please try again.");
+    console.log('Request setup failed. Please try again.',error)
+    showErrorPopup("Something went wrong please try again later");
     return Promise.reject(error);
   }
 );
@@ -52,13 +53,14 @@ instance.interceptors.response.use(
     return response;
   },
   async(error) => {
-    console.error('Error = ', error);
+    console.error('axios Error response = ', error);
     const originalRequest = error.config;
     console.log('response from error = ',error.response)
     if (error.response) {
       const status = error.response.status;
       const data = error.response.data
-      console.log('data ==== from  ==== error ====----===-',data)
+      // console.log('data ==== from  ==== error ====----===-',data)
+      
       let pos
       let accessTokens = localStorage.getItem("accessTokens")
       let details = {}
@@ -74,7 +76,7 @@ instance.interceptors.response.use(
           }
           
         }
-        console.log('details obj ===============!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!',details)
+        console.log('details obj ===============!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!',details)
         if(pos<accTs.length){
           accTs.splice(pos,1)
           localStorage.setItem('accessTokens',JSON.stringify(accTs))
@@ -95,8 +97,8 @@ instance.interceptors.response.use(
             if (response.data.success) {
               let accessTokens  = JSON.parse(localStorage.getItem("accessTokens"))
               accessTokens.push(response.data.accessToken)
-              localStorage.setItem("accessToken", JSON.stringify(accessTokens));
-              originalRequest.headers["Access-Tokens"] = accessTokens;
+              localStorage.setItem("accessTokens", JSON.stringify(accessTokens));
+              originalRequest.headers["Access-Tokens"] = JSON.stringify(accessTokens);
               return axios(originalRequest);
             } else {
               throw new Error('Refresh token expired');
@@ -114,10 +116,10 @@ instance.interceptors.response.use(
             if(data.role == 'admin') window.location.href = "/admin/login"; 
             if(data.role == 'worker') window.location.href = '/worker/signup';
         }
-      } else {
-        console.error('error due to invalide user')
-        const backendMessage = error.response.data.error || 'An error occurred';
-        showErrorPopup(backendMessage);
+      }else if(status == 500){
+        showErrorPopup("Something went wrong, please try again later")
+      }else{
+        
       }
     } else if (error.request) {
       // The request was made but no response was received (network error, server down)

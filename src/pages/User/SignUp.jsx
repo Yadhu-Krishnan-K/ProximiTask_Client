@@ -10,6 +10,8 @@ import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 import { setUserData } from "../../redux/features/User/userSlice";
 import ImgCropper from "../../helper/ImageCropper";
 import "react-toastify/dist/ReactToastify.css";
+import { signUpSchema } from "../../helper/schemas";
+import showErrorPopup from "../../Common/ShowErrorPopup";
 
 const SignUp = () => {
   const nav = useNavigate();
@@ -53,29 +55,7 @@ const SignUp = () => {
       pass: "",
       conPass: "",
     },
-    validationSchema: Yup.object({
-      userImg: Yup.mixed().required("Profile image is required"),
-      croppedImg: Yup.mixed().required("Image needs to be cropped"),
-      name: Yup.string()
-        .matches(/[A-Za-z]/, "Name must contain at least one alphabetic character")
-        .matches(/^[A-Za-z\s]+$/, "Name can only contain letters and spaces")
-        .required("Name is required"),
-      email: Yup.string()
-        .matches(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, "Invalid email address")
-        .matches(/^\S*$/, "Email must not contain spaces")
-        .required("Email is required"),
-      pass: Yup.string()
-        .min(8, "Password must be at least 8 characters")
-        .matches(/[A-Z]/, "Password must contain at least one uppercase letter")
-        .matches(/[a-z]/, "Password must contain at least one lowercase letter")
-        .matches(/\d/, "Password must contain at least one number")
-        .matches(/[@$!%*?&]/, "Password must contain at least one special character")
-        .matches(/^\S*$/, "Password must not contain spaces")
-        .required("Password is required"),
-      conPass: Yup.string()
-        .oneOf([Yup.ref("pass"), null], "Passwords must match")
-        .required("Confirm Password is required"),
-    }),
+    validationSchema:signUpSchema,
     onSubmit: (values) => {
       const formData = new FormData();
       formData.append("name", values.name);
@@ -109,7 +89,17 @@ const SignUp = () => {
 
   const handleImageChange = (event) => {
     const file = event.currentTarget.files[0];
+    
     if (file) {
+      // Check if the file is an image (valid MIME types)
+      const validImageTypes = ["image/jpeg", "image/png", "image/gif"];
+      
+      if (!validImageTypes.includes(file.type)) {
+        showErrorPopup("Unsupported file format. Please upload a JPEG, PNG, or GIF image.");
+        return; // Exit the function if the file is not a valid image
+      }
+  
+      // Proceed if the file is an image
       const fileUrl = URL.createObjectURL(file);
       setOriginal(fileUrl);
       setOriginalFile(file);
@@ -117,6 +107,7 @@ const SignUp = () => {
       setCropped(false); // Reset cropping state
     }
   };
+  
 
   const handleImageEdit = () => {
     fileInputRef.current.click();

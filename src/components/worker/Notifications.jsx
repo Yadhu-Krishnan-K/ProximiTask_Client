@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Search } from 'lucide-react';
 import instance from '../../helper/axiosInstance';
-import { useParams } from 'react-router-dom';
-import {useSelector} from 'react-redux'
+import { useSelector } from 'react-redux';
 
 const Table = ({ children }) => <table className="min-w-full divide-y divide-gray-200">{children}</table>;
 const TableHeader = ({ children }) => <thead className="bg-gray-50">{children}</thead>;
@@ -10,10 +8,6 @@ const TableBody = ({ children }) => <tbody className="bg-white divide-y divide-g
 const TableRow = ({ children }) => <tr>{children}</tr>;
 const TableHead = ({ children }) => <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{children}</th>;
 const TableCell = ({ children, className }) => <td className={`px-6 py-4 whitespace-nowrap ${className}`}>{children}</td>;
-
-const Input = ({ ...props }) => (
-  <input {...props} className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md" />
-);
 
 const Badge = ({ children, className }) => (
   <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${className}`}>
@@ -33,82 +27,55 @@ const getStatusColor = (status) => {
 };
 
 const Notifications = () => {
-  const worker = useSelector((state)=>state.workerReducer.worker)
+  const worker = useSelector((state) => state.workerReducer.workerData); // Get logged-in worker data
   const [bookings, setBookings] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
-    getBookingDetails();
-  }, []);
+    if (worker?._id) {
+      getBookingDetails();
+    }
+  }, [worker]);
 
   const getBookingDetails = async () => {
     try {
       const response = await instance.get(`/workers/booking/list/${worker._id}`);
-      const workerIds = response.data.list.map((val) => val.workerId);
-      let workerDetails = [];
-      for (let workerId of workerIds) {
-        const workerResponse = await instance.get(`/workers/worker/${workerId}`);
-        workerDetails.push(workerResponse?.data?.worker);
-      }
-      
-      let updatedBookings = response.data.list.map((booking, index) => ({
-        ...booking,
-        workerName: workerDetails[index].name,
-        category: workerDetails[index].category
-      }));
-      
-      setBookings(updatedBookings);
+      setBookings(response.data.list);
     } catch (error) {
       console.error("Error fetching booking details:", error);
     }
   };
 
-  const handleStatusChange = async (workerId, newStatus) => {
+  const handleStatusChange = async (bookingId, newStatus) => {
     try {
-      await instance.patch(`/workers/booking/${id}/${workerId}`, { status: newStatus });
-      getBookingDetails(); // Refresh the booking list
+      await instance.patch(`/workers/booking/${bookingId}`, { status: newStatus });
+      getBookingDetails();
     } catch (error) {
       console.error("Error updating booking status:", error);
     }
   };
 
-  const filteredBookings = bookings.filter(booking =>
-    booking.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    booking.workerName.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
   return (
     <div className="container mx-auto p-6">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Booking Status</h1>
-        {/* <div className="relative">
-          <Input 
-            type="text" 
-            placeholder="Search" 
-            className="pl-10 pr-4 py-2" 
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-        </div> */}
+        <h1 className="text-2xl font-bold">My Bookings</h1>
       </div>
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Booking</TableHead>
-            <TableHead>DATE & TIME</TableHead>
-            <TableHead>Worker</TableHead>
-            <TableHead>AMOUNT</TableHead>
-            <TableHead>STATUS</TableHead>
+            <TableHead>Customer</TableHead>
+            <TableHead>Booking Date</TableHead>
+            {/* <TableHead>Category</TableHead> */}
+            <TableHead>Amount</TableHead>
+            <TableHead>Status</TableHead>
             <TableHead>Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {filteredBookings.map((booking) => (
-            <TableRow key={booking.workerId}>
-              <TableCell className="font-medium">{booking.category}</TableCell>
-              <TableCell>{booking.selectedDate}</TableCell>
-              <TableCell>{booking.workerName}</TableCell>
+          {bookings.map((booking) => (
+            <TableRow key={booking._id}>
+              <TableCell>{booking.userName || "N/A"}</TableCell>
+              <TableCell>{booking.selectedDate.split('T')[0]}</TableCell>
+              {/* <TableCell>{booking.category}</TableCell> */}
               <TableCell>{(booking?.amount) || "---"}</TableCell>
               <TableCell>
                 <Badge className={getStatusColor(booking.status)}>
@@ -119,7 +86,7 @@ const Notifications = () => {
                 <select
                   className="text-sm border rounded"
                   value={booking.status}
-                  onChange={(e) => handleStatusChange(booking.workerId, e.target.value)}
+                  onChange={(e) => handleStatusChange(booking._id, e.target.value)}
                 >
                   <option value="Booked">Booked</option>
                   <option value="Confirmed">Confirmed</option>

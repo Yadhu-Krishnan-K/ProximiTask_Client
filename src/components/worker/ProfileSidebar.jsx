@@ -30,7 +30,7 @@ function ProfileSidebar() {
                 Notifications
             </NavLink>
             <NavLink
-                to='/WorkerProfile/Dashboard'
+                to='/worker/profile/dash'
                 className={({isActive})=>isActive?
                 'text-[#083A50] cursor-pointer bg-gray-300 font-semibold py-2 px-4 w-full rounded'
                 :

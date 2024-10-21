@@ -46,11 +46,21 @@ function WorkerNear({ location }) {
   return (
     <div className="text-center p-5 flex-col">
       <h1 className="text-3xl underline mb-5">Workers Near You</h1>
+      {
+        workers.length?
+      (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-6">
         {workers.map((worker, index) =>
             <ProfileCard key={worker._id} worker={worker} workerIdPass={selectedWorker} />
         )}
       </div>
+      )
+      :(
+        <div className="animate-pulse w-80 h-52">
+        
+        </div>
+      )
+      }
     </div>
   );
 }

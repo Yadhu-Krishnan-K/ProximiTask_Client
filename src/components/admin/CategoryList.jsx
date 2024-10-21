@@ -3,6 +3,35 @@ import instance from '../../helper/axiosInstance';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ImgCropper from '../../helper/ImageCropper';
+import showErrorPopup from '../../Common/ShowErrorPopup';
+
+// Custom Modal Component
+const Modal = ({ isOpen, onClose, onConfirm, message }) => {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white p-6 rounded-lg shadow-xl">
+        <h2 className="text-xl font-bold mb-4">Confirm Deletion</h2>
+        <p className="mb-6">{message}</p>
+        <div className="flex justify-end">
+          <button
+            className="bg-gray-300 hover:bg-gray-400 text-black font-bold py-2 px-4 rounded mr-2"
+            onClick={onClose}
+          >
+            Cancel
+          </button>
+          <button
+            className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded"
+            onClick={onConfirm}
+          >
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 function CategoryList() {
   const [categories, setCategories] = useState([]);
@@ -11,8 +40,10 @@ function CategoryList() {
   const [newCategory, setNewCategory] = useState({ name: '' });
   const [editingCategory, setEditingCategory] = useState(null);
   const [cropped, setCropped] = useState(false);
-  const [originalFile, setOriginalFile] = useState(null); // Store original image file
-  const [croppedFile, setCroppedFile] = useState(null); // Store cropped image file
+  const [originalFile, setOriginalFile] = useState(null);
+  const [croppedFile, setCroppedFile] = useState(null);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [categoryToDelete, setCategoryToDelete] = useState(null);
 
   let ref = useRef(null);
 
@@ -25,34 +56,31 @@ function CategoryList() {
       .then((res) => {
         setCategories(res.data.cateList);
       })
-      .catch(error => handleError('Error fetching categories:', error));
-  };
+      .catch(err=>{
+        console.log('Error fetching categories: ',err)
+      })
+    };
 
   const addCategory = () => {
-    if (newCategory.name.trim() === '') return;
-    console.log('origianl ==== ', originalFile, ' cropped = ====',croppedFile)
+    if (newCategory.name.trim() === ''){
+      showErrorPopup("Please enter category and image")
+      return
+    }
     const formData = new FormData();
     formData.append('categoryName', newCategory.name);
     if (originalFile) formData.append('originalImage', originalFile);
     if (croppedFile) formData.append('croppedImage', croppedFile);
-    for (let pair of formData.entries()) {
-      console.log(`${pair[0]}: ${pair[1]}`);
-    }
+
     instance.post('/category', formData, {
       headers: { 'Content-Type': 'multipart/form-data' }
     })
       .then(response => {
         if (response.data.success) {
           getCategory();
-          setNewCategory({ name: '' });
-          setOriginal('');
-          setImage('');
-          setCropped(false)
-          setOriginalFile(null);
-          setCroppedFile(null);
+          resetForm();
         }
       })
-      .catch(error => handleError('Error adding category:', error));
+      .catch(error => {console.log('Error adding category:',error)});
   };
 
   const updateCategory = () => {
@@ -63,40 +91,37 @@ function CategoryList() {
     if (originalFile) formData.append('originalImage', originalFile);
     if (croppedFile) formData.append('croppedImage', croppedFile);
 
-    // console.log('formData ====================',formData)
-
     instance.put(`/category/${editingCategory._id}`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' }
     })
       .then(response => {
         if (response.data.success) {
           getCategory();
-          setEditingCategory(null);
-          setOriginal('');
-          setImage('');
-          setOriginalFile(null);
-          setCroppedFile(null);
+          resetForm();
         }
       })
-      .catch(error => handleError('Error updating category:', error));
+      .catch(error =>{console.log("error adding category :",error)});
   };
 
-  const deleteCategory = (id) => {
-    if (window.confirm("Do you really want to delete this category?")) {
-      instance.delete(`/category/${id}`)
-        .then(response => {
-          if (response.data.success) {
-            getCategory();
-          }
-        })
-        .catch(error => handleError('Error deleting category:', error));
-    }
+  const deleteCategory = () => {
+    if (!categoryToDelete) return;
+
+    instance.delete(`/category/${categoryToDelete._id}`)
+      .then(response => {
+        if (response.data.success) {
+          getCategory();
+          setIsDeleteModalOpen(false);
+          setCategoryToDelete(null);
+        }
+      })
+      .catch(error => {console.log('Error deleting category: ',error);
+      });
   };
 
-  const handleError = (message, error) => {
-    console.error(message, error);
-    toast.error(`${message} ${error.response ? error.response.data.message : error.message}`);
-  };
+  // const handleError = (message, error) => {
+  //   console.error(message, error);
+  //   toast.error(`${message} ${error.response ? error.response.data.message : error.message}`);
+  // };
 
   const handleImg = (e) => {
     const file = e.target.files[0];
@@ -109,23 +134,45 @@ function CategoryList() {
     if (typeExpected.includes(fileType)) {
       setOriginal(fileUrl);
       setImage(fileUrl);
-      setOriginalFile(file); // Store the original file
+      setOriginalFile(file);
       setCropped(false);
     } else {
       console.log('Rejected file type');
     }
   };
 
+  const resetForm = () => {
+    setNewCategory({ name: '' });
+    setOriginal('');
+    setImage('');
+    setCropped(false);
+    setOriginalFile(null);
+    setCroppedFile(null);
+    setEditingCategory(null);
+  };
+
+  const handleEditCategory = (category) => {
+    setEditingCategory(category);
+    setOriginal(category.originalImgURL);
+    setImage(category.croppedImgURL);
+    setCropped(true);
+  };
+
+  const openDeleteModal = (category) => {
+    setCategoryToDelete(category);
+    setIsDeleteModalOpen(true);
+  };
+
   return (
     <>
-      {(!cropped && image.length) && (
+      {(!cropped && image.length) ? (
         <ImgCropper
           imageURL={image}
           setImage={setImage}
           setCropped={setCropped}
           setCroppedFile={setCroppedFile}
         />
-      )}
+      ):
       <div className="p-6">
         <h2 className="text-2xl font-semibold mb-4">Categories</h2>
 
@@ -164,7 +211,7 @@ function CategoryList() {
           {editingCategory && (
             <button
               className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded ml-2"
-              onClick={() => setEditingCategory(null)}
+              onClick={resetForm}
             >
               Cancel
             </button>
@@ -187,13 +234,13 @@ function CategoryList() {
                 <td className="px-4 py-2 text-center">
                   <button
                     className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded mr-2"
-                    onClick={() => setEditingCategory(category)}
+                    onClick={() => handleEditCategory(category)}
                   >
                     Edit
                   </button>
                   <button
                     className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded"
-                    onClick={() => deleteCategory(category._id)}
+                    onClick={() => openDeleteModal(category)}
                   >
                     Delete
                   </button>
@@ -203,9 +250,16 @@ function CategoryList() {
           </tbody>
         </table>
 
-        {/* Toast container to show toast messages */}
+        <Modal
+          isOpen={isDeleteModalOpen}
+          onClose={() => setIsDeleteModalOpen(false)}
+          onConfirm={deleteCategory}
+          message={`Are you sure you want to delete the category "${categoryToDelete?.categoryName}"?`}
+        />
+
         <ToastContainer />
       </div>
+}
     </>
   );
 }

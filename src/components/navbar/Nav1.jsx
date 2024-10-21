@@ -63,7 +63,7 @@ function Nav1({ user }) {
         </>
       ) : (
         <>
-          <li className='cursor-pointer' onClick={() => nav('/user/signUp')}>SignUp/SignIn</li>
+          <li className='cursor-pointer' onClick={() => nav('/user/login')}>SignUp/SignIn</li>
           <li>
             <button
               className='bg-cyan-700 text-white py-1 px-4 rounded-full hover:bg-cyan-800 transition-colors duration-300'

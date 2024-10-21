@@ -7,7 +7,6 @@ import store from './redux/app/store.js'
 import {Provider} from 'react-redux'
 import ErrorBoundary from './helper/ErrorBoundary.jsx'
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
     <ErrorBoundary >
       <Provider store={store}>
         <Router>
@@ -15,5 +14,4 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         </Router>
       </Provider>
     </ErrorBoundary>
-  </React.StrictMode>,
 )

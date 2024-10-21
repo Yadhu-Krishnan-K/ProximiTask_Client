@@ -42,12 +42,13 @@ const AdminLogin = () => {
             localStorage.setItem("refreshToken", JSON.stringify(res.data.refreshToken));
           }
           dispatch(setAdmin())
-          // Add a delay to ensure localStorage is properly set before navigating
           nav('/admin/panel')
+        }else{
+          toast.error(res.data.message)
         }
       } catch (error) {
         console.error('Login error:', error);
-        toast.error("Login failed. Please try again.");
+        // toast.error("Login failed. Please try again.");
       } finally {
         setSubmitting(false);
       }

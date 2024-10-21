@@ -10,6 +10,8 @@ import { setAdmin } from './redux/features/Admin/adminSlice'
 import ServiceBookingForm from './pages/User/WorkerBooking'
 import Notifications from './components/worker/Notifications'
 import ServiceList from './pages/User/ServiceList'
+import DashWorker from './components/worker/DashWorker'
+import WorkCategoryComponent from './pages/User/ServiceViceWorkers'
 
 const LandingPage = lazy(() => import('./pages/User/LandingPage'));
 const SignUp = lazy(() => import('./pages/User/SignUp'));
@@ -62,7 +64,11 @@ function App() {
   return (
 
     <>
-      <Suspense fallback={<div>Loading...</div>}>
+      <Suspense fallback={<div>
+        <svg class="animate-spin h-5 w-5 mr-3 ..." viewBox="0 0 24 24">
+        </svg>
+          Processing...
+      </div>}>
         <Routes>
 
           <Route path='/user/signUp' element={user?.isActive ? (<Navigate to='/' />) : (<SignUp />)} />
@@ -70,6 +76,7 @@ function App() {
           <Route path='/user/Otp' element={user?.isActive ? (<Navigate to='/' />) : (<OTPPage />)} />
           <Route path='/' element={<LandingPage />} />
           <Route path='/user/Services' element={<ServiceList />} />
+          <Route path='/user/Services/:cateName' element={<WorkCategoryComponent />} />
           <Route path='/user/WorkerDetails/:id' element={<WorkerDetailPage />}>
             <Route index element={<Navigate to='WorkerServices' />} />
             <Route path='details' element={<WorkerServices />} />
@@ -87,6 +94,7 @@ function App() {
             <Route index element={<Navigate to='workerProfileEdit' />} />
             <Route path='workerProfileEdit' element={<ProfileForm />} />
             <Route path='notifications' element={<Notifications />} />
+            <Route path='dash' element={<DashWorker/>} />
           </Route>
           {/* <Route path='/WorkerServices' element={worker.active?(<WorkerServices />):(<Navigate to='/WorkerProfile' />)} /> */}
           <Route path='/worker/services' element={<WorkerServices />} />
