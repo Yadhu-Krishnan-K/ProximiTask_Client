@@ -19,11 +19,11 @@ const ProfileNavBar = ({ toggleSidebar, user }) => {
             <div className="flex p-2 items-center space-x-2 bg-cyan-500 rounded-3xl">
               <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
                 {user
-                  ? (<img src={user.croppedImgURL} alt='userImgage' className=' rounded-full h-5 w-5' />)
+                  ? (<img src={user.croppedImgURL} alt='userImgage' className=' rounded-full h-8 w-8' />)
                   : (<FaRegUserCircle className="h-5 w-5 text-gray-600" />)
                 }
               </div>
-              <span className="hidden sm:inline text-white">{user.name}</span>
+              <span className="hidden sm:inline text-white">{user.name.split(" ")[0]}...</span>
             </div>
           </div>
         </div>
