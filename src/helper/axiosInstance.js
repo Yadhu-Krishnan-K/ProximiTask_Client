@@ -59,7 +59,7 @@ instance.interceptors.response.use(
     if (error.response) {
       const status = error.response.status;
       const data = error.response.data
-      // console.log('data ==== from  ==== error ====----===-',data)
+      console.log('data ==== from  ==== error ====----===-',data)
       
       let pos
       let accessTokens = localStorage.getItem("accessTokens")
@@ -119,7 +119,7 @@ instance.interceptors.response.use(
       }else if(status == 500){
         showErrorPopup("Something went wrong, please try again later")
       }else{
-        
+
       }
     } else if (error.request) {
       // The request was made but no response was received (network error, server down)

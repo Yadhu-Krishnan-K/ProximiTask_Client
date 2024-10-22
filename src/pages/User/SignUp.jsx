@@ -137,6 +137,7 @@ const SignUp = () => {
 
   const handleGoogleLoginSuccess = (response) => {
     const { credential } = response;
+    console.log('res = ',response,' cred = ',credential)
 
     instance.post("/users/google-login", { token: credential })
       .then((res) => {

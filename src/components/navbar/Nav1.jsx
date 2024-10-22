@@ -4,6 +4,7 @@ import logOutHelper from '../../helper/logoutHelper'
 import { IoMdArrowDropdown, IoMdArrowDropup } from "react-icons/io";
 
 function Nav1({ user }) {
+  console.log('user======-__________+_----------------0 = ',user)
   const nav = useNavigate()
   const [ddopen, setDdopen] = useState(false)
   const [isOpen, setIsOpen] = useState(false) // State to toggle the mobile menu
@@ -41,7 +42,7 @@ function Nav1({ user }) {
           <li className='relative' ref={dropdownRef}>
               <div className='flex items-center cursor-pointer space-x-2 p-2 bg-gray-100 rounded-full shadow-md hover:bg-gray-200 transition-all duration-300' onClick={() => setDdopen(!ddopen)}>
               <img src={user.croppedImgURL} alt="img" className='w-8 h-8 rounded-full object-cover border-2 border-cyan-500' />
-              <span className='text-md font-semibold text-gray-800'>{user.name}</span>
+              <span className='text-md font-semibold text-gray-800'>{user.name.split(" ")[0]}...</span>
               <span className='text-cyan-500'>
                 {ddopen ? <IoMdArrowDropup size={20} /> : <IoMdArrowDropdown size={20} />}
               </span>

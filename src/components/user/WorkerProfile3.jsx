@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import instance from '../../helper/axiosInstance';
 
 export default function ProfileCard({ worker, workerIdPass }) {
-  const {id} = useParams();
+  // const {id} = useParams();
   // const [worker, setWorker] = useState(null)
   // useEffect(()=>{
   //   getWorker(id)
