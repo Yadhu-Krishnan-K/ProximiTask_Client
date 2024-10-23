@@ -3,6 +3,7 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import instance from "../../helper/axiosInstance";
 import { ToastContainer } from "react-toastify";
+import {useNavigate} from 'react-router-dom'
 
 // Validation schema using Yup
 const validationSchema = Yup.object().shape({
@@ -24,10 +25,12 @@ const validationSchema = Yup.object().shape({
 });
 
 function CreateAccountForm({ setOriginalImg, setCroppedImg, setCropped, onClose, onSuccess, data }) {
+  const nav = useNavigate()
   const [showErrors, setShowErrors] = useState({});
   const [isFormFilled, setIsFormFilled] = useState(false);
   const [categories, setCategories] = useState([]);
   const [locations, setLocations] = useState([]);
+
 
   // Timeout to hide errors
   useEffect(() => {
@@ -93,6 +96,7 @@ function CreateAccountForm({ setOriginalImg, setCroppedImg, setCropped, onClose,
         isSoleProprietor: values.isSoleProprietor,
         agreeTerms: values.agreeTerms,
       };
+      console.log('values = ',values)
 
       const response = await instance.post("/workers/signup", formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
@@ -100,8 +104,26 @@ function CreateAccountForm({ setOriginalImg, setCroppedImg, setCropped, onClose,
 
       if (response.status === 201) {
         console.log("Signup successful:", response.data);
-        onSuccess();
-        onClose();
+         // Clean up
+         setCropped(false);
+         setOriginalImg(null);
+         setCroppedImg(null);
+         resetForm();
+         
+         // Call success callback if provided
+         if (onSuccess) {
+           onSuccess();
+         }
+         
+         // Close modal if provided
+         if (onClose) {
+           onClose();
+         }
+ 
+         // Use setTimeout to ensure all state updates are processed
+         setTimeout(() => {
+           navigate('/worker/otp', { replace: true });
+         }, 100);
       } else {
         console.error("Signup failed:", response.data);
       }
@@ -184,7 +206,7 @@ function CreateAccountForm({ setOriginalImg, setCroppedImg, setCropped, onClose,
                 >
                   <option value="">Select Category</option>
                   {categories.map((category) => (
-                    <option key={category._id} value={category.categoryName}>
+                    <option key={category._id} value={category._id}>
                       {category.categoryName}
                     </option>
                   ))}

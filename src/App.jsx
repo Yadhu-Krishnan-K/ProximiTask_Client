@@ -12,6 +12,7 @@ import Notifications from './components/worker/Notifications'
 import ServiceList from './pages/User/ServiceList'
 import DashWorker from './components/worker/DashWorker'
 import WorkCategoryComponent from './pages/User/ServiceViceWorkers'
+import OTPVerification from './pages/Worker/OtpSecrion'
 
 const LandingPage = lazy(() => import('./pages/User/LandingPage'));
 const SignUp = lazy(() => import('./pages/User/SignUp'));
@@ -71,6 +72,8 @@ function App() {
       </div>}>
         <Routes>
 
+          {/* user Route */}
+
           <Route path='/user/signUp' element={user?.isActive ? (<Navigate to='/' />) : (<SignUp />)} />
           <Route path='/user/login' element={user?.isActive ? (<Navigate to='/' />) : (<Login />)} />
           <Route path='/user/Otp' element={user?.isActive ? (<Navigate to='/' />) : (<OTPPage />)} />
@@ -89,7 +92,10 @@ function App() {
             <Route path='security' element={<Security />} />
           </Route>
 
+          {/* workerRoute */}
+
           <Route path='/worker/signUp' element={worker?.active ? (<Navigate to='/worker/profile' />) : (<WSignUp />)} />
+          <Route path='/worker/otp' element={!worker ? (<OTPVerification />) : (<Navigate to='/worker/signUp' />)} />
           <Route path='/worker/profile' element={worker?.active ? (<WorkerProfile />) : (<Navigate to='/worker/signUp' />)} >
             <Route index element={<Navigate to='workerProfileEdit' />} />
             <Route path='workerProfileEdit' element={<ProfileForm />} />
@@ -98,6 +104,8 @@ function App() {
           </Route>
           {/* <Route path='/WorkerServices' element={worker.active?(<WorkerServices />):(<Navigate to='/WorkerProfile' />)} /> */}
           <Route path='/worker/services' element={<WorkerServices />} />
+
+          {/* adminRoute */}
 
           <Route path='/admin/login' element={!adminStatus ? (<AdminLogin />) : (<Navigate to="/admin/panel" />)} />
           <Route path='/admin/panel' element={adminStatus ? (<Container />) : (<Navigate to="/admin/login" />)} >

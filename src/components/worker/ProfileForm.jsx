@@ -65,13 +65,9 @@ const ProfileForm = () => {
 
   const handleSubmit = async (values, { setSubmitting, resetForm }) => {
     try {
-      console.log('vals = ',values)
       const response = await instance.put(`/workers/worker/${worker._id}`, values);
       if (response.status === 200) {
-        console.log('Profile updated successfully:', response.data);
-        // resetForm();
         dispatch(setWorkerData(response.data.data))
-        
       }
     } catch (error) {
       console.error('Error updating profile:', error);
@@ -81,80 +77,114 @@ const ProfileForm = () => {
   };
 
   return (
-    <Formik
-      initialValues={initialValues}
-      validationSchema={validationSchema}
-      onSubmit={handleSubmit}
-    >
-      {({ isSubmitting }) => (
-        <Form className="max-w-2xl mx-auto bg-white shadow-md rounded px-8 pt-6 pb-8 mt-10 mb-4">
-          {['name', 'email', 'phoneNumber'].map((field) => (
-            <div key={field} className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor={field}>
-                {field.charAt(0).toUpperCase() + field.slice(1).replace(/([A-Z])/g, ' $1').trim()}
-              </label>
-              <Field
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                id={field}
-                name={field}
-                type={field === 'email' ? 'email' : 'text'}
-              />
-              <ErrorMessage name={field} component="div" className="text-red-500 text-xs italic" />
-            </div>
-          ))}
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 w-full">
+      <div className="w-full max-w-2xl mx-4">
+        <div className="bg-white rounded-lg shadow-lg">
+          <Formik
+            initialValues={initialValues}
+            validationSchema={validationSchema}
+            onSubmit={handleSubmit}
+          >
+            {({ isSubmitting }) => (
+              <Form className="p-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Name Field */}
+                  <div>
+                    <label className="block text-gray-700 font-semibold mb-2">
+                      Name
+                    </label>
+                    <Field
+                      className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                      name="name"
+                      type="text"
+                    />
+                    <ErrorMessage name="name" component="div" className="text-red-500 text-sm mt-1" />
+                  </div>
 
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="category">
-              Category
-            </label>
-            <Field
-              as="select"
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              id="category"
-              name="category"
-            >
-              <option value="" label="Select category" />
-              {categories.map((category) => (
-                <option key={category._id} value={category.name}>
-                  {category.categoryName}
-                </option>
-              ))}
-            </Field>
-            <ErrorMessage name="category" component="div" className="text-red-500 text-xs italic" />
-          </div>
+                  {/* Email Field */}
+                  <div>
+                    <label className="block text-gray-700 font-semibold mb-2">
+                      Email
+                    </label>
+                    <Field
+                      className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                      name="email"
+                      type="email"
+                    />
+                    <ErrorMessage name="email" component="div" className="text-red-500 text-sm mt-1" />
+                  </div>
 
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="location">
-              Location
-            </label>
-            <Field
-              as="select"
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              id="location"
-              name="location"
-            >
-              <option value="" label="Select location" />
-              {locations.map((location) => (
-                <option key={location._id} value={location.name}>
-                  {location.name}
-                </option>
-              ))}
-            </Field>
-            <ErrorMessage name="location" component="div" className="text-red-500 text-xs italic" />
-          </div>
+                  {/* Phone Number Field */}
+                  <div>
+                    <label className="block text-gray-700 font-semibold mb-2">
+                      Phone Number
+                    </label>
+                    <Field
+                      className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                      name="phoneNumber"
+                      type="text"
+                    />
+                    <ErrorMessage name="phoneNumber" component="div" className="text-red-500 text-sm mt-1" />
+                  </div>
 
-          <div className="flex items-center justify-between mt-6">
-            <button
-              className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-              type="submit"
-              disabled={isSubmitting}
-            >
-              Save
-            </button>
-          </div>
-        </Form>
-      )}
-    </Formik>
+                  {/* Category Field */}
+                  <div>
+                    <label className="block text-gray-700 font-semibold mb-2">
+                      Category
+                    </label>
+                    <Field
+                      as="select"
+                      className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 bg-white"
+                      name="category"
+                    >
+                      <option value="">Select category</option>
+                      {categories.map((category) => (
+                        <option key={category._id} value={category.name}>
+                          {category.categoryName}
+                        </option>
+                      ))}
+                    </Field>
+                    <ErrorMessage name="category" component="div" className="text-red-500 text-sm mt-1" />
+                  </div>
+
+                  {/* Location Field */}
+                  <div className="md:col-span-2">
+                    <label className="block text-gray-700 font-semibold mb-2">
+                      Location
+                    </label>
+                    <Field
+                      as="select"
+                      className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 bg-white"
+                      name="location"
+                    >
+                      <option value="">Select location</option>
+                      {locations.map((location) => (
+                        <option key={location._id} value={location.name}>
+                          {location.name}
+                        </option>
+                      ))}
+                    </Field>
+                    <ErrorMessage name="location" component="div" className="text-red-500 text-sm mt-1" />
+                  </div>
+                </div>
+
+                <div className="mt-8 flex justify-center">
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="px-6 py-2 bg-cyan-500 text-white font-semibold rounded-lg 
+                             hover:bg-cyan-600 focus:outline-none focus:ring-2 focus:ring-cyan-500 
+                             disabled:opacity-50 transition-all duration-200"
+                  >
+                    {isSubmitting ? 'Saving...' : 'Save Changes'}
+                  </button>
+                </div>
+              </Form>
+            )}
+          </Formik>
+        </div>
+      </div>
+    </div>
   );
 };
 

@@ -10,8 +10,11 @@ import LoginComponent from "../../components/worker/LoginComponent";
 import CreateAccountForm from "../../components/worker/SignUpCredentials";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import { useLocation } from "react-router-dom";
 
 const WSignUp = () => {
+  const location = useLocation()
+  const successMessage = location.state?.message
   const fileRef = useRef(null)
   const passRef = useRef(null)
   const [showPass, setShowPass] = useState(false)
@@ -124,7 +127,14 @@ const WSignUp = () => {
 
   return (
     <>
-    <ToastContainer />
+      <ToastContainer />
+      {successMessage && (
+        <div className="w-full max-w-md mx-auto bg-white rounded-lg shadow-lg p-6">
+          <div className="text-green-600 text-center mb-4">
+            {successMessage}
+          </div>
+        </div>
+      )}
       {(originalImg && !cropped)
         ? (<ImgCropper
           imageURL={URL.createObjectURL(originalImg)}
@@ -157,7 +167,7 @@ const WSignUp = () => {
             <div className="w-full max-w-md">
               <h1 className="text-2xl font-bold mb-6">Create Account</h1>
               <form onSubmit={form.handleSubmit} noValidate >
-                <div className="flex w-full h-20 justify-center">
+                <div className="flex flex-col w-full h-20 items-center mb-4">
                   {(cropped && croppedImg) ? (
                     <img
                       src={URL.createObjectURL(croppedImg)}
@@ -177,15 +187,26 @@ const WSignUp = () => {
                   <input
                     type="file"
                     ref={fileRef}
-                    name="profile"
+                    name="originalImg"
                     id="img"
                     className="hidden"
                     onChange={(e) => {
-                      form.setFieldValue('originalImg', e.target.files[0])
-                      setOriginalImg(e.target.files[0])
-                      console.log(originalImg)
+                      // form.setFieldValue('originalImg', e.target.files[0])
+                      // setOriginalImg(e.target.files[0])
+                      // console.log(originalImg)
+                      const file = e.target.files[0];
+                      if (file) {
+                        form.setFieldValue('originalImg', file);
+                        setOriginalImg(file);
+                        form.setFieldTouched('originalImg', true);  // Add this line
+                      }
                     }}
                   />
+                  {form.touched.originalImg && form.errors.originalImg && (
+                    <div className="text-red-500 text-sm mt-1">
+                      {form.errors.originalImg}
+                    </div>
+                  )}
                 </div>
                 <div className="mb-4">
                   <input
