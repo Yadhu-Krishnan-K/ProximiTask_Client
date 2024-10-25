@@ -34,6 +34,7 @@ function Security() {
             })
             if(res.data.success){
                 Success("Password changed successfully!")
+                formik.resetForm()
             }
         } catch (error) {
             console.log('error = ',error.message)

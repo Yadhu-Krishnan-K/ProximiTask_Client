@@ -119,7 +119,7 @@ instance.interceptors.response.use(
       }else if(status == 500){
         showErrorPopup("Something went wrong, please try again later")
       }else{
-        showErrorPopup(data.error)
+        showErrorPopup(data.error                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           )
       }
     } else if (error.request) {
       // The request was made but no response was received (network error, server down)
