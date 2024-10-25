@@ -34,7 +34,6 @@ const UserProfile = () => {
         <div className="space-y-4">
           <ProfileField label="Name" value={editedUser.name} />
           <ProfileField label="Email" value={editedUser.email} />
-          <ProfileField label="Address" value={editedUser.address} />
           <ProfileField label="Contact Number" value={editedUser.contactNumber} />
         </div>
         <div className="mt-8 flex justify-center">

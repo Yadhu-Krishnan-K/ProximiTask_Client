@@ -7,7 +7,6 @@ import * as Yup from "yup";
 import { FaEye } from "react-icons/fa";
 import { FaEyeSlash } from "react-icons/fa";
 
-import { ToastContainer } from "react-toastify";
 import instance from "../../helper/axiosInstance";
 import { setUserData,userLogin } from "../../redux/features/User/userSlice";
 // import {jwtDecode} from 'jwt-decode'
@@ -127,7 +126,7 @@ const Login = () => {
   return (
     <GoogleOAuthProvider clientId={clientId}>
     <div className="w-full h-screen bg-emerald-200 flex justify-center items-center p-4">
-      <ToastContainer />
+       
       <div className="max-sm:w-full md:w-1/3 bg-white p-8 rounded-2xl shadow-lg">
         <h1 className="text-2xl font-bold mb-8 text-center">Login</h1>
         <form onSubmit={handleSubmit} className="space-y-4" noValidate>

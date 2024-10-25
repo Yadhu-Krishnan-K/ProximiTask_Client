@@ -14,7 +14,8 @@ import { useLocation } from "react-router-dom";
 
 const WSignUp = () => {
   const location = useLocation()
-  const successMessage = location.state?.message
+  const [successMessage, setSuccessMessage] = useState(location.state?.message)
+  console.log('success = ',successMessage)
   const fileRef = useRef(null)
   const passRef = useRef(null)
   const [showPass, setShowPass] = useState(false)
@@ -32,6 +33,14 @@ const WSignUp = () => {
     email: "",
     password: ""
   });
+  useEffect(() => {
+    if (successMessage) {
+      
+      setTimeout(() => {
+        setSuccessMessage(undefined)
+      }, 7000)
+    }
+  }, [successMessage])
 
   const openPopup = () => {
     setShowPopup(true);
@@ -127,14 +136,8 @@ const WSignUp = () => {
 
   return (
     <>
-      <ToastContainer />
-      {successMessage && (
-        <div className="w-full max-w-md mx-auto bg-white rounded-lg shadow-lg p-6">
-          <div className="text-green-600 text-center mb-4">
-            {successMessage}
-          </div>
-        </div>
-      )}
+       
+
       {(originalImg && !cropped)
         ? (<ImgCropper
           imageURL={URL.createObjectURL(originalImg)}
@@ -150,6 +153,13 @@ const WSignUp = () => {
           }}
         />)
         : (<div className="flex w-full h-screen relative">
+          {successMessage && (
+            <div className="w-auto max-w-md mx-auto bg-white rounded-lg shadow-lg p-6 fixed top-0 right-0">
+              <div className="text-green-600 text-center mb-4">
+                {successMessage}
+              </div>
+            </div>
+          )}
           {/* Background Section */}
           <div
             className="hidden md:flex md:w-1/2 bg-cover"

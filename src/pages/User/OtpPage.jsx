@@ -97,7 +97,7 @@ const OTPPage = () => {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-      <ToastContainer />
+       
       <div className="p-8 bg-white rounded-lg shadow-md">
         <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">Enter OTP</h2>
         <form onSubmit={handleSubmit}>

@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import instance from "../../helper/axiosInstance";
-import { ToastContainer } from "react-toastify";
 import {useNavigate} from 'react-router-dom'
 
 // Validation schema using Yup
@@ -82,7 +81,7 @@ function CreateAccountForm({ setOriginalImg, setCroppedImg, setCropped, onClose,
     agreeTerms: false,
   };
 
-  const handleSubmit = async (values, { setSubmitting }) => {
+  const handleSubmit = async (values, { setSubmitting, resetForm }) => {
     try {
       const formData = {
         ...data,
@@ -122,7 +121,7 @@ function CreateAccountForm({ setOriginalImg, setCroppedImg, setCropped, onClose,
  
          // Use setTimeout to ensure all state updates are processed
          setTimeout(() => {
-           navigate('/worker/otp', { replace: true });
+           nav('/worker/otp', { replace: true });
          }, 100);
       } else {
         console.error("Signup failed:", response.data);
@@ -167,7 +166,7 @@ function CreateAccountForm({ setOriginalImg, setCroppedImg, setCropped, onClose,
 
           return (
             <Form className="space-y-4" noValidate>
-              <ToastContainer />
+               
 
               {/* Area Selection */}
               <div>

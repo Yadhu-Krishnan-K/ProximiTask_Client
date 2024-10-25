@@ -38,7 +38,7 @@ const OTPVerification = () => {
       setStatus({ type: '', message: '' });
       
       // Simulate API call
-        const res = await instance.post('/resend-otp')      
+        const res = await instance.get('/workers/resendOtp')      
       // Reset OTP and timer
       setOtp(['', '', '', '']);
       setTimer(30);
@@ -70,7 +70,7 @@ const OTPVerification = () => {
       
       // Simulate API call
       // await new Promise(resolve => setTimeout(resolve, 1500));
-      const res = await instance.post('/postSignup',{otp:otp})
+      const res = await instance.post('/workers/postSignup',{otp:otp})
       
       // Simulate verification check
       if (res.data.success) {

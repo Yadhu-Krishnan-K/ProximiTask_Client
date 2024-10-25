@@ -183,7 +183,7 @@ const SignUp = () => {
         </div>
       ):
       <div className="w-full min-h-screen bg-emerald-200 flex justify-center items-center p-4 overflow-y-auto">
-        <ToastContainer />
+         
         <div className="w-full max-w-md bg-[#F6FBF9] rounded-2xl shadow-lg p-8 my-8">
           <h1 className="text-2xl font-bold text-center mb-6">Create An Account</h1>
           

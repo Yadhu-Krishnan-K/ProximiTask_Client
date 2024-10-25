@@ -257,7 +257,7 @@ function CategoryList() {
           message={`Are you sure you want to delete the category "${categoryToDelete?.categoryName}"?`}
         />
 
-        <ToastContainer />
+         
       </div>
 }
     </>
