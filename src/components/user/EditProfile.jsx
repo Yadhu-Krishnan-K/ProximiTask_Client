@@ -2,6 +2,10 @@ import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { EditProfileModal } from './EditProfileModal';
+import { TbUser } from "react-icons/tb";
+import { MdOutlineEmail } from "react-icons/md";
+import { FiPhone } from "react-icons/fi";
+
 
 const UserProfile = () => {
   const user = useSelector((state) => state.userReducer.userData);
@@ -20,7 +24,7 @@ const UserProfile = () => {
   }
 
   return (
-    <div className="max-w-2xl mx-auto mt-10 bg-white shadow-lg rounded-lg overflow-hidden p-2">
+    <div className="max-w-2xl mx-auto mt-28 bg-white shadow-lg rounded-lg overflow-hidden p-2">
       {isOpen && (
         <EditProfileModal
           isOpen={isOpen}
@@ -32,9 +36,9 @@ const UserProfile = () => {
       <h2 className="text-2xl font-bold">Profile</h2>
       <div className="p-6">
         <div className="space-y-4">
-          <ProfileField label="Name" value={editedUser.name} />
-          <ProfileField label="Email" value={editedUser.email} />
-          <ProfileField label="Contact Number" value={editedUser.contactNumber} />
+          <ProfileField label="Name" value={editedUser.name}><TbUser className='text-teal-600'/></ProfileField>
+          <ProfileField label="Email" value={editedUser.email} ><MdOutlineEmail className='text-teal-600'/></ProfileField>
+          <ProfileField label="Contact Number" value={editedUser.contactNumber} ><FiPhone className='text-teal-600'/></ProfileField>
         </div>
         <div className="mt-8 flex justify-center">
           <button
@@ -49,10 +53,10 @@ const UserProfile = () => {
   );
 };
 
-const ProfileField = ({ label, value }) => (
+const ProfileField = ({ label, value, children }) => (
   <div>
     <label className="block text-gray-700 text-sm font-semibold mb-1">{label}</label>
-    <p className="text-gray-800 bg-gray-100 rounded-lg py-2 px-3">{value}</p>
+    <p className="text-gray-800 bg-gray-100 rounded-lg py-2 px-3 flex items-center">{children}<span style={{ paddingRight: 5 }}/>{value}</p>
   </div>
 );
 
