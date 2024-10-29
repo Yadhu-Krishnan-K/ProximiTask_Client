@@ -25,7 +25,7 @@ const WSignUp = () => {
   const [showPopup, setShowPopup] = useState(false);
   const [showLoginPopup, setShowLoginPopup] = useState(false);
   const [visibleErrors, setVisibleErrors] = useState({});
-  const [showCropper, setShowCropper] = useState(false);
+  
   const [formData, setFormData] = useState({
     originalImg: "",
     croppedImg: "",
@@ -149,7 +149,7 @@ const WSignUp = () => {
             setCroppedImg(croppedImage);
             form.setFieldValue("croppedImg", croppedImage);
             console.log("Cropped Image Set: ", croppedImage);
-            setShowCropper(false)
+            
           }}
         />)
         : (<div className="flex w-full h-screen relative">
@@ -185,7 +185,9 @@ const WSignUp = () => {
                       width={70}
                       className="border rounded-full cursor-pointer"
                       onClick={() => {
-                        setShowCropper(true); // Show cropper again when clicked
+                         // Show cropper again when clicked
+                         setCropped(false)
+                         setCroppedImg(null)
                       }}
                     />
                   ) : (
