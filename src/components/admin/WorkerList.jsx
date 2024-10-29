@@ -75,7 +75,9 @@ function WorkerList() {
       <table className="w-full bg-white shadow-md rounded-lg overflow-hidden mb-8">
         <thead className="bg-gray-200">
           <tr>
+            <th className='px-4 py-2'>Photo</th>
             <th className="px-4 py-2">Name</th>
+            <th className='px-4 py-2'>Category</th>
             <th className="px-4 py-2">Email</th>
             <th className="px-4 py-2">Status</th>
             <th className="px-4 py-2">Action</th>
@@ -84,9 +86,11 @@ function WorkerList() {
         <tbody>
           {workers.map((worker) => (
             <tr key={worker._id}>
-              <td className="border px-4 py-2">{worker.name}</td>
-              <td className="border px-4 py-2">{worker.email}</td>
-              <td className="border px-4 py-2">
+              <td className="border px-4 py-2 text-center"><img className='w-14 ' src={worker.croppedImgURL} alt="img" /></td>
+              <td className="border px-4 py-2 text-center">{worker.name}</td>
+              <td className="border px-4 py-2 text-center">{worker?.category_id?.categoryName}</td>
+              <td className="border px-4 py-2 text-center">{worker.email}</td>
+              <td className="border px-4 py-2 text-center">
                 {worker.active ? 'Active' : 'Inactive'}
               </td>
               <td className="border px-4 py-2">

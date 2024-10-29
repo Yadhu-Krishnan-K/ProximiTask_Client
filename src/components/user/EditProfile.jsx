@@ -38,7 +38,7 @@ const UserProfile = () => {
         <div className="space-y-4">
           <ProfileField label="Name" value={editedUser.name}><TbUser className='text-teal-600'/></ProfileField>
           <ProfileField label="Email" value={editedUser.email} ><MdOutlineEmail className='text-teal-600'/></ProfileField>
-          <ProfileField label="Contact Number" value={editedUser.contactNumber} ><FiPhone className='text-teal-600'/></ProfileField>
+          <ProfileField label="Contact Number" value={!editedUser?.contactNumber && '<!--please add a phone number-->'} ><FiPhone className='text-teal-600'/></ProfileField>
         </div>
         <div className="mt-8 flex justify-center">
           <button

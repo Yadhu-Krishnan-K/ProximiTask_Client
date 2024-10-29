@@ -18,9 +18,14 @@ const WorkerDetailPage = () => {
       <Nav1 user={user} />
       <main className=" w-full">
         <WorkerInfo id={id} />
-        <div className='flex'>
-          <WorkerSidebar id={id}/>
-          <Outlet/>
+        <div className="flex flex-col md:flex-row gap-4">
+          <aside className="w-full md:w-64">
+            <WorkerSidebar id={id} />
+          </aside>
+          
+          <div className="flex-1">
+            <Outlet />
+          </div>
         </div>
       </main>
     </div>

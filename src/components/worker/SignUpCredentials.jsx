@@ -2,11 +2,34 @@ import React, { useState, useEffect } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import instance from "../../helper/axiosInstance";
-import {useNavigate} from 'react-router-dom'
+import { useNavigate } from 'react-router-dom';
+import LocationMapModal from "./LocationMapModal";
+import {
+  Container,
+  Typography,
+  TextField,
+  MenuItem,
+  FormControlLabel,
+  Checkbox,
+  Button,
+  Box,
+  Paper,
+  Radio,
+  RadioGroup,
+  FormControl,
+  FormLabel,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  sliderClasses
+} from '@mui/material';
+import MyLocationIcon from '@mui/icons-material/MyLocation';
+import MapIcon from '@mui/icons-material/Map';
 
-// Validation schema using Yup
 const validationSchema = Yup.object().shape({
-  area: Yup.string().required("Area is required"),
+  lat: Yup.number().required("Location is required"),
+  long: Yup.number().required("Location is required"),
   category: Yup.string().required("Category is required"),
   phone: Yup.string()
     .matches(/^[0-9]+$/, "Phone number must contain only digits")
@@ -14,7 +37,7 @@ const validationSchema = Yup.object().shape({
     .required("Phone number is required"),
   idType: Yup.string().required("ID type is required"),
   idNumber: Yup.string()
-    .matches(/^\d+$/, "ID number must contain only digits and no spaces or special characters")
+    .matches(/^\d+$/, "ID number must contain only digits")
     .required("ID number is required"),
   isSoleProprietor: Yup.boolean(),
   agreeTerms: Yup.boolean().oneOf(
@@ -24,55 +47,42 @@ const validationSchema = Yup.object().shape({
 });
 
 function CreateAccountForm({ setOriginalImg, setCroppedImg, setCropped, onClose, onSuccess, data }) {
-  const nav = useNavigate()
+  const nav = useNavigate();
   const [showErrors, setShowErrors] = useState({});
   const [isFormFilled, setIsFormFilled] = useState(false);
   const [categories, setCategories] = useState([]);
-  const [locations, setLocations] = useState([]);
+  const [locationDetails, setLocationDetails] = useState(null);
+
+  const [locationError, setLocationError] = useState(null);
+  const [isLoadingLocation, setIsLoadingLocation] = useState(false);
+  const [isMapModalOpen, setIsMapModalOpen] = useState(false);
 
 
-  // Timeout to hide errors
-  useEffect(() => {
-    const timers = Object.keys(showErrors).map((field) =>
-      setTimeout(() => {
-        setShowErrors((prev) => ({ ...prev, [field]: false }));
-      }, 3000)
-    );
-    return () => timers.forEach((timer) => clearTimeout(timer));
-  }, [showErrors]);
-
-  // Fetch categories and locations
   useEffect(() => {
     const getCategory = async () => {
       try {
         const res = await instance.get("/category");
-        console.log('res from signupcredenials ==== ',res);
         setCategories([...res.data.cateList]);
-        console.log('categories from signupcredenials ==== ',categories);
       } catch (error) {
         console.error("Failed to fetch categories", error);
       }
     };
 
-    const getLocations = async () => {
-      try {
-        const res = await instance.get('/location');
-        if (res.data.success) {
-          setLocations([...res.data.placeData]);
-        }
-      } catch (error) {
-        console.error("Failed to fetch locations", error);
-      }
-    };
-
     getCategory();
-    getLocations();
   }, []);
 
   const initialValues = {
-    area: "",
-    lat: null,
-    long: null,
+    location: {
+      coords: {
+        lat: null,
+        long: null,
+      },
+      name: "",
+      city: "",
+      state: "",
+      nation: "",
+      pincode: "",
+    },
     category: "",
     phone: "",
     idType: "",
@@ -85,213 +95,319 @@ function CreateAccountForm({ setOriginalImg, setCroppedImg, setCropped, onClose,
     try {
       const formData = {
         ...data,
-        area: values.area,
+        location: {
+          coords: {
+            lat: values.location.coords.lat,
+            long: values.location.coords.long,
+          },
+          name: values.location.name,
+          city: values.location.city,
+          state: values.location.state,
+          nation: values.location.nation,
+          pincode: values.location.pincode,
+        },
         category: values.category,
-        lat: values.lat,
-        long: values.long,
         phone: values.phone,
         idType: values.idType,
         idNumber: values.idNumber,
         isSoleProprietor: values.isSoleProprietor,
         agreeTerms: values.agreeTerms,
       };
-      console.log('values = ',values)
+      
 
       const response = await instance.post("/workers/signup", formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
 
       if (response.status === 201) {
-        console.log("Signup successful:", response.data);
-         // Clean up
-         setCropped(false);
-         setOriginalImg(null);
-         setCroppedImg(null);
-         resetForm();
-         
-         // Call success callback if provided
-         if (onSuccess) {
-           onSuccess();
-         }
-         
-         // Close modal if provided
-         if (onClose) {
-           onClose();
-         }
- 
-         // Use setTimeout to ensure all state updates are processed
-         setTimeout(() => {
-           nav('/worker/otp', { replace: true });
-         }, 100);
-      } else {
-        console.error("Signup failed:", response.data);
+        setCropped(false);
+        setOriginalImg(null);
+        setCroppedImg(null);
+        resetForm();
+
+        if (onSuccess) {
+          onSuccess();
+        }
+
+        if (onClose) {
+          onClose();
+        }
+
+        setTimeout(() => {
+          nav('/worker/otp', { replace: true });
+        }, 100);
       }
     } catch (error) {
       console.error("An error occurred during signup:", error);
     } finally {
-      setCropped(false);
-      setOriginalImg(null);
-      setCroppedImg(null);
       setSubmitting(false);
     }
   };
 
+  
+  
+
+
+
   return (
-    <div className="max-w-md mx-auto p-4 bg-white rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold text-center mb-6">Create Account</h2>
-      <Formik
-        initialValues={initialValues}
-        validationSchema={validationSchema}
-        onSubmit={handleSubmit}
-      >
-        {({ errors, touched, setFieldTouched, values, isValid, setFieldValue }) => {
-          // Check if all required fields are filled
-          useEffect(() => {
-            const requiredFields = ["area", "category", "phone", "idType", "idNumber"];
-            const allFieldsFilled = requiredFields.every((field) => values[field] !== "");
-            setIsFormFilled(allFieldsFilled && values.agreeTerms);
-          }, [values]);
+    <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+      <Box sx={{ p: 2, bgcolor: 'primary.main', color: 'white', position: 'sticky', top: 0, zIndex: 1100 }}>
+        <Typography variant="h5" align="center">
+          Create Account
+        </Typography>
+      </Box>
 
-          // Handle area change to set lat and long
-          const handleAreaChange = (event) => {
-            const selectedArea = event.target.value;
-            const selectedLocation = locations.find(location => location.name === selectedArea);
+      <Box sx={{ flex: 1, overflow: 'auto', p: 2, bgcolor: '#f5f5f5' }}>
+        <Container maxWidth="md" sx={{ py: 2 }}>
+          <Formik
+            initialValues={initialValues}
+            validationSchema={validationSchema}
+            onSubmit={handleSubmit}
+          >
+            {({ errors, touched, setFieldValue, values, isValid }) => {
+                const handleLocationSelect = (location) => {
+                  setFieldValue('location.coords.lat', location.lat);
+                  setFieldValue('location.coords.long', location.lng);
+                };
+                const getCurrentLocation = () => {
+                  navigator.geolocation.getCurrentPosition(async (position) => {
+                    const { latitude, longitude } = position.coords;
+                
+                    // Set latitude and longitude in form values
+                    setFieldValue("location.coords.lat", latitude);
+                    setFieldValue("location.coords.long", longitude);
+                
+                    // Fetch additional location details using Nominatim API
+                    try {
+                      const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
+                      const data = await response.json();
+                      setLocationDetails({
+                        displayName: data.display_name,
+                        city: data.address.city || data.address.town || data.address.village,
+                        state: data.address.state,
+                        country: data.address.country,
+                        postcode: data.address.postcode,
+                      });
+                    } catch (error) {
+                      console.error("Error fetching location details:", error);
+                    }
+                  });
+                };
+                const handleMapSelection = () => {
+                  setIsMapModalOpen(true);
+                };
+              
+                useEffect(() => {
+                  const requiredFields = [
+                    "location.coords.lat",
+                    "location.coords.long",
+                    "category",
+                    "phone",
+                    "idType",
+                    "idNumber",
+                  ];
+                  
+                  const allFieldsFilled = requiredFields.every((field) => {
+                    const fieldParts = field.split('.');
+                    return fieldParts.reduce((acc, part) => acc && acc[part], values) !== null && 
+                           fieldParts.reduce((acc, part) => acc && acc[part], values) !== "";
+                  });
+                
+                  setIsFormFilled(allFieldsFilled && values.agreeTerms);
+                }, [values]);
+                
 
-            if (selectedLocation) {
-              setFieldValue('area', selectedArea);
-              setFieldValue('lat', selectedLocation.lat);
-              setFieldValue('long', selectedLocation.lng);
-            }
-          };
+              return (
+                <Form>
 
-          return (
-            <Form className="space-y-4" noValidate>
-               
+                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                    {/* Location Section */}
+                    <Paper sx={{ p: 3 }}>
+                      <Typography variant="h6" gutterBottom>
+                        Location Details
+                      </Typography>
 
-              {/* Area Selection */}
-              <div>
-                <label htmlFor="area" className="block text-sm font-medium text-gray-700 mb-1">
-                  Available Area
-                </label>
-                <Field
-                  as="select"
-                  id="area"
-                  name="area"
-                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
-                  onChange={handleAreaChange}
-                  value={values.area}
-                >
-                  <option value="">Select Area</option>
-                  {locations.map((location) => (
-                    <option key={location._id} value={location.name}>
-                      {location.name}
-                    </option>
-                  ))}
-                </Field>
-                <ErrorMessage name="area" component="div" className="text-red-500 text-sm mt-1" />
-              </div>
+                      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                        <Button
+                          variant="outlined"
+                          startIcon={<MyLocationIcon />}
+                          onClick={() => getCurrentLocation(setFieldValue)}
+                          disabled={isLoadingLocation}
+                        >
+                          {isLoadingLocation ? 'Getting location...' : 'Use current location'}
+                        </Button>
 
-              {/* Category Selection */}
-              <div>
-                <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-1">
-                  Category
-                </label>
-                <Field
-                  as="select"
-                  id="category"
-                  name="category"
-                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
-                  value={values.category}
-                >
-                  <option value="">Select Category</option>
-                  {categories.map((category) => (
-                    <option key={category._id} value={category._id}>
-                      {category.categoryName}
-                    </option>
-                  ))}
-                </Field>
-                <ErrorMessage name="category" component="div" className="text-red-500 text-sm mt-1" />
-              </div>
+                        <Button
+                          variant="outlined"
+                          startIcon={<MapIcon />}
+                          onClick={handleMapSelection}
+                        >
+                          Select from Map
+                        </Button>
 
-              {/* Phone Input */}
-              <div>
-                <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
-                  Phone
-                </label>
-                <Field
-                  type="text"
-                  id="phone"
-                  name="phone"
-                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
-                />
-                <ErrorMessage name="phone" component="div" className="text-red-500 text-sm mt-1" />
-              </div>
+                        {locationError && (
+                          <Typography color="error" variant="body2">
+                            {locationError}
+                          </Typography>
+                        )}
 
-              {/* ID Type Input */}
-              <div>
-                <label htmlFor="idType" className="block text-sm font-medium text-gray-700 mb-1">
-                  ID Type
-                </label>
-                <Field
-                  as="select"
-                  id="idType"
-                  name="idType"
-                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
-                >
-                  <option value="">Select ID Type</option>
-                  <option value="Aadhaar">Aadhaar</option>
-                  <option value="PAN">PAN</option>
-                </Field>
-                <ErrorMessage name="idType" component="div" className="text-red-500 text-sm mt-1" />
-              </div>
+                        {values.lat && values.long && (
+                          <Typography variant="body2" color="text.secondary">
+                            Selected location: {values.lat.toFixed(4)}, {values.long.toFixed(4)}
+                          </Typography>
+                        )}
+                      </Box>
+                    </Paper>
 
-              {/* ID Number Input */}
-              <div>
-                <label htmlFor="idNumber" className="block text-sm font-medium text-gray-700 mb-1">
-                  ID Number
-                </label>
-                <Field
-                  type="text"
-                  id="idNumber"
-                  name="idNumber"
-                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
-                />
-                <ErrorMessage name="idNumber" component="div" className="text-red-500 text-sm mt-1" />
-              </div>
+                    {/* Rest of the form sections remain the same */}
+                    {/* Personal Details Section */}
+                    <Paper sx={{ p: 3 }}>
+                      {/* Personal Details Section */}
+                      <Paper sx={{ p: 3 }}>
+                        <Typography variant="h6" gutterBottom>
+                          Personal Details
+                        </Typography>
+                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                          {/* Category Selection */}
+                          <Field name="category">
+                            {({ field }) => (
+                              <TextField
+                                {...field}
+                                select
+                                label="Category"
+                                fullWidth
+                                error={touched.category && errors.category}
+                                helperText={touched.category && errors.category}
+                              >
+                                {categories.map((category) => (
+                                  <MenuItem key={category._id} value={category._id}>
+                                    {category.categoryName}
+                                  </MenuItem>
+                                ))}
+                              </TextField>
+                            )}
+                          </Field>
 
-              {/* Sole Proprietor Checkbox */}
-              <div>
-                <label className="flex items-center">
-                  <Field type="checkbox" name="isSoleProprietor" className="mr-2" />
-                  <span className="text-sm text-gray-700">Are you a sole proprietor?</span>
-                </label>
-              </div>
+                          {/* Phone Input */}
+                          <Field name="phone">
+                            {({ field }) => (
+                              <TextField
+                                {...field}
+                                label="Phone"
+                                fullWidth
+                                error={touched.phone && errors.phone}
+                                helperText={touched.phone && errors.phone}
+                              />
+                            )}
+                          </Field>
+                        </Box>
+                      </Paper>
+                    </Paper>
 
-              {/* Agree to Terms */}
-              <div>
-                <label className="flex items-center">
-                  <Field type="checkbox" name="agreeTerms" className="mr-2" />
-                  <span className="text-sm text-gray-700">I agree to the terms and conditions</span>
-                </label>
-                <ErrorMessage name="agreeTerms" component="div" className="text-red-500 text-sm mt-1" />
-              </div>
+                    {/* ID Details Section */}
+                    <Paper sx={{ p: 3 }}>
+                      {/* ID Details Section */}
+                      <Paper sx={{ p: 3 }}>
+                        <Typography variant="h6" gutterBottom>
+                          ID Details
+                        </Typography>
+                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                          {/* ID Type Selection */}
+                          <Field name="idType">
+                            {({ field }) => (
+                              <TextField
+                                {...field}
+                                select
+                                label="ID Type"
+                                fullWidth
+                                error={touched.idType && errors.idType}
+                                helperText={touched.idType && errors.idType}
+                              >
+                                <MenuItem value="Aadhaar">Aadhaar</MenuItem>
+                                <MenuItem value="PAN">PAN</MenuItem>
+                              </TextField>
+                            )}
+                          </Field>
 
-              {/* Submit Button */}
-              <div>
-                <button
-                  type="submit"
-                  className={`w-full p-2 text-white font-semibold rounded-md ${isFormFilled ? "bg-indigo-600 hover:bg-indigo-700" : "bg-gray-400 cursor-not-allowed"}`}
-                  disabled={!isFormFilled}
-                >
-                  Create Account
-                </button>
-              </div>
-            </Form>
-          );
-        }}
-      </Formik>
-    </div>
+                          {/* ID Number Input */}
+                          <Field name="idNumber">
+                            {({ field }) => (
+                              <TextField
+                                {...field}
+                                label="ID Number"
+                                fullWidth
+                                error={touched.idNumber && errors.idNumber}
+                                helperText={touched.idNumber && errors.idNumber}
+                              />
+                            )}
+                          </Field>
+                        </Box>
+                      </Paper>
+                    </Paper>
+
+                    {/* Terms Section */}
+                    <Paper sx={{ p: 3 }}>
+                      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                        <FormControlLabel
+                          control={
+                            <Field
+                              as={Checkbox}
+                              name="isSoleProprietor"
+                              color="primary"
+                            />
+                          }
+                          label="Are you a sole proprietor?"
+                        />
+
+                        <FormControlLabel
+                          control={
+                            <Field
+                              as={Checkbox}
+                              name="agreeTerms"
+                              color="primary"
+                            />
+                          }
+                          label="I agree to the terms and conditions"
+                        />
+                        {touched.agreeTerms && errors.agreeTerms && (
+                          <Typography color="error" variant="caption">
+                            {errors.agreeTerms}
+                          </Typography>
+                        )}
+                      </Box>
+                    </Paper>
+                    {/* <Paper sx={{ p: 3 }}> */}
+                    {/* ... Terms content ... */}
+                    {/* </Paper> */}
+                  </Box>
+
+                  {/* Submit Button */}
+                  <Paper elevation={3} sx={{ position: 'sticky', bottom: 16, p: 2, mt: 3, bgcolor: 'background.paper' }}>
+                    <Button
+                      type="submit"
+                      variant="contained"
+                      color="primary"
+                      size="large"
+                      fullWidth
+                      disabled={!isFormFilled}
+                    >
+                      Create Account
+                    </Button>
+                  </Paper>
+                  <LocationMapModal
+                    open={isMapModalOpen}
+                    onClose={() => setIsMapModalOpen(false)}
+                    onSelectLocation={handleLocationSelect}
+                    initialLocation={values.lat && values.long ? { lat: values.lat, lng: values.long } : null}
+                  />
+                </Form>
+              );
+            }}
+          </Formik>
+        </Container>
+      </Box>
+    </Box>
   );
 }
 
-export default CreateAccountForm;
+export default CreateAccountForm; 

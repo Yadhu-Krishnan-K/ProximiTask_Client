@@ -48,7 +48,7 @@ function WorkerNear({ location }) {
 
   return (
     <div className="text-center p-5 flex-col">
-      <h1 className="text-3xl underline mb-5">Workers Near You</h1>
+      <h1 className="text-3xl font-bold mb-5">---Workers Near You---</h1>
       {
         !loading ?
           (

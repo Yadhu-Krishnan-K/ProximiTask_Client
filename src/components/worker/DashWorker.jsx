@@ -1,23 +1,23 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import dayjs from "dayjs";
-import { Box, Button, Dialog, DialogTitle, DialogActions, DialogContent, DialogContentText } from "@mui/material";
-import { styled } from "@mui/material/styles";
+import { Box, Button, Dialog, DialogTitle, DialogActions, DialogContent, DialogContentText, Alert } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { StaticDatePicker } from "@mui/x-date-pickers/StaticDatePicker";
 import { PickersDay } from "@mui/x-date-pickers/PickersDay";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { styled } from "@mui/material/styles";
+import instance from "../../helper/axiosInstance";
+import { useSelector } from "react-redux";
 
 const HighlightedDay = styled(PickersDay)(({ theme }) => ({
   "&.Mui-selected": {
-    backgroundColor: "grey", // Grey background for leave days
-    color: "white", // White text
+    backgroundColor: "grey",
+    color: "white",
   },
 }));
 
-// Custom component to highlight leave dates
 const ServerDay = (props) => {
   const { highlightedDays = [], day, outsideCurrentMonth, ...other } = props;
-
   const isSelected = !outsideCurrentMonth && highlightedDays.includes(day.format("YYYY-MM-DD"));
 
   return (
@@ -31,36 +31,80 @@ const ServerDay = (props) => {
 };
 
 const WorkerDashboard = () => {
-  const [value, setValue] = useState(dayjs()); // Date selected
-  const [leaveDates, setLeaveDates] = useState([]); // Leave dates array
-  const [open, setOpen] = useState(false); // State to control dialog visibility
+  const [value, setValue] = useState(dayjs());
+  const [leaveDates, setLeaveDates] = useState([]);
+  const [open, setOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [tasks, setTasks] = useState([]);
 
-  // Example work assigned for today
-  const tasks = [
-    { id: 1, task: "Install inverter at Client XYZ", date: dayjs().format("YYYY-MM-DD") },
-  ];
+  // Fetch existing leave dates on component mount
+  const worker = useSelector((state) => state.workerReducer.workerData)
+  useEffect(() => {
+    fetchLeaveDates();
+    fetchTasks();
+  }, []);
 
-  // Handle marking the selected day as leave
-  const handleMarkLeave = () => {
-    setOpen(true); // Open confirmation dialog
-  };
-
-  // Handle confirmation to mark as leave
-  const handleConfirmLeave = () => {
-    const formattedDate = value.format("YYYY-MM-DD");
-    if (!leaveDates.includes(formattedDate)) {
-      setLeaveDates((prev) => [...prev, formattedDate]); // Add the leave date
+  const fetchLeaveDates = async () => {
+    try {
+      const response = await instance.get(`/workers/leave-dates/${worker._id}`);
+      if (!response.data.success) throw new Error('Failed to fetch leave dates');
+      const list = response.data.list
+      setLeaveDates(list.map(date => dayjs(date).format("YYYY-MM-DD")));
+    } catch (err) {
+      setError('Failed to load leave dates');
+      console.error(err);
     }
-    setOpen(false); // Close the dialog after confirming
   };
 
-  // Check if the selected day is a workday or leave
+  const fetchTasks = async () => {
+    try {
+      const response = await instance.get('/api/tasks');
+      if (!response.ok) throw new Error('Failed to fetch tasks');
+      const data = await response.json();
+      setTasks(data);
+    } catch (err) {
+      setError('Failed to load tasks');
+      console.error(err);
+    }
+  };
+
+  const handleMarkLeave = () => {
+    setOpen(true);
+  };
+
+  const handleConfirmLeave = async () => {
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      const formattedDate = value.format("YYYY-MM-DD");
+      const response = await instance.patch(`/workers/leave-dates/${worker._id}`, {  
+          date: formattedDate,
+        })
+      
+
+      if (!response.data.success) throw new Error('Failed to mark leave');
+
+      // Update local state only after successful backend update
+      if (!leaveDates.includes(formattedDate)) {
+        setLeaveDates(prev => [...prev, formattedDate]);
+      }
+      setOpen(false);
+    } catch (err) {
+      setError('Failed to mark leave. Please try again.');
+      console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const getDaySpecial = (date) => {
     const formattedDate = date.format("YYYY-MM-DD");
     if (leaveDates.includes(formattedDate)) {
       return "Leave";
     }
-    const taskForDay = tasks.find((task) => task.date === formattedDate);
+    const taskForDay = tasks.find(task => task.date === formattedDate);
     return taskForDay ? taskForDay.task : "No tasks assigned";
   };
 
@@ -72,35 +116,36 @@ const WorkerDashboard = () => {
             defaultValue={dayjs()}
             value={value}
             onChange={(newValue) => setValue(newValue)}
-            minDate={dayjs()} // Disable past dates
+            minDate={dayjs()}
             maxDate={dayjs().add(1, "month")}
-            slots={{ day: ServerDay }} // Use custom day rendering
-            slotProps={{ day: { highlightedDays: leaveDates } }} // Pass leave dates to custom day component
+            slots={{ day: ServerDay }}
+            slotProps={{ day: { highlightedDays: leaveDates } }}
           />
         </LocalizationProvider>
         <Button
           variant="contained"
           color="primary"
           onClick={handleMarkLeave}
-          className="mt-4"
+          disabled={isLoading}
+          className="mt-4 w-full"
         >
-          Mark as Leave
+          {isLoading ? "Marking Leave..." : "Mark as Leave"}
         </Button>
       </Box>
 
-      {/* Display selected date and its special (work or leave) */}
       <div className="w-1/3 ml-10 bg-gray-100 p-4 rounded-md shadow-md">
-        <h2 className="text-xl font-bold mb-4">Selected Date: {value.format("YYYY-MM-DD")}</h2>
-        <p className="text-lg">
-          {getDaySpecial(value)}
-        </p>
+        <h2 className="text-xl font-bold mb-4">
+          Selected Date: {value.format("YYYY-MM-DD")}
+        </h2>
+        <p className="text-lg">{getDaySpecial(value)}</p>
+        {error && (
+          <Alert severity="error" className="mt-4">
+            {error}
+          </Alert>
+        )}
       </div>
 
-      {/* Confirmation Dialog */}
-      <Dialog
-        open={open}
-        onClose={() => setOpen(false)} // Close dialog without marking leave
-      >
+      <Dialog open={open} onClose={() => setOpen(false)}>
         <DialogTitle>Mark as Leave</DialogTitle>
         <DialogContent>
           <DialogContentText>
@@ -108,11 +153,20 @@ const WorkerDashboard = () => {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpen(false)} color="secondary">
+          <Button 
+            onClick={() => setOpen(false)} 
+            color="secondary"
+            disabled={isLoading}
+          >
             Cancel
           </Button>
-          <Button onClick={handleConfirmLeave} color="primary" autoFocus>
-            Confirm
+          <Button 
+            onClick={handleConfirmLeave} 
+            color="primary" 
+            disabled={isLoading}
+            autoFocus
+          >
+            {isLoading ? "Confirming..." : "Confirm"}
           </Button>
         </DialogActions>
       </Dialog>

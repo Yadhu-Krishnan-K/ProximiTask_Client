@@ -8,7 +8,7 @@ const WorkerInfo = ({id}) => {
     getWorker(id)
   },[])
   async function getWorker(id){
-    const response = await instance.get(`/workers/worker/${id}`)
+    const response = await instance.get(`/workers/${id}`)
     if(response.data.success){
       console.log(response)
       setWorker(response.data.worker)

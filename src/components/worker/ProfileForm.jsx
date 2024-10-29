@@ -21,12 +21,13 @@ const validationSchema = Yup.object().shape({
     .matches(/^[0-9]+$/, "Phone number must contain only digits")
     .matches(/^\d{10}$/, "Phone number must be exactly 10 digits")
     .required("Phone number is required"),
-  location: Yup.string().required('Location is required'),
-  category: Yup.string().required('Category is required'),
-});
-
-const ProfileForm = () => {
-  const dispatch = useDispatch()
+    location: Yup.string().required('Location is required'),
+    category: Yup.string().required('Category is required'),
+  });
+  
+  const ProfileForm = () => {
+  const worker = useSelector((state) => state.workerReducer.workerData);
+  const dispatch = useDispatch();
   const [categories, setCategories] = useState([]);
   const [locations, setLocations] = useState([]);
 
@@ -53,7 +54,6 @@ const ProfileForm = () => {
     }
   };
 
-  const worker = useSelector((state) => state.workerReducer.workerData);
   
   const initialValues = {
     name: worker.name || '',
@@ -67,7 +67,7 @@ const ProfileForm = () => {
     try {
       const response = await instance.put(`/workers/worker/${worker._id}`, values);
       if (response.status === 200) {
-        dispatch(setWorkerData(response.data.data))
+        dispatch(setWorkerData(response.data.data));
       }
     } catch (error) {
       console.error('Error updating profile:', error);
@@ -85,7 +85,7 @@ const ProfileForm = () => {
             validationSchema={validationSchema}
             onSubmit={handleSubmit}
           >
-            {({ isSubmitting }) => (
+            {({ isSubmitting, values }) => (
               <Form className="p-8">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* Name Field */}
@@ -136,14 +136,22 @@ const ProfileForm = () => {
                       as="select"
                       className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 bg-white"
                       name="category"
+                      value={worker.category_id}
                     >
                       <option value="">Select category</option>
                       {categories.map((category) => (
-                        <option key={category._id} value={category.name}>
+                        <option key={category._id} value={category._id}>
                           {category.categoryName}
                         </option>
                       ))}
                     </Field>
+                    {/* <div className="mt-1">
+                      {values.category && (
+                        <span className="text-gray-600">
+                          Selected: {categories.find(cat => cat._id === values.category)?.categoryName}
+                        </span>
+                      )}
+                    </div> */}
                     <ErrorMessage name="category" component="div" className="text-red-500 text-sm mt-1" />
                   </div>
 
@@ -156,6 +164,7 @@ const ProfileForm = () => {
                       as="select"
                       className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 bg-white"
                       name="location"
+                      value={worker.area}
                     >
                       <option value="">Select location</option>
                       {locations.map((location) => (
@@ -164,6 +173,13 @@ const ProfileForm = () => {
                         </option>
                       ))}
                     </Field>
+                    {/* <div className="mt-1">
+                      {values.location && (
+                        <span className="text-gray-600">
+                          Selected: {values.location}
+                        </span>
+                      )}
+                    </div> */}
                     <ErrorMessage name="location" component="div" className="text-red-500 text-sm mt-1" />
                   </div>
                 </div>

@@ -16,7 +16,7 @@ function WorkerSidebar({id}) {
             Services
         </NavLink> */}
         <NavLink 
-         to='/det'
+         to={`/user/WorkerDetails/${id}/details`}
          className={({isActive})=>
             isActive?
             'text-[#083A50] cursor-pointer bg-gray-300 font-semibold py-2 px-4 w-full rounded'

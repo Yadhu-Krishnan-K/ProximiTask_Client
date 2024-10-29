@@ -9,6 +9,7 @@ import { IoHelpCircleOutline, IoClose } from "react-icons/io5";
 
 
 import { BiExit } from "react-icons/bi";
+import logOutHeloper from "../../helper/logoutHelper";
 
 const ProfileSideBar = ({ isOpen, toggleSidebar, user }) => {
   const {id} = useParams()
@@ -71,7 +72,9 @@ const ProfileSideBar = ({ isOpen, toggleSidebar, user }) => {
         </NavLink>
       </nav>
       <div className="absolute bottom-0 w-full p-4 border-t">
-        <div onClick={() => navigate('/logout')} className="flex items-center text-red-600 cursor-pointer">
+        <div onClick={() => {localStorage.removeItem('userData')
+    logOutHeloper('user')
+    window.location.href = '/';}} className="flex items-center text-red-600 cursor-pointer">
           <BiExit className="mr-3 h-5 w-5" />
           Log out
         </div>

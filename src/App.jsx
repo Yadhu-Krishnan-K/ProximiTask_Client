@@ -13,6 +13,8 @@ import ServiceList from './pages/User/ServiceList'
 import DashWorker from './components/worker/DashWorker'
 import WorkCategoryComponent from './pages/User/ServiceViceWorkers'
 import OTPVerification from './pages/Worker/OtpSecrion'
+import LocationMapPage from './components/worker/LocationMapModal'
+import Worker from './components/user/Worker'
 
 const LandingPage = lazy(() => import('./pages/User/LandingPage'));
 const SignUp = lazy(() => import('./pages/User/SignUp'));
@@ -82,7 +84,7 @@ function App() {
           <Route path='/user/Services/:cateName' element={<WorkCategoryComponent />} />
           <Route path='/user/WorkerDetails/:id' element={<WorkerDetailPage />}>
             <Route index element={<Navigate to='WorkerServices' />} />
-            <Route path='details' element={<WorkerServices />} />
+            <Route path='details' element={<Worker />} />
             <Route path='workerBooking' element={user?.isActive ? (<ServiceBookingForm  />) : (<Navigate to='/user/login' />)} />
           </Route>
           <Route path='/user/profile/:id' element={user?.isActive ? (<Profile user={user} />) : (<Navigate to='/' />)} >
@@ -102,6 +104,7 @@ function App() {
             <Route path='notifications' element={<Notifications />} />
             <Route path='dash' element={<DashWorker/>} />
           </Route>
+          {/* <Route path='/worker/select-location' element={<LocationMapPage />} /> */}
           {/* <Route path='/WorkerServices' element={worker.active?(<WorkerServices />):(<Navigate to='/WorkerProfile' />)} /> */}
           <Route path='/worker/services' element={<WorkerServices />} />
 

@@ -51,7 +51,7 @@ export const EditProfileModal = ({ isOpen, onClose, user, onSave }) => {
                   <Field
                     type="text"
                     name="name"
-                    className="w-full border-gray-300 rounded-lg py-2 px-3"
+                    className="w-full bg-slate-200 border-gray-300 rounded-lg py-2 px-3"
                   />
                   <ErrorMessage name="name" component="p" className="text-red-500 text-sm" />
                 </div>
@@ -62,29 +62,29 @@ export const EditProfileModal = ({ isOpen, onClose, user, onSave }) => {
                   <Field
                     type="email"
                     name="email"
-                    className="w-full border-gray-300 rounded-lg py-2 px-3"
+                    className="w-full bg-slate-200 border-gray-300 rounded-lg py-2 px-3"
                   />
                   <ErrorMessage name="email" component="p" className="text-red-500 text-sm" />
                 </div>
 
                 {/* Address Field */}
-                <div>
+                {/* <div>
                   <label className="block text-gray-700 text-sm font-semibold mb-1">Address</label>
                   <Field
                     type="text"
                     name="address"
-                    className="w-full border-gray-300 rounded-lg py-2 px-3"
+                    className="w-full bg-slate-200 border-gray-300 rounded-lg py-2 px-3"
                   />
                   <ErrorMessage name="address" component="p" className="text-red-500 text-sm" />
-                </div>
+                </div> */}
 
                 {/* Contact Number Field */}
                 <div>
                   <label className="block text-gray-700 text-sm font-semibold mb-1">Contact Number</label>
                   <Field
-                    type="number"
+                    type="text"
                     name="contactNumber"
-                    className="w-full border-gray-300 rounded-lg py-2 px-3"
+                    className="w-full bg-slate-200 border-gray-300 rounded-lg py-2 px-3"
                   />
                   <ErrorMessage
                     name="contactNumber"
