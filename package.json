@@ -19,6 +19,8 @@
     "@mui/x-date-pickers": "^7.20.0",
     "@react-oauth/google": "^0.12.1",
     "@reduxjs/toolkit": "^2.2.6",
+    "@testing-library/jest-dom": "^6.6.2",
+    "@testing-library/react": "^16.0.1",
     "axios": "^1.7.3",
     "dayjs": "^1.11.13",
     "formik": "^2.4.6",
