@@ -165,22 +165,42 @@ function CreateAccountForm({ setOriginalImg, setCroppedImg, setCropped, onClose,
             onSubmit={handleSubmit}
           >
             {({ errors, touched, setFieldValue, values, isValid }) => {
-                const handleLocationSelect = (location) => {
+                const handleLocationSelect = async(location) => {
                   setFieldValue('location.coords.lat', location.lat);
                   setFieldValue('location.coords.long', location.lng);
+                  try {
+                    const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${location.lat}&lon=${location.lng}`);
+                    console.log('response when selecting from map = ',response)
+                    const data = await response.json();
+                    console.log('data when selecting from map = ',data)
+                    setLocationDetails({
+                      displayName: data.display_name,
+                      city: data.address.city || data.address.town || data.address.village,
+                      state: data.address.state,
+                      country: data.address.country,
+                      postcode: data.address.postcode,
+                    });
+                    12.3679
+                    console.log('location details = ', locationDetails)
+                  } catch (error) {
+                    console.error("Error fetching location details:", error);
+                  }
                 };
-                const getCurrentLocation = () => {
+                const getCurrentLocation = (setFieldValue) => {
                   navigator.geolocation.getCurrentPosition(async (position) => {
                     const { latitude, longitude } = position.coords;
-                
+                    console.log('location lat, lng = ',latitude,longitude)
+
                     // Set latitude and longitude in form values
-                    setFieldValue("location.coords.lat", latitude);
+                    setFieldValue("location.coords.lat", latitude); 
                     setFieldValue("location.coords.long", longitude);
                 
                     // Fetch additional location details using Nominatim API
                     try {
                       const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
+                      console.log('response = ',response)
                       const data = await response.json();
+                      console.log('data = ',data)
                       setLocationDetails({
                         displayName: data.display_name,
                         city: data.address.city || data.address.town || data.address.village,
@@ -188,9 +208,17 @@ function CreateAccountForm({ setOriginalImg, setCroppedImg, setCropped, onClose,
                         country: data.address.country,
                         postcode: data.address.postcode,
                       });
+
+                      console.log('location details = ', locationDetails)
                     } catch (error) {
                       console.error("Error fetching location details:", error);
                     }
+                  }, 
+                  async (error)=>{console.log(error)},
+                  {
+                    enableHighAccuracy: true,
+                    timeout: 5000,
+                    maximumAge: 0
                   });
                 };
                 const handleMapSelection = () => {
@@ -251,9 +279,10 @@ function CreateAccountForm({ setOriginalImg, setCroppedImg, setCropped, onClose,
                           </Typography>
                         )}
 
-                        {values.lat && values.long && (
+                        {values.location.coords.lat && values.location.coords.long && (
                           <Typography variant="body2" color="text.secondary">
-                            Selected location: {values.lat.toFixed(4)}, {values.long.toFixed(4)}
+                            Selected location: {values.location.coords.lat.toFixed(4)}, {values.location.coords.long.toFixed(4)}, 
+                            {locationDetails?.city}
                           </Typography>
                         )}
                       </Box>
@@ -261,7 +290,7 @@ function CreateAccountForm({ setOriginalImg, setCroppedImg, setCropped, onClose,
 
                     {/* Rest of the form sections remain the same */}
                     {/* Personal Details Section */}
-                    <Paper sx={{ p: 3 }}>
+                    
                       {/* Personal Details Section */}
                       <Paper sx={{ p: 3 }}>
                         <Typography variant="h6" gutterBottom>
@@ -302,7 +331,7 @@ function CreateAccountForm({ setOriginalImg, setCroppedImg, setCropped, onClose,
                           </Field>
                         </Box>
                       </Paper>
-                    </Paper>
+                    
 
                     {/* ID Details Section */}
                     <Paper sx={{ p: 3 }}>
@@ -398,7 +427,7 @@ function CreateAccountForm({ setOriginalImg, setCroppedImg, setCropped, onClose,
                     open={isMapModalOpen}
                     onClose={() => setIsMapModalOpen(false)}
                     onSelectLocation={handleLocationSelect}
-                    initialLocation={values.lat && values.long ? { lat: values.lat, lng: values.long } : null}
+                    initialLocation={values.location.coords.lat && values.location.coords.long ? { lat: values.location.coords.lat, lng: values.location.coords.long } : null}
                   />
                 </Form>
               );
