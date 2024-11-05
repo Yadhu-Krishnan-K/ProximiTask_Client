@@ -59,7 +59,7 @@ const WorkerApproval = ({ worker, onApprove, onReject, onClose }) => {
 
               <div className="flex items-center py-2 border-b border-gray-100">
                 <div className="w-24 text-sm text-gray-500">Category</div>
-                <div className="flex-1 font-medium">{worker.category}</div>
+                <div className="flex-1 font-medium">{worker.category_id.categoryName}</div>
               </div>
 
               <div className="flex items-center py-2 border-b border-gray-100">

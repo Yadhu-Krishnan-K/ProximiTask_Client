@@ -86,10 +86,11 @@ const OTPVerification = () => {
         throw new Error('Invalid code');
       }
     } catch (error) {
-      setStatus({
-        type: 'error',
-        message: 'Invalid verification code'
-      });
+      console.log(error)
+      // setStatus({
+      //   type: 'error',
+      //   message: 'Invalid verification code'
+      // });
       setOtp(['', '', '', '']);
       refs[0].current.focus();
     } finally {
