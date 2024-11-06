@@ -38,7 +38,7 @@ export default function ProfileCard({ worker, workerIdPass }) {
           <svg className="w-4 h-4 mr-2 fill-current" viewBox="0 0 20 20">
             <path d="M10 20S3 10.87 3 7a7 7 0 1 1 14 0c0 3.87-7 13-7 13zm0-11a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/>
           </svg>
-          <span className="text-sm">{worker.location || 'City, Country'}</span>
+          <span className="text-sm">{worker.location_id.name || 'City, Country'}</span>
         </div>
         <div className="mb-4 flex items-center text-gray-700">
           <svg className="w-4 h-4 mr-2 fill-current" viewBox="0 0 20 20">

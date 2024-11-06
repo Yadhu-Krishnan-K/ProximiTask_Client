@@ -22,8 +22,9 @@ function WorkerNear({ location }) {
       let list = res.data.list;
       let ApprovedWorkers = list.filter((worker) => worker.active);
       let workersWithInRange = [];
+      console.log('approved workers = ',ApprovedWorkers)
       for (let worker of ApprovedWorkers) {
-        let res = isWithin(location.lat, location.long, worker.lat, worker.long);
+        let res = isWithin(location.lat, location.long, worker.location_id.coords.lat, worker.location_id.coords.long);
         console.log('res from for of = ', res)
         if (res) {
           workersWithInRange.push(worker);
