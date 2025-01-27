@@ -6,16 +6,16 @@ import EditProfile from "../../components/user/EditProfile";
 import { useSelector } from "react-redux";
 
 function Profile({user}) {
-
   const [sidebarOpen, setSidebarOpen] = useState(false);
-
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
-
+  
   return (
     <div className="bg-gray-100 min-h-screen">
       <ProfileNavBar toggleSidebar={toggleSidebar} user={user}/>
       <ProfileSideBar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} user={user} />
-      <div className = "lg:ml-64 pt-16 p-4 sm:p-6 lg:p-8">
+      <div className={`transition-all duration-300 pt-16 p-4 sm:p-6 lg:p-8 ${
+        sidebarOpen ? 'lg:ml-64' : 'ml-0'
+      }`}>
         <Outlet />
       </div>
     </div>

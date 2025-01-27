@@ -37,6 +37,7 @@ const WorkerServices = lazy(() => import('./components/user/WorkerServices'));
 const ProfileForm = lazy(() => import('./components/worker/ProfileForm'));
 const LocationManagement = lazy(() => import('./components/admin/LocationManagement'));
 const BookingStatusList = lazy(() => import('./components/user/BookingStatusList'));
+const AddressPage = lazy(()=> import('./components/user/UserProfile/AddressPage'))
 
 function App() {
 
@@ -54,7 +55,6 @@ function App() {
     const storedWorker = localStorage.getItem('workerData');
     console.log('storedWorker = === ', storedWorker)
     if (storedWorker) {
-
       dispatch(setWorkerData(JSON.parse(storedWorker)))
     }
 
@@ -83,15 +83,16 @@ function App() {
           <Route path='/user/Services' element={<ServiceList />} />
           <Route path='/user/Services/:cateName' element={<WorkCategoryComponent />} />
           <Route path='/user/WorkerDetails/:id' element={<WorkerDetailPage />}>
-            <Route index element={<Navigate to='WorkerServices' />} />
+            <Route index element={<Navigate to='details' />} />
             <Route path='details' element={<Worker />} />
             <Route path='workerBooking' element={user?.isActive ? (<ServiceBookingForm  />) : (<Navigate to='/user/login' />)} />
           </Route>
-          <Route path='/user/profile/:id' element={user?.isActive ? (<Profile user={user} />) : (<Navigate to='/' />)} >
+          <Route path='/user/profile/:id' element={user?.isActive ? (<Profile user={user} />) : (<Navigate to='/user/login ' />)} >
             <Route index element={<Navigate to='editProfile' />} />
             <Route path='editProfile' element={<EditProfile />} />
             <Route path='notifications' element={<BookingStatusList />} />
             <Route path='security' element={<Security />} />
+            <Route path='address' element={<AddressPage />} />
           </Route>
 
           {/* workerRoute */}

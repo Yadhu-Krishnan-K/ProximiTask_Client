@@ -95,8 +95,8 @@ function CreateAccountForm({ setOriginalImg, setCroppedImg, setCropped, onClose,
       const position = await new Promise((resolve, reject) => {
         navigator.geolocation.getCurrentPosition(resolve, reject, {
           enableHighAccuracy: true,
-          timeout: 5000,
-          maximumAge: 0
+          // timeout: 5000,
+          // maximumAge: 10000
         });
       });
 
@@ -374,7 +374,7 @@ function CreateAccountForm({ setOriginalImg, setCroppedImg, setCropped, onClose,
                           )}
                         </Field>
                       </Box>
-                    </Paper>
+                    </Paper>wk
 
                     {/* Terms Section */}
                     <Paper sx={{ p: 3 }}>

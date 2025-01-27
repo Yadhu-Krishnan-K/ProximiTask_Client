@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import { useDispatch, useSelector } from "react-redux";
-import { ToastContainer, toast } from "react-toastify";
 import * as Yup from "yup";
 import instance from "../../helper/axiosInstance";
 import { FaEye, FaEyeSlash, FaCamera, FaEdit } from "react-icons/fa";
@@ -20,11 +19,6 @@ const SignUp = () => {
   
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [original, setOriginal] = useState(''); // Image URL for cropping
-  const [croppedImage, setCroppedImage] = useState(''); // Final cropped image URL
-  const [cropped, setCropped] = useState(false); // Whether cropping is done
-  const [originalFile, setOriginalFile] = useState(null); // Store original image file
-  const [croppedFile, setCroppedFile] = useState(null); // Store cropped image file
   const fileInputRef = useRef(null);
   const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
@@ -37,19 +31,9 @@ const SignUp = () => {
     }
   }, [showError]);
 
-  useEffect(() => {
-    if (croppedFile !== null) {
-      const objUrl = URL.createObjectURL(croppedFile);
-      formik.setFieldValue("croppedImg", croppedFile); // Set croppedImg value in formik
-      setCroppedImage(objUrl);
-      return () => URL.revokeObjectURL(objUrl);
-    }
-  }, [croppedFile]);
 
   const formik = useFormik({
     initialValues: {
-      userImg: null,
-      croppedImg: null,
       name: "",
       email: "",
       pass: "",
@@ -61,9 +45,6 @@ const SignUp = () => {
       formData.append("name", values.name);
       formData.append("email", values.email);
       formData.append("pass", values.pass);
-      formData.append("userImg", originalFile);
-      formData.append("croppedImg", croppedFile);
-
       instance
         .post("/users/initiateSignup", formData, {
           headers: {
@@ -87,42 +68,8 @@ const SignUp = () => {
     validateOnChange: true,
   });
 
-  const handleImageChange = (event) => {
-    const file = event.currentTarget.files[0];
-    
-    if (file) {
-      // Check if the file is an image (valid MIME types)
-      const validImageTypes = ["image/jpeg", "image/png", "image/gif"];
-      
-      if (!validImageTypes.includes(file.type)) {
-        showErrorPopup("Unsupported file format. Please upload a JPEG, PNG, or GIF image.");
-        return; // Exit the function if the file is not a valid image
-      }
-  
-      // Proceed if the file is an image
-      const fileUrl = URL.createObjectURL(file);
-      setOriginal(fileUrl);
-      setOriginalFile(file);
-      formik.setFieldValue("userImg", file); // Set userImg value in formik
-      setCropped(false); // Reset cropping state
-    }
-  };
-  
-
-  const handleImageEdit = () => {
-    fileInputRef.current.click();
-  };
-
   const handleSubmit = (e) => {
     e.preventDefault();
-    formik.setTouched({
-      userImg: true,
-      croppedImg: true,
-      name: true,
-      email: true,
-      pass: true,
-      conPass: true,
-    });
     setShowError(true);
     formik.handleSubmit(e);
   };
@@ -172,62 +119,13 @@ const SignUp = () => {
 
   return (
     <GoogleOAuthProvider clientId={clientId}>
-      {(!cropped && original )? (
-        <div className="w-screen h-screen bg-white">
-          <ImgCropper
-            imageURL={original}
-            setImage={setCroppedImage}
-            setCropped={setCropped}
-            setCroppedFile={setCroppedFile}
-          />
-        </div>
-      ):
+      
       <div className="w-full min-h-screen bg-emerald-200 flex justify-center items-center p-4 overflow-y-auto">
          
         <div className="w-full max-w-md bg-[#F6FBF9] rounded-2xl shadow-lg p-8 my-8">
           <h1 className="text-2xl font-bold text-center mb-6">Create An Account</h1>
           
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="flex flex-col items-center mb-4">
-              <div className="relative mb-4">
-                {cropped ? (
-                  <img
-                    src={croppedImage}
-                    alt="Preview"
-                    className="w-32 h-32 rounded-full object-cover"
-                    onClick={() => {
-                      setOriginal(original);
-                      setCropped(false);
-                    }}
-                  />
-                ) : (
-                  <div className="w-32 h-32 rounded-full bg-gray-200 flex items-center justify-center cursor-pointer" onClick={handleImageEdit}>
-                    <FaCamera size={32} color="#9CA3AF" />
-                  </div>
-                )}
-                <button
-                  type="button"
-                  onClick={handleImageEdit}
-                  className="absolute bottom-0 right-0 bg-white rounded-full p-2 shadow-md"
-                >
-                  <FaEdit size={16} color="#4B5563" />
-                </button>
-              </div>
-              <input
-                ref={fileInputRef}
-                type="file"
-                name="userImg"
-                accept="image/*"
-                onChange={handleImageChange}
-                hidden
-              />
-              {formik.touched.userImg && formik.errors.userImg && (
-                <div className="text-red-500 text-sm mt-1">{formik.errors.userImg}</div>
-              )}
-              {formik.touched.croppedImg && formik.errors.croppedImg && (
-                <div className="text-red-500 text-sm mt-1">{formik.errors.croppedImg}</div>
-              )}
-            </div>
 
             {/* Name Input */}
             <div>
@@ -342,7 +240,7 @@ const SignUp = () => {
           </p>
         </div>
       </div>
-      }
+      
     </GoogleOAuthProvider>
   );
 };

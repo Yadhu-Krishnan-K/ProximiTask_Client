@@ -52,6 +52,9 @@ const userSlice = createSlice({
     deleteUserData: (state, action) => {
       state.userData = null;
     },
+    updateUserData:(state,action) => {
+      state.userData = {...state.userData,...action.payload}
+    }
   },
   extraReducers:(builer)=>{
     builer

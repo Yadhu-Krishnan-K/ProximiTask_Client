@@ -30,8 +30,9 @@ function WorkerNear({ location }) {
           workersWithInRange.push(worker);
         }
       }
-      console.log('with in range = ', workersWithInRange)
-      setWorkers([...workersWithInRange]); // Set the state with filtered workers
+      // console.log('with in range = ', workersWithInRange)
+      // setWorkers([...workersWithInRange]); // Set the state with filtered workers
+      setWorkers([...ApprovedWorkers])
     } catch (error) {
       console.error('Error fetching workers:', error);
     } finally {
@@ -49,7 +50,7 @@ function WorkerNear({ location }) {
 
   return (
     <div className="text-center p-5 flex-col">
-      <h1 className="text-3xl font-bold mb-5">---Workers Near You---</h1>
+      <h1 className="text-3xl font-bold mb-5 text-green-500">Workers Near You</h1>
       {
         !loading ?
           (

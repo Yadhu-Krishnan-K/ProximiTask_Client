@@ -50,9 +50,10 @@ function Nav1({ user }) {
 
             {/* Dropdown Menu */}
             {ddopen && (
-              <div className='absolute right-0 mt-2 w-48 bg-white border border-gray-200 shadow-lg rounded-lg z-50'>
+              <div className='absolute mt-2 w-48 bg-white border border-gray-200 shadow-lg rounded-lg z-50'>
                 <div className='flex flex-col'>
-                  <div className='px-4 py-2 hover:bg-gray-100 cursor-pointer' onClick={() => nav(`/user/profile/${user._id}/editProfile`)}>Edit Profile</div>
+                  <div className='px-4 py-2 hover:bg-gray-100 cursor-pointer' onClick={() => nav(`/user/profile/${user._id}/editProfile`)}>Profile</div>
+                  <div className='px-4 py-2 hover:bg-gray-100 cursor-pointer' onClick={() => nav(`/user/profile/${user._id}/address`)}>Addresses</div>
                   <div className='px-4 py-2 hover:bg-gray-100 cursor-pointer' onClick={() => nav(`/user/profile/${user._id}/notifications`)}>Notifications</div>
                   <div className='px-4 py-2 hover:bg-gray-100 cursor-pointer' onClick={() => nav(`/user/profile/${user._id}/security`)}>Security</div>
                   <div className='px-4 py-2 hover:bg-gray-100 cursor-pointer' onClick={() => nav(`/user/profile/${user._id}/help`)}>Help</div>
@@ -108,7 +109,7 @@ function Nav1({ user }) {
       </div>
       {/* Mobile Dropdown Menu */}
       {isOpen && (
-        <div className="absolute top-16 right-0 w-full bg-white shadow-lg md:hidden z-40">
+        <div className="absolute top-16 right-0 bg-white shadow-lg md:hidden z-40">
           <ul className='flex flex-col items-center space-y-4 p-4 text-md font-medium text-gray-700'>
             {menuItems}
           </ul>

@@ -2,17 +2,18 @@ import React, { useEffect } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { X } from 'lucide-react'; // Import the close icon
+import instance from '../../helper/axiosInstance';
+import { useSelector } from 'react-redux';
 
 export const EditProfileModal = ({ isOpen, onClose, user, onSave }) => {
+  const userData = useSelector((state)=>state.userReducer.userData)
   
   // Define validation schema using Yup
   const validationSchema = Yup.object({
-    name: Yup.string().required('Name is required'),
-    email: Yup.string().email('Invalid email address').required('Email is required'),
-    address: Yup.string().required('Address is required'),
-    contactNumber: Yup.string()
-      .required('Contact number is required')
-      .matches(/^[0-9]{10}$/, 'Must be a valid 10-digit number'),
+    name: Yup.string().required('Name is required')
+                      .matches(/[A-Za-z]/, "Name must contain at least one alphabetic character")
+                      .matches(/^[A-Za-z\s]+$/, "Name can only contain letters and spaces"),
+    email: Yup.string().email('Invalid email address').required('Email is required')
   });
 
   // If modal is not open, don't render the content
@@ -33,13 +34,20 @@ export const EditProfileModal = ({ isOpen, onClose, user, onSave }) => {
           initialValues={{
             name: user.name || '',
             email: user.email || '',
-            address: user.address || '',
-            contactNumber: user.contactNumber || '',
+            // address: user.address || '',
+            // contactNumber: user.contactNumber || '',
           }}
           validationSchema={validationSchema}
-          onSubmit={(values) => {
+          onSubmit={async(values) => {
             console.log('values = ', values)
+            const res = await instance.patch(`/users/update/${userData._id}`,{
+              name:values.name,
+              email:values.email
+            })
+            
             onSave(values);
+            onClose()
+
           }}
         >
           {({ isSubmitting }) => (
@@ -79,7 +87,7 @@ export const EditProfileModal = ({ isOpen, onClose, user, onSave }) => {
                 </div> */}
 
                 {/* Contact Number Field */}
-                <div>
+                {/* <div>
                   <label className="block text-gray-700 text-sm font-semibold mb-1">Contact Number</label>
                   <Field
                     type="text"
@@ -91,7 +99,7 @@ export const EditProfileModal = ({ isOpen, onClose, user, onSave }) => {
                     component="p"
                     className="text-red-500 text-sm"
                   />
-                </div>
+                </div> */}
               </div>
 
               <div className="mt-6 flex justify-end space-x-2">

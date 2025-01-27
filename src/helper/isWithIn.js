@@ -29,7 +29,7 @@ function isWithin20km(lat1, lon1, lat2, lon2) {
     console.log('Calculated Distance =', distance);
 
     // Ensure correct comparison
-    return distance <= 255;
+    return distance <= 20;
   } catch (error) {
     console.log('Error in isWithin20km =', error);
     return false;

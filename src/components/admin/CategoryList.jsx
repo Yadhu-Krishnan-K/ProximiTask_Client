@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import instance from '../../helper/axiosInstance';
-import { toast, ToastContainer } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ImgCropper from '../../helper/ImageCropper';
 import showErrorPopup from '../../Common/ShowErrorPopup';

@@ -68,7 +68,7 @@ const BookingStatusList = () => {
     }
 
   return (
-    <div className="container mx-auto p-6">
+    <div className="container mx-auto p-10">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Booking Status</h1>
         {/* <div className="relative">

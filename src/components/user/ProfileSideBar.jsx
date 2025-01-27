@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { IoIosArrowBack } from "react-icons/io";
 import { useNavigate, NavLink, useLocation, useParams } from 'react-router-dom'
 import { ImPencil } from "react-icons/im";
-import { FaRegBell, FaRegUserCircle, FaCamera } from "react-icons/fa";
+import { FaRegBell, FaRegUserCircle, FaCamera, FaRegAddressCard } from "react-icons/fa";
 import { MdLockOutline } from "react-icons/md";
 import { IoHelpCircleOutline, IoClose } from "react-icons/io5";
 // import { FaRegUserCircle } from "react-icons/fa";
@@ -14,7 +14,7 @@ import logOutHeloper from "../../helper/logoutHelper";
 const ProfileSideBar = ({ isOpen, toggleSidebar, user }) => {
   const {id} = useParams()
   useEffect(()=>{
-    
+
   },[])
   const navigate = useNavigate();
 
@@ -28,13 +28,13 @@ const ProfileSideBar = ({ isOpen, toggleSidebar, user }) => {
       </div>
       <div className="w-full h-32 flex justify-center items-center relative">
         {/* <img src="" alt="ProfileImg" /> */}
-        {user
-        ? (<img src={user.croppedImgURL} alt='userImgage' className='rounded-full h-20 w-20' />)
-        : (<FaRegUserCircle className="w-2/3 h-2/3" />)
+        {user&&
+         (<img src={user.croppedImgURL} alt='userImgage' className='rounded-full h-20 w-20'/>)
         }
         <button className="rounded-full border-2 border-black w-7 h-7 flex justify-center items-center absolute bottom-5 right-20 bg-white">
-          <FaCamera className="text-cyan-400 bg-white"/>
+          <FaCamera className="text-cyan-400 bg-white" />
         </button>
+        <input type="text" hidden='true' name="" id="" />
       </div>
       <nav className="mt-4">
         <NavLink to={`/user/profile/${id}/editProfile`} className={({isActive})=>(
@@ -44,7 +44,15 @@ const ProfileSideBar = ({ isOpen, toggleSidebar, user }) => {
         )}>
         
           <ImPencil className="mr-3 h-5 w-5" />
-          Edit profile
+          Profile
+        </NavLink>
+        <NavLink to={`/user/profile/${id}/address`} className={({isActive})=>(
+          isActive
+          ?("flex items-center px-4 py-2 text-gray-700 bg-gray-200 cursor-pointer")
+          :("flex items-center px-4 py-2 text-gray-600 hover:bg-gray-100 cursor-pointer")
+        )}>
+          <FaRegAddressCard className="mr-3 h-5 w-5" />
+          Addresses
         </NavLink>
         <NavLink to={`/user/profile/${id}/notifications`} className={({isActive})=>(
           isActive

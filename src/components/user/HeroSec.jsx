@@ -4,8 +4,8 @@ function HeroSec() {
   return (
     <div className='w-full min-h-screen flex flex-col md:flex-row items-center justify-between relative'>
       <div className='w-full md:w-1/2 z-10'>
-        <h1 className='text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight tracking-tight text-gray-900 mb-8 text-right'>
-          FIND PROFESSIONALS NEAR YOU
+        <h1 className='text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight tracking-tight text-green-500 mb-8 text-right'>
+          FIND PROFESSIONALS <span className='text-sky-500'>NEAR YOU</span>
         </h1>
         <div className='max-w-md mx-auto mt-6'>
           <div className='flex'>

@@ -5,7 +5,7 @@ import {jwtDecode} from 'jwt-decode'
 // Create an Axios instance
 const instance = axios.create({
   baseURL: "http://localhost:8000",
-  timeout: 50000,
+  timeout: 10000,
   headers: {
     "Content-Type": "application/json",
   },

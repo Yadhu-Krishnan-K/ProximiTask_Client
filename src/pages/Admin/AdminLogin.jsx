@@ -5,7 +5,7 @@ import { setAdmin } from '../../redux/features/Admin/adminSlice';
 import { useDispatch } from 'react-redux';
 import * as Yup from 'yup';
 import instance from '../../helper/axiosInstance';
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const AdminLoginSchema = Yup.object().shape({
