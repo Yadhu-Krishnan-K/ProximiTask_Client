@@ -2,14 +2,6 @@ import * as Yup from "yup";
 
 
 export const signUpSchema = Yup.object({
-    userImg: Yup.mixed().required("Profile image is required")
-    .test('fileFormat', "Unsupported file format", (value) =>
-            ["image/jpeg", "image/png", "image/gif"].includes(value?.type)
-    ),
-    croppedImg: Yup.mixed().required("Image needs to be cropped")
-    .test('fileFormat', "Unsupported file format", (value) =>
-      ["image/jpeg", "image/png", "image/gif"].includes(value?.type)
-    ),
     name: Yup.string()
       .matches(/[A-Za-z]/, "Name must contain at least one alphabetic character")
       .matches(/^[A-Za-z\s]+$/, "Name can only contain letters and spaces")

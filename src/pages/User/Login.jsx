@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
-import { json, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -15,7 +15,7 @@ const Login = () => {
 
   const [showPassword, setShowPassword] = useState(false)
 
-  const userData = useSelector((state) => state.userReducer.userData);
+  const userData = useSelector((state) => state.User.userData);
   console.log('User Data:', userData);
   const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
   const dispatch = useDispatch();
@@ -65,12 +65,13 @@ const Login = () => {
     onSubmit: (values) => {
       try {
         console.log('values before sumbittng === ',values)
-        dispatch(userLogin(values)).then((data)=>{
-          // console.log('data from login = ',data)
-          if((data.meta.requestStatus == 'fulfilled')&&(data.payload.isActive)){
-            nav('/')
-          }
-        } )
+        dispatch(userLogin(values))
+        // .then((data)=>{
+        //   // console.log('data from login = ',data)
+        //   if((data.meta.requestStatus == 'fulfilled')&&(data.payload.isActive)){
+        //     nav('/')
+        //   }
+        // } )
       } catch (error) {
           setShowError(true);
       }

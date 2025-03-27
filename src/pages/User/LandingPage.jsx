@@ -12,41 +12,18 @@ import { useNavigate } from "react-router-dom";
 function LandingPage() {
   const dispatch = useDispatch()
   const navigate = useNavigate()
+  const user = useSelector((state) => state.User.userData);
 
   const [location, setLocation] = useState(null)
-  useEffect(() => {
-    console.log('instance rerender working..........===============----------')
-    const data = JSON.parse(localStorage.getItem("userData"));
-    console.log('data from Landing page ======',data)
-    if (data) {
-      instance.get(`/users/${data.email}`)
-      .then((res) => {
-          console.log('response from Landing page ====',res)
-          let result = res.data.user.isActive
-          if (!result) {
-            // If user is inactive, log them out            
-            localStorage.removeItem("userData");
-            dispatch(deleteUserData())
-            navigate("/UserLogin"); // Redirect to login page
-          } else {
-            // If user is active, set the user data in Redux
-            dispatch(setUserData(data));
-          }
-        })
-        .catch((error) => {
-          console.error("Error fetching user status:", error);
-        });
-    }
-  }, []);
+  useEffect(() => {}, []);
 
-  const user = useSelector((state) => state.userReducer.userData);
   
   useEffect(()=>{
     navigator.geolocation.getCurrentPosition((res)=>{
       console.log(res.coords)
       setLocation({
         lat:res.coords.latitude,
-        long:res.coords.longitude
+        long:res.coords.longitude 
       })
     })
   },[])

@@ -34,8 +34,8 @@ function Nav1({ user }) {
   // Menu items as an array for easier reuse
   const menuItems = (
     <>
-      <li className='cursor-pointer' onClick={() => nav('/')}>Home</li>
-      <li className='cursor-pointer' onClick={() => nav('/user/Services')}>Services</li>
+      <li className='cursor-pointer hover:text-red-600' onClick={() => nav('/')}>Home</li>
+      <li className='cursor-pointer hover:text-red-600' onClick={() => nav('/user/Services')}>Services</li>
       {user ? (
         <>
           <li className='cursor-pointer'>Chat</li>
@@ -65,7 +65,7 @@ function Nav1({ user }) {
         </>
       ) : (
         <>
-          <li className='cursor-pointer' onClick={() => nav('/user/login')}>SignUp/SignIn</li>
+          <li className='cursor-pointer hover:text-red-600' onClick={() => nav('/user/login')}>SignIn</li>
           <li>
             <button
               className='bg-cyan-700 text-white py-1 px-4 rounded-full hover:bg-cyan-800 transition-colors duration-300'
@@ -80,10 +80,10 @@ function Nav1({ user }) {
   )
 
   return (
-    <nav className='w-full h-16 flex justify-between items-center shadow-md px-4 bg-white'>
+    <nav className='w-full flex justify-between items-center shadow-md bg-[#F4F4F4] py-5 px-2'>
       {/* Logo Section */}
       <div className="logo flex items-center">
-        <img src="/logo.png" alt="logo" className='lg:w-48 w-36 transition-all duration-300 ease-in-out' />
+        <img src="/FinalLogo.png" alt="logo" className='lg:w-48 w-36 transition-all duration-300 ease-in-out' />
       </div>
 
       {/* Desktop Menu */}

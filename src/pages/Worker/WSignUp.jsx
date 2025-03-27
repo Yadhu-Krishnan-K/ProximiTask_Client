@@ -3,7 +3,6 @@ import { toast } from "react-toastify";
 import { IoMdCloseCircleOutline } from "react-icons/io";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { FaRegUserCircle } from "react-icons/fa";
-import ImgCropper from "../../helper/ImageCropper";
 
 import "react-toastify/dist/ReactToastify.css";
 import LoginComponent from "../../components/worker/LoginComponent";
@@ -138,7 +137,8 @@ const WSignUp = () => {
     <>
        
 
-      {(originalImg && !cropped)
+      {
+      (originalImg && !cropped)
         ? (<ImgCropper
           imageURL={URL.createObjectURL(originalImg)}
           cropInit={{ x: 0, y: 0 }}

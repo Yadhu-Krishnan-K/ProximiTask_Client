@@ -1,32 +1,43 @@
-import React from 'react'
-
+import React, { useEffect, useState } from 'react'
+import instance from '../../helper/axiosInstance'
 function HeroSec() {
+
+ const [text, setText] = useState('')
+ const [loading, setLoading] = useState(false)
+ const [data, setData] = useState([])
+ 
+ useEffect(()=>{
+  let timerId = setTimeout(async()=>{
+      let response = await instance.get(`/url/${text}`)
+  },500)
+
+  return ()=>clearTimeout(timerId)
+},[text])
+ 
+ function handleChange(e){
+  setText(e.target.value)
+ }
+
   return (
-    <div className='w-full min-h-screen flex flex-col md:flex-row items-center justify-between relative'>
-      <div className='w-full md:w-1/2 z-10'>
-        <h1 className='text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight tracking-tight text-green-500 mb-8 text-right'>
+    <div className='w-full min-h-screen flex'>
+      <div className='absolute inset-0 z-10 flex flex-col gap-40 md:gap-0 justify-center w-full p-4 sm:relative sm:z-auto text-wrap'>
+        <h1 className='text-4xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight tracking-tight text-green-500 mb-8 md:text-right'>
           FIND PROFESSIONALS <span className='text-sky-500'>NEAR YOU</span>
         </h1>
-        <div className='max-w-md mx-auto mt-6'>
-          <div className='flex'>
+          <div className='flex justify-center'>
             <input 
               type="text" 
               placeholder="What do you need help with?" 
-              className='flex-grow p-2 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500'
+              className='p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500'
+              onChange={handleChange}
             />
-            <button className='bg-teal-500 text-white p-2 rounded-r-lg'>
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-            </button>
           </div>
-        </div>
+
       </div>
-      <div className='w-full md:w-1/2 absolute md:relative right-0 bottom-0'>
-        <div className='bg rounded-full w-3/4 h-3/4 absolute bottom-0 right-0 z-0'></div>
+      <div className='w-full right-0 bottom-0 mt-1 relative'>
         <img 
           src="/Rectangle 2.png" 
-          className='w-full h-auto max-w-lg mx-auto md:max-w-full relative z-10' 
+          className='w-full h-full' 
           alt="Professionals near you" 
         />
       </div>
@@ -35,3 +46,4 @@ function HeroSec() {
 }
 
 export default HeroSec
+

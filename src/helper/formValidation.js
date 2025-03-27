@@ -29,3 +29,7 @@ export const passwordSchema = Yup.string()
              .matches(/[@$!%*?&]/, "Password must contain at least one special character")
              .matches(/^\S*$/, "Password must not contain spaces")
              .required("Password is required")
+
+export const searchTextValidation = Yup.string()
+             .required("Enter something")
+             .matches(/^\S*$/, "Enter the category only...")

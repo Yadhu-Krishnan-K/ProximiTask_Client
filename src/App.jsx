@@ -16,6 +16,8 @@ import OTPVerification from './pages/Worker/OtpSecrion'
 import LocationMapPage from './components/worker/LocationMapModal'
 import Worker from './components/user/Worker'
 
+import LoaderComponent from './components/Loadin/LoaderComponent'
+
 const LandingPage = lazy(() => import('./pages/User/LandingPage'));
 const SignUp = lazy(() => import('./pages/User/SignUp'));
 const Login = lazy(() => import('./pages/User/Login'));
@@ -41,37 +43,18 @@ const AddressPage = lazy(()=> import('./components/user/UserProfile/AddressPage'
 
 function App() {
 
-  const worker = useSelector((state) => state.workerReducer.workerData)
-  const user = useSelector((state) => state.userReducer.userData);
-  const adminStatus = useSelector((state) => state.adminReducer.adminLogedIn)
+  const user = useSelector((state) => state.User.userData);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const storedUser = localStorage.getItem('userData');
-    if (storedUser) {
-      dispatch(setUserData(JSON.parse(storedUser)));
-    }
-
-    const storedWorker = localStorage.getItem('workerData');
-    console.log('storedWorker = === ', storedWorker)
-    if (storedWorker) {
-      dispatch(setWorkerData(JSON.parse(storedWorker)))
-    }
-
-    const storedAdmin = localStorage.getItem('adminLogedIn')
-    if (storedAdmin) {
-      dispatch(setAdmin())
-    }
+  
   }, []);
 
   return (
 
     <>
-      <Suspense fallback={<div>
-        <svg className="animate-spin h-5 w-5 mr-3 ..." viewBox="0 0 24 24">
-        </svg>
-          Processing...
-      </div>}>
+    {/* <LoaderComponent /> */}
+      <Suspense fallback={<LoaderComponent />}>
         <Routes>
 
           {/* user Route */}
@@ -97,9 +80,10 @@ function App() {
 
           {/* workerRoute */}
 
-          <Route path='/worker/signUp' element={worker?.active ? (<Navigate to='/worker/profile' />) : (<WSignUp />)} />
-          <Route path='/worker/otp' element={!worker ? (<OTPVerification />) : (<Navigate to='/worker/signUp' />)} />
-          <Route path='/worker/profile' element={worker?.active ? (<WorkerProfile />) : (<Navigate to='/worker/signUp' />)} >
+          <Route path='/worker/signUp' element={user?.active ? (<Navigate to='/worker/profile' />) : (<WSignUp />)} />
+          <Route path='/worker/otp' element={!user ? (<OTPVerification />) : (<Navigate to='/worker/signUp' />)} />
+          {/* <Route path='/worker/otp' element={!worker ? (<OTPVerification />) : (<Navigate to='/worker/signUp' />)} /> */}
+          <Route path='/worker/profile' element={user?.active ? (<WorkerProfile />) : (<Navigate to='/worker/signUp' />)} >
             <Route index element={<Navigate to='workerProfileEdit' />} />
             <Route path='workerProfileEdit' element={<ProfileForm />} />
             <Route path='notifications' element={<Notifications />} />
@@ -111,8 +95,9 @@ function App() {
 
           {/* adminRoute */}
 
-          <Route path='/admin/login' element={!adminStatus ? (<AdminLogin />) : (<Navigate to="/admin/panel" />)} />
-          <Route path='/admin/panel' element={adminStatus ? (<Container />) : (<Navigate to="/admin/login" />)} >
+          <Route path='/admin/login' element={!user ? (<AdminLogin />) : (<Navigate to="/admin/panel" />)} />
+          {/* <Route path='/admin/login' element={!adminStatus ? (<AdminLogin />) : (<Navigate to="/admin/panel" />)} /> */}
+          <Route path='/admin/panel' element={user ? (<Container />) : (<Navigate to="/admin/login" />)} >
             <Route index element={<Navigate to='customers' />} />
             <Route path='customers' element={<CustomerList />} />
             <Route path='workers' element={<WorkerList />} />
