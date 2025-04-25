@@ -79,28 +79,7 @@ const SignUp = () => {
 
     instance.post("/users/google-login", { token: credential })
       .then((res) => {
-        if (res?.data?.success) {
-          let accessTokens = localStorage.getItem("accessTokens");
-          let refreshToken = localStorage.getItem("refreshToken");
-
-          if (accessTokens) {
-            accessTokens = JSON.parse(accessTokens);
-          } else {
-            accessTokens = [];
-          }
-          accessTokens.push(res?.data?.accessToken);
-
-          localStorage.setItem("userData", JSON.stringify(res?.data?.user));
-          localStorage.setItem("accessTokens", JSON.stringify(accessTokens));
-          if (!refreshToken) {
-            localStorage.setItem("refreshToken", JSON.stringify(res?.data?.refreshToken));
-          }
-
-          dispatch(setUserData(res?.data?.user));
           nav("/");
-        } else {
-          Failed("Google login failed. Please try again.");
-        }
       })
       .catch((error) => {
         console.error("Google Login error:", error);
@@ -125,7 +104,7 @@ const SignUp = () => {
                 type="text"
                 name="name"
                 placeholder="Full Name"
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none"
                 value={formik.values.name}
                 onChange={formik.handleChange}  
                 onBlur={formik.handleBlur}
@@ -142,7 +121,7 @@ const SignUp = () => {
                 type="email"
                 name="email"
                 placeholder="Email Address"
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none"
                 value={formik.values.email}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
@@ -153,7 +132,7 @@ const SignUp = () => {
             </div>
 
             {/* Password Input */}
-            <div className="relative border rounded-lg flex justify-around bg-white">
+            <div className="relative border border-gray-300 rounded-lg flex justify-around bg-white">
               <input
                 id="pass"
                 type={showPassword ? "text" : "password"}
@@ -178,7 +157,7 @@ const SignUp = () => {
               )}
 
             {/* Confirm Password Input */}
-            <div className="relative border rounded-lg flex justify-center bg-white">
+            <div className="relative border border-gray-300 rounded-lg flex justify-center bg-white">
               <input
                 id="conPass"
                 type={showConfirmPassword ? "text" : "password"}

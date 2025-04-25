@@ -6,10 +6,11 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { FaEye } from "react-icons/fa";
 import { FaEyeSlash } from "react-icons/fa";
-
 import instance from "../../helper/axiosInstance";
-import { setUserData,userLogin } from "../../redux/features/User/userSlice";
+import { setUserData } from "../../redux/features/User/userSlice";
+import { userLogin } from "../../redux/actions/loginAction";
 // import {jwtDecode} from 'jwt-decode'
+import { Success, Failed } from "../../helper/popup";
 
 const Login = () => {
 
@@ -66,12 +67,19 @@ const Login = () => {
       try {
         console.log('values before sumbittng === ',values)
         dispatch(userLogin(values))
-        // .then((data)=>{
-        //   // console.log('data from login = ',data)
-        //   if((data.meta.requestStatus == 'fulfilled')&&(data.payload.isActive)){
-        //     nav('/')
-        //   }
-        // } )
+        .unwrap() // Ensures `fulfilled` gives direct access to `payload`
+        .then((payload) => {
+          console.log('working to show payload',payload)
+          if (payload.user.isActive) {
+            console.log('user loged in successfully ')
+            Success("User logged in successfully")
+            // nav("/");
+          }
+        })
+        .catch((error) => {
+          console.error("Login error:", error);
+          Failed(error.error)
+        });
       } catch (error) {
           setShowError(true);
       }

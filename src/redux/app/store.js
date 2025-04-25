@@ -1,18 +1,24 @@
-import { configureStore } from '@reduxjs/toolkit';
-import userReducer from '../features/User/userSlice'
-import authReducer from '../features/authSlice';
+import { configureStore, combineReducers } from '@reduxjs/toolkit';
+import {persistReducer, persistStore} from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
 
-// (
-// function working(){
 
-//     console.log('userReducer= ',userReducer)
+import userReducer from '../features/User/userSlice';
 
-// })()
+const persistConfig = {
+    key:"root",
+    storage
+}
+
+const rootReducers = combineReducers({
+    User: userReducer,
+})
+
+const persistedReducer = persistReducer(persistConfig,rootReducers)
+
 export const store = configureStore({
-    reducer: {
-        User: userReducer,
-        // Worker: workerReducer,
-        // Admin: adminReducer,
-        Auth: authReducer
-    }
+    reducer:persistedReducer,
+    middleware:(getDefaultMiddleware)=>getDefaultMiddleware({serializableCheck:false})
 });
+
+export const persistor = persistStore(store)

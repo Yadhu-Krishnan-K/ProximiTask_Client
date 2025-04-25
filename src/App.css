@@ -3,3 +3,19 @@
   padding: 0;
   /* text-align: center; */
 }
+
+@keyframes slideInFromLeft {
+  0% {
+    transform: translateX(-300px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.slide-in-left {
+  animation: slideInFromLeft 1s ease-out forwards;
+}
+

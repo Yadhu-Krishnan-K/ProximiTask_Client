@@ -1,0 +1,7 @@
+export {default as Step1} from './InitialSignup'
+export {default as Step2} from './PhoneAndProfile'
+export {default as Step3} from './LocationInfo'
+export {default as Step4} from './WorkDetails'
+export {default as Step5} from './DocumentsToVerify'
+export {default as Step6} from './Availability'
+export {default as Step7} from './LoginComponent'

@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { userLogin } from "../../actions/loginAction";
+import { logoutAction } from "../../actions/logoutAction";
 
 const initialState = {
   userData: null,
@@ -14,7 +15,7 @@ const userSlice = createSlice({
     setUserData: (state, action) => {
       state.userData = action.payload;
     },
-    deleteUserData: (state, action) => {
+    clearUserData: (state, action) => {
       state.userData = null;
     },
     updateUserData:(state,action) => {
@@ -34,6 +35,9 @@ const userSlice = createSlice({
     .addCase(userLogin.rejected,(state,action)=>{
         state.loading = false
         state.error = action.payload
+    })
+    .addCase(logoutAction.fulfilled,(state)=>{
+      state.userData = null
     })
   }
 });

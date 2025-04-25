@@ -6,7 +6,7 @@ import instance from '../../helper/axiosInstance';
 import { useSelector } from 'react-redux';
 
 export const EditProfileModal = ({ isOpen, onClose, user, onSave }) => {
-  const userData = useSelector((state)=>state.userReducer.userData)
+  const userData = useSelector((state)=>state.User.userData.user)
   
   // Define validation schema using Yup
   const validationSchema = Yup.object({

@@ -2,21 +2,10 @@ import React, { useEffect, useState } from 'react'
 import instance from '../../helper/axiosInstance'
 function HeroSec() {
 
- const [text, setText] = useState('')
- const [loading, setLoading] = useState(false)
- const [data, setData] = useState([])
  
- useEffect(()=>{
-  let timerId = setTimeout(async()=>{
-      let response = await instance.get(`/url/${text}`)
-  },500)
-
-  return ()=>clearTimeout(timerId)
-},[text])
- 
- function handleChange(e){
-  setText(e.target.value)
- }
+//  function handleChange(e){
+//   setText(e.target.value)
+//  }
 
   return (
     <div className='w-full min-h-screen flex'>
@@ -29,7 +18,7 @@ function HeroSec() {
               type="text" 
               placeholder="What do you need help with?" 
               className='p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500'
-              onChange={handleChange}
+              // onChange={handleChange}
             />
           </div>
 

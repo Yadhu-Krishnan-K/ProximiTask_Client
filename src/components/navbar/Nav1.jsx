@@ -1,9 +1,16 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import logOutHelper from '../../helper/logoutHelper'
+import { persistor } from '../../redux/app/store';
 import { IoMdArrowDropdown, IoMdArrowDropup } from "react-icons/io";
+import { useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
+import { logoutAction } from '../../redux/actions/logoutAction';
+import { Success,Failed } from '../../helper/popup';
+import { unwrapResult } from '@reduxjs/toolkit';
 
-function Nav1({ user }) {
+function Nav1() {
+  const dispatch = useDispatch()
+  const user = useSelector((state)=>state.User.userData?.user)
   console.log('user======-__________+_----------------0 = ',user)
   const nav = useNavigate()
   const [ddopen, setDdopen] = useState(false)
@@ -26,9 +33,19 @@ function Nav1({ user }) {
   }, [])
 
   function logout() {
-    localStorage.removeItem('userData')
-    logOutHelper('user')
-    window.location.href = '/';
+   dispatch(logoutAction())
+   .then(unwrapResult)
+   .then(data=>{
+    console.log('data from nav when logout = ',data)
+    if(data.success){
+      console.log('data logout = ',data)
+      Success(data.message)
+    }
+   })
+   .catch(err=>{
+      Failed("Something went wrong, please try again")
+   })
+   persistor.purge()
   }
 
   // Menu items as an array for easier reuse
@@ -41,26 +58,31 @@ function Nav1({ user }) {
           <li className='cursor-pointer'>Chat</li>
           <li className='relative' ref={dropdownRef}>
               <div className='flex items-center cursor-pointer space-x-2 p-2 bg-gray-100 rounded-full shadow-md hover:bg-gray-200 transition-all duration-300' onClick={() => setDdopen(!ddopen)}>
-              <img src={user.croppedImgURL} alt="img" className='w-8 h-8 rounded-full object-cover border-2 border-cyan-500' />
-              <span className='text-md font-semibold text-gray-800'>{user.name.split(" ")[0]}...</span>
-              <span className='text-cyan-500'>
-                {ddopen ? <IoMdArrowDropup size={20} /> : <IoMdArrowDropdown size={20} />}
-              </span>
-            </div>
+                <img src={user.croppedImgURL} alt="img" className='w-8 h-8 rounded-full object-cover border-2 border-cyan-500' />
+                <span className='text-md font-semibold text-gray-800'>{user.name.split(" ")[0]}...</span>
+                <span className='text-cyan-500'>
+                  {ddopen ? <IoMdArrowDropup size={20} /> : <IoMdArrowDropdown size={20} />}
+                </span>
+              </div>
 
             {/* Dropdown Menu */}
-            {ddopen && (
-              <div className='absolute mt-2 w-48 bg-white border border-gray-200 shadow-lg rounded-lg z-50'>
-                <div className='flex flex-col'>
-                  <div className='px-4 py-2 hover:bg-gray-100 cursor-pointer' onClick={() => nav(`/user/profile/${user._id}/editProfile`)}>Profile</div>
-                  <div className='px-4 py-2 hover:bg-gray-100 cursor-pointer' onClick={() => nav(`/user/profile/${user._id}/address`)}>Addresses</div>
-                  <div className='px-4 py-2 hover:bg-gray-100 cursor-pointer' onClick={() => nav(`/user/profile/${user._id}/notifications`)}>Notifications</div>
-                  <div className='px-4 py-2 hover:bg-gray-100 cursor-pointer' onClick={() => nav(`/user/profile/${user._id}/security`)}>Security</div>
-                  <div className='px-4 py-2 hover:bg-gray-100 cursor-pointer' onClick={() => nav(`/user/profile/${user._id}/help`)}>Help</div>
-                  <div className='px-4 py-2 hover:bg-red-100 cursor-pointer text-red-500' onClick={logout}>Logout</div>
-                </div>
+            <div 
+              className={`absolute mt-2 bg-white border border-gray-200 shadow-lg rounded-lg z-50 overflow-hidden overflow-x-hidden transition-all duration-300 ease-in-out 
+                ${ddopen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}
+              `}
+            >
+              <div className='flex flex-col'>
+                <div className='px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm whitespace-normal' onClick={() => nav(`/user/profile/${user._id}/editProfile`)}>Profile</div>
+                <div className='px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm whitespace-normal' onClick={() => nav(`/user/profile/${user._id}/address`)}>Addresses</div>
+                <div className='px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm whitespace-normal' onClick={() => nav(`/user/profile/${user._id}/notifications`)}>Notifications</div>
+                <div className='px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm whitespace-normal' onClick={() => nav(`/user/profile/${user._id}/security`)}>Security</div>
+                <div className='px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm whitespace-normal' onClick={() => nav(`/user/profile/${user._id}/help`)}>Help</div>
+                <div className='px-4 py-2 text-emerald-600 hover:bg-emerald-100 cursor-pointer text-sm whitespace-normal'>Login as tasker</div>
+                <div className='px-4 py-2 hover:bg-red-100 cursor-pointer text-red-500 text-sm whitespace-normal' onClick={logout}>Logout</div>
               </div>
-            )}
+            </div>
+                        
+            
           </li>
         </>
       ) : (

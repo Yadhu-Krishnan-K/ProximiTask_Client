@@ -1,19 +1,16 @@
-import { useEffect, useState, Suspense, lazy } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { Suspense, lazy } from 'react'
+import { useSelector } from 'react-redux'
 import { Routes, Route, Navigate } from 'react-router-dom'
 
 import './App.css'
 
-import { setUserData } from './redux/features/User/userSlice'
-import { setWorkerData } from './redux/features/Worker/workerSlice'
-import { setAdmin } from './redux/features/Admin/adminSlice'
 import ServiceBookingForm from './pages/User/WorkerBooking'
 import Notifications from './components/worker/Notifications'
 import ServiceList from './pages/User/ServiceList'
 import DashWorker from './components/worker/DashWorker'
 import WorkCategoryComponent from './pages/User/ServiceViceWorkers'
 import OTPVerification from './pages/Worker/OtpSecrion'
-import LocationMapPage from './components/worker/LocationMapModal'
+// import LocationMapPage from './components/worker/LocationMapModal'
 import Worker from './components/user/Worker'
 
 import LoaderComponent from './components/Loadin/LoaderComponent'
@@ -21,7 +18,7 @@ import LoaderComponent from './components/Loadin/LoaderComponent'
 const LandingPage = lazy(() => import('./pages/User/LandingPage'));
 const SignUp = lazy(() => import('./pages/User/SignUp'));
 const Login = lazy(() => import('./pages/User/Login'));
-const WSignUp = lazy(() => import('./pages/Worker/WSignUp'));
+const WorkerSignUp = lazy(() => import('./pages/Worker/WorkerSignUp'));
 const AdminLogin = lazy(() => import('./pages/Admin/AdminLogin'));
 const NotFoundPage = lazy(() => import('./pages/NotFound'));
 const OTPPage = lazy(() => import('./pages/User/OtpPage'));
@@ -43,12 +40,8 @@ const AddressPage = lazy(()=> import('./components/user/UserProfile/AddressPage'
 
 function App() {
 
-  const user = useSelector((state) => state.User.userData);
-  const dispatch = useDispatch();
+  const user = useSelector((state) => state.User.userData?.user);
 
-  useEffect(() => {
-  
-  }, []);
 
   return (
 
@@ -80,7 +73,7 @@ function App() {
 
           {/* workerRoute */}
 
-          <Route path='/worker/signUp' element={user?.active ? (<Navigate to='/worker/profile' />) : (<WSignUp />)} />
+          <Route path='/worker/signUp' element={user?.active ? (<Navigate to='/worker/profile' />) : (<WorkerSignUp />)} />
           <Route path='/worker/otp' element={!user ? (<OTPVerification />) : (<Navigate to='/worker/signUp' />)} />
           {/* <Route path='/worker/otp' element={!worker ? (<OTPVerification />) : (<Navigate to='/worker/signUp' />)} /> */}
           <Route path='/worker/profile' element={user?.active ? (<WorkerProfile />) : (<Navigate to='/worker/signUp' />)} >

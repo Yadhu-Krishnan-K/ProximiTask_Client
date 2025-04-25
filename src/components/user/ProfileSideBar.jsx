@@ -6,16 +6,34 @@ import { FaRegBell, FaRegUserCircle, FaCamera, FaRegAddressCard } from "react-ic
 import { MdLockOutline } from "react-icons/md";
 import { IoHelpCircleOutline, IoClose } from "react-icons/io5";
 // import { FaRegUserCircle } from "react-icons/fa";
+import { logoutAction } from "../../redux/actions/logoutAction";
 
 
 import { BiExit } from "react-icons/bi";
-import logOutHeloper from "../../helper/logoutHelper";
+import { useDispatch } from "react-redux";
+import { unwrapResult } from "@reduxjs/toolkit";
+import { persistor } from "../../redux/app/store";
+import { Failed, Success } from "../../helper/popup";
+// import logOutHeloper from "../../helper/logoutHelper";
 
 const ProfileSideBar = ({ isOpen, toggleSidebar, user }) => {
+  const dispatch = useDispatch()
   const {id} = useParams()
-  useEffect(()=>{
 
-  },[])
+  function logout(){
+    dispatch(logoutAction())
+   .then(unwrapResult)
+   .then(data=>{
+    if(data.Success){
+      Success(data.message)
+    }
+   })
+   .catch(err=>{
+      Failed("Something went wrong, please try again")
+   })
+   persistor.purge()
+  }
+
   const navigate = useNavigate();
 
   return (
@@ -80,9 +98,7 @@ const ProfileSideBar = ({ isOpen, toggleSidebar, user }) => {
         </NavLink>
       </nav>
       <div className="absolute bottom-0 w-full p-4 border-t">
-        <div onClick={() => {localStorage.removeItem('userData')
-    logOutHeloper('user')
-    window.location.href = '/';}} className="flex items-center text-red-600 cursor-pointer">
+        <div onClick={logout} className="flex items-center text-red-600 cursor-pointer">
           <BiExit className="mr-3 h-5 w-5" />
           Log out
         </div>

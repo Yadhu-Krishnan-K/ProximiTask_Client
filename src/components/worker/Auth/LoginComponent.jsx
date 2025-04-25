@@ -3,10 +3,10 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { PiEyeBold } from "react-icons/pi";
 import { PiEyeClosedBold } from "react-icons/pi";
-import instance from "../../helper/axiosInstance";
+import instance from "../../../helper/axiosInstance";
 import { useNavigate } from 'react-router-dom'
 import { useDispatch } from "react-redux";
-import { setWorkerData } from "../../redux/features/Worker/workerSlice";
+import { setWorkerData } from "../../../redux/features/Worker/workerSlice";
 
 function LoginComponent({ onClose }) {
   const [showPass, setShowPass] = useState(false)
@@ -66,8 +66,8 @@ function LoginComponent({ onClose }) {
   });
 
   return (
-    <div className="p-5 flex flex-col">
-      <button onClick={onClose} className="self-end text-2xl">
+    <div className="p-5 flex flex-col absolute left-7/12 top-3/12">
+      <button onClick={()=>onClose(false)} className="self-end text-2xl">
         &times;
       </button>
       <h3 className="md:text-2xl lg:text-3xl mb-4">Log In</h3>

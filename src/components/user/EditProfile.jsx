@@ -8,7 +8,7 @@ import { FiPhone } from "react-icons/fi";
 
 
 const UserProfile = () => {
-  const user = useSelector((state) => state.userReducer.userData);
+  const user = useSelector((state) => state.User.userData.user);
   const { userId } = useParams();
   const [isOpen, setIsOpen] = useState(false);
   const [editedUser, setEditedUser] = useState(user);
