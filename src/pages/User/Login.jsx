@@ -143,7 +143,7 @@ const Login = () => {
             <input
               type="email"
               name="email"
-              className="w-full p-2 border border-gray-300 rounded"
+              className="w-full p-2 border outline-none border-gray-300 rounded"
               placeholder="Email"
               value={formik.values.email}
               onChange={formik.handleChange}
