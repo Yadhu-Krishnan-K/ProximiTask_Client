@@ -22,9 +22,7 @@ const LogFormikValuesOnModalOpen = ({ showModal }) => {
 function WSignUp() {
   const [showLogin, setShowLogin] = useState(false)
   const [showModal, setShowModal] = useState(false)
-  useEffect(()=>{
-    console.log
-  },[showModal])
+
   return (
     <>
       <div className='w-full h-screen flex justify-between overflow-hidden bg-[#F4F4F4]'>
@@ -50,7 +48,7 @@ function WSignUp() {
                   setTouched={setTouched} 
                 />
               </div>
-              {showModal&&<ModalRegister onClose={setShowModal}/>}
+              {showModal&&<ModalRegister onClose={setShowModal} />}
             </Form>
             )}
           </Formik>

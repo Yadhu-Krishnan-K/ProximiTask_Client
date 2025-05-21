@@ -1,9 +1,11 @@
 import { useState } from "react";
+import { useFormikContext } from "formik"
 import { Step2, Step3, Step4, Step5, Step6 } from './Auth';
 
 const ModalSlider = ({ onClose }) => {
   const steps = [Step2, Step3, Step4, Step5, Step6];
   const [step, setStep] = useState(0);
+  const {submitForm} = useFormikContext()
 
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
@@ -54,7 +56,10 @@ const ModalSlider = ({ onClose }) => {
           ) : (
             <button
               type="submit"
-              onClick={() => alert("Submit logic here")}
+              onClick={() => {
+                submitForm();     // Submit Formik form
+                onClose(false);   // Close modal after submission
+              }}
               className="px-4 py-2 bg-green-600 text-white rounded"
             >
               Submit

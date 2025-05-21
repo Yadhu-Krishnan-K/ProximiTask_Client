@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import TextInput from '../../Form/InputText'
 import FileInput from '../../Form/FileInput'
 import ImageCropper from '../../ImageCrop/ImageCropper'
@@ -12,6 +12,12 @@ function PhoneAndProfile() {
   const [imageAfterCrop, setImageAfterCrop] = useState("")
   const {setFieldValue} = useFormikContext()
   
+  useEffect(()=>{
+    console.log(image)
+    if(!image.length){
+      setCurrentPage("choose-img")
+    }
+  },[image])
   //on image selected
   const onChooseImage = () => {
     inputRef.current.click()
@@ -44,6 +50,7 @@ function PhoneAndProfile() {
         imageCroppedArea.height
       )
       //convert canvasEle to data url (jpeg format...)
+      console.log('canEle = ',canvasEle)
       const dataUrl = canvasEle.toDataURL('image/jpeg');
       canvasEle.toBlob((blob) => {
         if (blob) {
@@ -82,7 +89,7 @@ function PhoneAndProfile() {
         name='profilePhoto'
         className='hidden'
         ref={inputRef}
-        accept="image/*"
+        accept=".png, .jpg, .jpeg"
         onImageSelected={onImageSelected}
       />
       {
@@ -99,7 +106,7 @@ function PhoneAndProfile() {
              )
             :(
               <div>
-                <img src={imageAfterCrop} onClick={onChooseImage} alt="imageAfterCrop" />
+                <img src={imageAfterCrop} onClick={onChooseImage} alt="imageAfterCrop" width={100} height={100} />
               </div>
             )
           )

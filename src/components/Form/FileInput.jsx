@@ -1,28 +1,34 @@
-// components/form/FileInput.jsx
 import { useField } from "formik";
 import { forwardRef } from "react";
+import FormikDebugger from "../../helper/FormikDebugger";
 
 const FileInput = forwardRef(({ label, onImageSelected, ...props }, ref) => {
-  const [field, meta, helpers] = useField(props);
+  const [, meta, helpers] = useField(props.name); // Don't use field.value
+
   const handleChange = (e) => {
-    if(e.target?.files.length>0){
-      const reader = new FileReader()
-      reader.readAsDataURL(e.target.files[0])
-      reader.onload = function(e){
-        onImageSelected(reader.result)
-      }
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        onImageSelected(reader.result); // You handle the image preview
+        // helpers.setValue(file);        // Set the file in Formik state
+      };
     }
-  }
+  };
+
   return (
     <div className="mb-4">
       {label && <label className="block text-sm font-medium mb-1">{label}</label>}
       <input
         type="file"
         ref={ref}
-        {...field}
-        {...props}
+        name={props.name}
         onChange={handleChange}
+        onBlur={() => helpers.setTouched(true)}
+        {...props}
       />
+      <FormikDebugger />
       {meta.touched && meta.error && (
         <div className="text-red-500 text-sm mt-1">{meta.error}</div>
       )}
